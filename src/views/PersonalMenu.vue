@@ -27,6 +27,7 @@
           设置
         </a-menu-item>
       </a-menu>
+      <ResultCardList></ResultCardList>
     </div>
   </div>
 </template>
@@ -36,9 +37,10 @@
 import {Component, Vue} from 'vue-property-decorator';
 import axios from "axios";
 import {Modal} from "ant-design-vue";
+import ResultCardList from "@/components/ResultCardList.vue";
 
 @Component({
-  components: {}
+  components: {ResultCardList}
 })
 
 export default class PersonalMenu extends Vue {
