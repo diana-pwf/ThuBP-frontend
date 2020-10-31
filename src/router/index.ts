@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Login from '../views/Login.vue'
 import Logon from '../views/Logon.vue'
+import PersonalMenu from "@/views/PersonalMenu.vue"
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes: Array<RouteConfig> = [
     path: '/logon',
     name: 'Logon',
     component: Logon
+  },
+  {
+    path: '/person',
+    name: 'PersonalMenu',
+    component: PersonalMenu
   },
   {
     path: '/about',

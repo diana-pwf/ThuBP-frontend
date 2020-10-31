@@ -33,7 +33,7 @@ export default class Login extends Vue {
   password = ""
 
   login() {
-
+    this.$router.push('/person')
   }
 
   logon(){
