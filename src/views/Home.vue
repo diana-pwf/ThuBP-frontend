@@ -8,7 +8,7 @@
           <Carousel></Carousel>
           <ul class="wrapper">
             <li class="list" v-for="(item,index) in new Array(30).fill(1)" :key="index">
-            <a-card hoverable style="width: 240px">
+            <a-card style="width: 240px">
               <img
                   slot="cover"
                   alt="example"
@@ -23,7 +23,7 @@
             </li>
           </ul>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="篮球" force-render>
+        <a-tab-pane class="matchLists" key="2" tab="篮球" force-render>
           <ResultCardList :match-lists="new Array(20).fill('1')"></ResultCardList>
         </a-tab-pane>
         <a-tab-pane key="3" tab="足球">
@@ -74,5 +74,8 @@ export default class Home extends Vue {
   margin-top:2%;
   display: grid;
   grid-template-columns: repeat(auto-fill,33%);
+}
+.matchLists{
+  margin:auto;
 }
 </style>

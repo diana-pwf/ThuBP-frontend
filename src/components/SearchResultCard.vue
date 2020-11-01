@@ -1,5 +1,5 @@
 <template>
-  <a-card class="card" hoverable="" style="width:1000px">
+  <a-card class="card" hoverable="" style="width:70%">
     <div class="mycard">
       <div class="card-img">
         <slot name="card-img"></slot>
@@ -23,18 +23,18 @@ export default class SearchResultCard extends Vue {
 
 <style scoped>
 .card {
-  height: 268px;
+  height: 25%;
 }
 
 .mycard {
-  height: 220px;
+  height: 100%;
   display: grid;
   grid-template-columns: 2fr 5fr;
-  grid-column-gap: 20px;
+  grid-column-gap: 5%;
 }
 
 .card-img {
-  height: 220px;
+  height: 100%;
 }
 
 .card-text {
