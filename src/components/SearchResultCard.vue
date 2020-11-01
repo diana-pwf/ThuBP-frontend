@@ -7,11 +7,6 @@
       <div class="card-text">
         <slot name="card-title"></slot>
         <slot name="card-content"></slot>
-        <!--    <a-card-meta title="Europe Street beat">-->
-        <!--      <template slot="description">-->
-        <!--        www.instagram.com-->
-        <!--      </template>-->
-        <!--    </a-card-meta>-->
       </div>
     </div>
   </a-card>

@@ -24,7 +24,7 @@
           </ul>
         </a-tab-pane>
         <a-tab-pane key="2" tab="篮球" force-render>
-          Content of Tab Pane 2
+          <ResultCardList :match-lists="new Array(20).fill('1')"></ResultCardList>
         </a-tab-pane>
         <a-tab-pane key="3" tab="足球">
           Content of Tab Pane 3
@@ -48,9 +48,10 @@ import { Component, Vue } from 'vue-property-decorator';
 import Navigation from '@/components/Navigation.vue'
 import SearchInput from "@/components/SearchInput.vue";
 import Carousel from "@/components/Carousel.vue";
+import ResultCardList from "@/components/ResultCardList.vue" ;
 
 @Component({
-  components: { Navigation,SearchInput,Carousel
+  components: { Navigation,SearchInput,Carousel,ResultCardList
   },
 })
 export default class Home extends Vue {

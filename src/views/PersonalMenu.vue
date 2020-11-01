@@ -27,7 +27,7 @@
           设置
         </a-menu-item>
       </a-menu>
-      <ResultCardList></ResultCardList>
+      <ResultCardList :match-lists="new Array(20).fill(1)"></ResultCardList>
     </div>
   </div>
 </template>

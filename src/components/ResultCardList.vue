@@ -1,14 +1,14 @@
 <template>
   <ul id="result-card-list">
-    <li v-for="item in matchLists" :key="item.id">
+    <li v-for="(item,index) in matchLists" :key="index">
       <SearchResultCard>
         <img
             alt="example"
-            :src=item.imgSrc
+            src="background.png"
             slot="card-img"
         />
-        <h2 slot="card-title">{{item.name}}</h2>
-        <p slot="card-content">{{item.content}}</p>
+        <h2 slot="card-title"> name  </h2>
+        <p slot="card-content"> content </p>
       </SearchResultCard>
     </li>
   </ul>
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue,Prop } from 'vue-property-decorator';
 import SearchResultCard from "./SearchResultCard.vue";
 
 @Component({
@@ -24,21 +24,7 @@ import SearchResultCard from "./SearchResultCard.vue";
 })
 
 export default class ResultCardList extends Vue {
-  matchCardInfo1 = {
-    id:1,
-    imgSrc:"background.png",
-    name:"Europe Street beat",
-    content:"www.instagram.com"
-  }
-
-  matchCardInfo2 = {
-    id:2,
-    imgSrc:"background.png",
-    name:"Europe Street beat",
-    content:"www.instagram.com"
-  }
-
-  matchLists = [this.matchCardInfo1, this.matchCardInfo2]
+  @Prop({type:Array,default:function (){return []}})matchLists
 }
 </script>
 
