@@ -1,7 +1,7 @@
 <template>
   <ul id="result-card-list">
     <li v-for="(item,index) in matchLists" :key="index">
-      <SearchResultCard>
+      <SearchResultCard class="card">
         <img
             alt="example"
             src="background.png"
@@ -36,5 +36,8 @@ img {
   max-width: 100%;
   max-height: 100%;
   margin: 0
+}
+.card{
+  margin-bottom: 1%;
 }
 </style>

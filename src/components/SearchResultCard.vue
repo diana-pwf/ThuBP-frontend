@@ -1,5 +1,5 @@
 <template>
-  <a-card class="card" hoverable="" style="width:70%">
+  <a-card class="card" hoverable="">
     <div class="mycard">
       <div class="card-img">
         <slot name="card-img"></slot>

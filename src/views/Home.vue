@@ -23,8 +23,8 @@
             </li>
           </ul>
         </a-tab-pane>
-        <a-tab-pane class="matchLists" key="2" tab="篮球" force-render>
-          <ResultCardList :match-lists="new Array(20).fill('1')"></ResultCardList>
+        <a-tab-pane  key="2" tab="篮球" force-render>
+          <ResultCardList class="matchLists" :match-lists="new Array(20).fill('1')"></ResultCardList>
         </a-tab-pane>
         <a-tab-pane key="3" tab="足球">
           Content of Tab Pane 3
@@ -77,5 +77,6 @@ export default class Home extends Vue {
 }
 .matchLists{
   margin:auto;
+  width: 80%;
 }
 </style>
