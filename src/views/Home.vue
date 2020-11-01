@@ -77,6 +77,6 @@ export default class Home extends Vue {
 }
 .matchLists{
   margin:auto;
-  width: 80%;
+  width: 90%;
 }
 </style>

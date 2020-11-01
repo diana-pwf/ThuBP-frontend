@@ -11,13 +11,31 @@
     <a-menu-item id="create"  key="2">
       创建比赛
     </a-menu-item>
-    <a-menu-item id="logout"  key="3">
-      登出
-    </a-menu-item>
-    <a-menu-item id="message"><a-icon type="message" /></a-menu-item>
     <a-menu-item id="user">
-      <a-avatar class="avatar" icon="user" />
-      <span> 用户名</span>
+      <a-dropdown :trigger="['click']">
+        <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+          <a-avatar class="avatar" icon="user" />
+          <span> 用户名</span><a-icon type="down" />
+        </a>
+        <a-menu slot="overlay">
+          <a-menu-item key="0">
+            <a-icon type="user"/>个人资料
+          </a-menu-item>
+          <a-menu-item key="1">
+            <a-icon type="schedule" />创建的比赛
+          </a-menu-item>
+          <a-menu-divider />
+          <a-menu-item key="3">
+            <a-icon type="schedule" />参加的比赛
+          </a-menu-item>
+          <a-menu-item key="4">
+            <a-icon type="message" />我的消息
+          </a-menu-item>
+          <a-menu-item key="5">
+            <a-icon type="logout" />登出
+          </a-menu-item>
+        </a-menu>
+      </a-dropdown>
     </a-menu-item>
   </a-menu>
 </template>
