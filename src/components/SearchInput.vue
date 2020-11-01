@@ -18,5 +18,6 @@ export default class SearchInput extends Vue {
 <style scoped>
 .search {
   width: 600px;
+  margin-top:1%;
 }
 </style>
