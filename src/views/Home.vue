@@ -5,6 +5,7 @@
     <div id="div">
       <a-tabs class="tab" default-active-key="1">
         <a-tab-pane  key="1" tab="综合">
+          <Carousel></Carousel>
           <ul class="wrapper">
             <li class="list" v-for="(item,index) in new Array(30).fill(1)" :key="index">
             <a-card hoverable style="width: 240px">
@@ -46,9 +47,10 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Navigation from '@/components/Navigation.vue'
 import SearchInput from "@/components/SearchInput.vue";
+import Carousel from "@/components/Carousel.vue";
 
 @Component({
-  components: { Navigation,SearchInput
+  components: { Navigation,SearchInput,Carousel
   },
 })
 export default class Home extends Vue {
@@ -68,7 +70,8 @@ export default class Home extends Vue {
   margin-bottom: 3%;
 }
 .wrapper{
+  margin-top:2%;
   display: grid;
-  grid-template-columns: repeat(auto-fill,300px);
+  grid-template-columns: repeat(auto-fill,33%);
 }
 </style>
