@@ -32,6 +32,7 @@ export default class ResultCardList extends Vue {
 ul, li {
   list-style-type: none;
 }
+
 img {
   max-width: 100%;
   max-height: 100%;

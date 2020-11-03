@@ -2,9 +2,9 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Login from '../views/Login.vue'
 import Logon from '../views/Logon.vue'
-import PersonalMenu from "@/views/PersonalMenu.vue"
 import Home from "@/views/Home.vue";
 import SearchResults from "@/views/SearchResults.vue";
+import PersonalInfoTab from "@/views/PersonalInfoTab.vue";
 
 Vue.use(VueRouter)
 
@@ -20,9 +20,9 @@ const routes: Array<RouteConfig> = [
     component: Logon
   },
   {
-    path: '/person',
-    name: 'PersonalMenu',
-    component: PersonalMenu
+    path: '/personal',
+    name: 'PersonalInfoTab',
+    component: PersonalInfoTab
   },
   {
     path: '/search',
