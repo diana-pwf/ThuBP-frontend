@@ -18,7 +18,7 @@
           <span> 用户名</span><a-icon type="down" />
         </a>
         <a-menu slot="overlay">
-          <a-menu-item key="0">
+          <a-menu-item @click="goPersonInfo" key="0">
             <a-icon type="user"/>个人资料
           </a-menu-item>
           <a-menu-item key="1">
@@ -49,7 +49,9 @@ import {Component, Vue} from 'vue-property-decorator';
 @Component
 
 export  default class Navigation extends Vue{
-
+goPersonInfo(){
+this.$router.push('personal');
+}
 }
 </script>
 

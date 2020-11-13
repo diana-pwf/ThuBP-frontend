@@ -22,6 +22,10 @@ export default class SearchResultCard extends Vue {
 </script>
 
 <style scoped>
+/*.card {*/
+/*  height: 25%;*/
+/*}*/
+
 .mycard {
   height: 100%;
   display: grid;
