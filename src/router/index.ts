@@ -5,6 +5,7 @@ import Logon from '../views/Logon.vue'
 import Home from "@/views/Home.vue";
 import SearchResults from "@/views/SearchResults.vue";
 import PersonalInfoTab from "@/views/PersonalInfoTab.vue";
+import MatchDetail from "@/views/MatchDetail.vue";
 
 Vue.use(VueRouter)
 
@@ -41,7 +42,13 @@ const routes: Array<RouteConfig> = [
    path: '/home',
     name:'Home',
     component:Home
+  },
+  {
+    path:'/matchDetail',
+    name:'matchDetail',
+    component:MatchDetail
   }
+
 ]
 
 const router = new VueRouter({
