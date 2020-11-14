@@ -5,6 +5,7 @@ import Logon from '../views/Logon.vue'
 import Home from "@/views/Home.vue";
 import SearchResults from "@/views/SearchResults.vue";
 import PersonalInfoTab from "@/views/PersonalInfoTab.vue";
+import GameDetail from "@/views/GameDetail.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 
 Vue.use(VueRouter)
@@ -42,6 +43,11 @@ const routes: Array<RouteConfig> = [
    path: '/home',
     name:'Home',
     component:Home
+  },
+  {
+    path: '/gameDetail',
+    name:'gameDetail',
+    component:GameDetail
   },
   {
     path:'/matchDetail',
