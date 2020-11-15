@@ -51,8 +51,27 @@
               <a-icon type="unordered-list" />
                选手、裁判列表
             </span>
-              <ul>
-                <li>
+              <div class='row' style='margin-top: 5ex'>
+                <div class='col-md-4'>
+                  <h3><i class="fas fa-box"></i>5</h3>
+                  <h5>比赛队伍</h5>
+                </div>
+                <div class='col-md-4'>
+                  <h3 class='text-success'><i class="fas fa-box"></i>55</h3>
+                  <h5 class='text-success'>比赛选手</h5>
+                </div>
+                <div class='col-md-4'>
+                  <h3 class='text-warning'><i class="fas fa-box"></i> 7</h3>
+                  <h5 class='text-warning'>比赛裁判</h5>
+                </div>
+              </div>
+              <div id="person_list">
+                <div>
+                  <span class="list_title">队伍列表</span>
+                  <br/>
+              <a-button class="add" icon="plus">添加</a-button>
+              <ul id="team">
+                <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
                   <a-comment>
                     <a slot="author">这是一支队伍名称</a>
                     <a-avatar
@@ -65,15 +84,90 @@
                     <p slot="content" :style="{verticalAlign:'left'}">
                       这是一段简短的对比赛队伍的描述。
                     </p>
+                    <span class="more" style="color: dodgerblue" slot="actions">更多</span>
                   </a-comment>
                 </li>
               </ul>
+                </div>
+                <div>
+                  <span class="list_title">裁判列表</span>
+                  <a-button class="add" icon="plus">添加</a-button>
+              <ul id="referee">
+                <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
+                  <a-comment>
+                    <a slot="author">裁判名称</a>
+                    <a-avatar
+                        slot="avatar"
+                        shape="square"
+                        size="large"
+                        :style="{ backgroundColor:'#9400D3', verticalAlign: 'left' }">
+                      Referee
+                    </a-avatar>
+                    <p slot="content" :style="{verticalAlign:'left'}">
+                      这是一段简介
+                    </p>
+                    <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                  </a-comment>
+                </li>
+              </ul>
+              </div>
+              </div>
             </a-tab-pane>
             <a-tab-pane  key="3">
             <span slot="tab">
               <a-icon type="unordered-list" />
                 比赛列表
             </span>
+              <b-card bg-variant="default">
+                <b-card-text>
+                    <div>
+                      <div class="matchCard">
+                    <img src="background.png" alt="赛事图片"/>
+                    <div>
+                      <h4>第一轮小组赛</h4>
+                      <a-descriptions style="margin-top:5%">
+                        <a-descriptions-item label="比赛场数">
+                          8场
+                        </a-descriptions-item>
+                        <a-descriptions-item label="赛制">
+                          循环赛
+                        </a-descriptions-item>
+                        <a-descriptions-item label="状态">
+                          进行中
+                        </a-descriptions-item>
+                      </a-descriptions>
+                    </div>
+                    </div>
+                      <ul>
+                        <li>
+                          <div class="game">
+                          <a-avatar
+                              slot="avatar"
+                              shape="square"
+                              size="large"
+                              :style="{ backgroundColor:'rgba(104,235,191,1)'}">
+                            Game
+                          </a-avatar>
+                      <a-descriptions layout="vertical">
+                        <a-descriptions-item class="game_name" label="比赛名称">
+                          名称
+                        </a-descriptions-item>
+                        <a-descriptions-item label="组织者">
+                          NPC
+                        </a-descriptions-item>
+                        <a-descriptions-item label="时间">
+                          2020/12/09
+                        </a-descriptions-item>
+                        <a-descriptions-item label="地点">
+                          紫荆操场
+                        </a-descriptions-item>
+                      </a-descriptions>
+                          </div>
+                        </li>
+                      </ul>
+                  </div>
+                </b-card-text>
+              </b-card>
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -100,7 +194,6 @@ export default class MatchDetail extends Vue{
 <style scoped>
 li{
   list-style-type: none;
-  width:40%
 }
 
 #menu {
@@ -131,5 +224,40 @@ img{
 #detail_edit{
   margin-top: 2%;
   margin-left: 80%;
+}
+#person_list{
+  margin-top: 10%;
+  display: grid;
+  grid-template-columns:  50% 50%;
+
+}
+.list_title{
+  font-weight: bold;
+}
+.add{
+  width:90%;
+  margin-top: 10%;
+  margin-right: 5%;
+  margin-left: 5%;
+  margin-bottom: 2%;
+}
+h4{
+  font-weight: bold;
+  color: dodgerblue;
+  text-align: left;
+}
+.matchCard{
+  display: grid;
+  grid-template-columns: 20% 80%;
+
+}
+
+.game{
+  display: grid;
+  grid-template-columns: 10% 90%;
+  margin-top: 5%;
+}
+.game_name{
+  left: 2%;
 }
 </style>
