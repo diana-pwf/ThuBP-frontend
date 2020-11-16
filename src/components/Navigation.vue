@@ -3,6 +3,7 @@
       class="a-menu"
       theme="dark"
       mode="horizontal"
+      id="navigation-bar"
       :default-selected-keys="['1']"
      >
     <a-menu-item id="main" @click="goHome" key="1">
@@ -13,11 +14,12 @@
     </a-menu-item>
     <a-menu-item id="user">
       <a-dropdown :trigger="['click']">
-        <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-          <a-avatar class="avatar" icon="user" />
-          <span> 用户名</span><a-icon type="down" />
+        <a class="ant-dropdown-link user-dropdown-link" @click="e => e.preventDefault()">
+          <a-avatar class="avatar" icon="user" :style="{}" />
+          <span class="delimiter"></span>
+          <span class="text-middle">用户名</span><a-icon class="down-icon" type="down" />
         </a>
-        <a-menu slot="overlay">
+        <a-menu slot="overlay" class="dropdown-list">
           <a-menu-item @click="goPersonInfo" key="0">
             <a-icon type="user"/>个人资料
           </a-menu-item>
@@ -64,14 +66,25 @@ export default class Navigation extends Vue{
 </script>
 
 <style scoped>
+#navigation-bar {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+}
+
+@media screen and (min-width: 500px) {
+  #navigation-bar {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+}
 
 #main{
-  position: absolute;
-  left: 10%;
+
 }
 #create{
-  position: absolute;
-  left: 18%;
+
 }
 #logout{
   position: absolute;
@@ -82,15 +95,32 @@ export default class Navigation extends Vue{
   left: 77%;
 }
 #user{
-  position: absolute;
-  left: 80%;
+  margin-left: auto;
 }
 .a-menu{
   height:46px;
   position:relative;
   margin-left:0;
 }
-.avatar{
+.delimiter {
+  display: inline-block;
+  width: 4px;
+}
+.down-icon {
+  margin: 0;
+  vertical-align: middle;
+}
+.text-middle {
+  vertical-align: middle;
+}
+.dropdown-list .ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+}
+.avatar {
   background-color: dodgerblue;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

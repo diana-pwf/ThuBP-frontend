@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <a-input-search class="search" placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch" />
-  </div>
+  <a-input-search class="search" placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch" />
 </template>
 
 <script lang="ts">
@@ -17,7 +15,6 @@ export default class SearchInput extends Vue {
 
 <style scoped>
 .search {
-  width: 600px;
-  margin-top:1%;
+  max-width: 600px;
 }
 </style>
