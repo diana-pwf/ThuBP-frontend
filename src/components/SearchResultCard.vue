@@ -1,5 +1,5 @@
 <template>
-  <a-card class="card" hoverable="">
+  <a-card @click="goMatchDetail" class="card" hoverable="">
     <div class="mycard">
       <div class="card-img">
         <slot name="card-img"></slot>
@@ -17,7 +17,9 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class SearchResultCard extends Vue {
-
+goMatchDetail(){
+  this.$router.push('/matchDetail')
+}
 }
 </script>
 

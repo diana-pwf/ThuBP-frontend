@@ -2,7 +2,7 @@
   <div id="personalMenu">
     <Navigation></Navigation>
     <div id="menu">
-      <div style="width: 85%; height:100%">
+      <div style="width: 100%; height:100%">
         <a-tabs
             default-active-key="1"
             :tab-position="'left'"
@@ -205,5 +205,8 @@ ul,li {
 
 #msg-list {
   margin: 5%;
+}
+.row{
+  margin-left: 10%;
 }
 </style>

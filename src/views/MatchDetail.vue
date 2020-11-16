@@ -3,7 +3,7 @@
     <div id="personalMenu">
       <Navigation></Navigation>
       <div id="menu">
-        <div style="width: 100%; height:100%">
+        <div style="width: 100%%; height:100%">
           <a-tabs
               default-active-key="1"
               :tab-position="'left'"
@@ -320,5 +320,8 @@ h4{
 #edit_button{
   margin-top:-6%;
   margin-left: 85%;
+}
+.row{
+  margin-left: 10%;
 }
 </style>
