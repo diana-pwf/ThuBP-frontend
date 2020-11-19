@@ -9,7 +9,7 @@
         <h1>清球汇</h1>
       </div>
       <div id="form-body">
-        <a-input class="user" placeholder="input userID" v-model="userID">
+        <a-input class="user" placeholder="input thuID" v-model="thuID">
           <a-icon slot="prefix" type="user"></a-icon>
         </a-input>
         <a-input-password class="password" placeholder="input password" v-model="password">
@@ -29,12 +29,28 @@ import {Modal} from "ant-design-vue";
 
 @Component
 export default class Login extends Vue {
-  userID = ""
+  thuID = ""
   password = ""
-
-  login() {
-     this.$router.push('/home')
-  }
+  rememberMe = false
+    async login () {
+      try {
+        let response = await axios({
+          method:"post",
+          url:'/api/v1/auth/login',
+          data:{
+            thuId: this.thuID,
+            password: this.password,
+            rememberMe:this.rememberMe
+          }})
+        if (response.status === 200) {
+          this.$message.success('log in success!')
+          this.$router.push('/home')
+          // 在此处弹出提示 注册成功
+        }
+      } catch (e) {
+        this.$message.error(JSON.stringify(e.response.data.error))
+      }
+    }
 
   logon(){
     this.$router.push('/logon')

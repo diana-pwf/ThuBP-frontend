@@ -9,10 +9,10 @@
         <h1>清球汇</h1>
       </div>
       <div id="form-body">
-        <a-input class="user" placeholder="input userID" v-model="userID">
+        <a-input class="user" placeholder="input TsinghuaID" v-model="ticket">
           <a-icon slot="prefix" type="user"></a-icon>
         </a-input>
-        <a-input class="user" placeholder="input nickname" v-model="nickname">
+        <a-input class="user" placeholder="input nickname" v-model="username">
           <a-icon slot="prefix" type="user"></a-icon>
         </a-input>
         <a-input-password class="password" placeholder="input password" v-model="password">
@@ -32,18 +32,35 @@ import {Modal} from "ant-design-vue";
 
 @Component
 export default class Logon extends Vue {
-  userID = ""
-  password = ""
-  nickname = ""
+  username = 'pwf18'
+  password = '123456'
+  ticket = '2018013405'
 
-  login() {
+
+  querystring = require('querystring')
+
+  login(){
     this.$router.push('/')
   }
-
-  logon(){
-
+  async logon () {
+    try {
+      let response = await axios({
+        method:"post",
+        url:'/api/v1/auth/register',
+        data:{
+        username: this.username,
+        password: this.password,
+        ticket:this.ticket
+      }})
+      if (response.status === 200) {
+        this.$message.success('log on success!')
+        this.$router.push('/')
+        // 在此处弹出提示 注册成功
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
   }
-
 }
 </script>
 
