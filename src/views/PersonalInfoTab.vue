@@ -2,7 +2,7 @@
   <div id="personalMenu">
     <Navigation></Navigation>
     <div id="menu">
-      <div style="width: 85%; height:100%">
+      <div style="width: 100%; height:100%">
         <a-tabs
             default-active-key="1"
             :tab-position="'left'"
@@ -52,7 +52,58 @@
               <a-icon type="message" />
                 我的消息
             </span>
-            <ResultCardList :match-lists="new Array(20).fill(1)"></ResultCardList>
+            <div>
+              <div class='row' style='margin-top: 5ex'>
+                <div class='col-md-4'>
+                  <h3><i class="fas fa-box"></i>5</h3>
+                  <h5>我的待办</h5>
+                </div>
+                <div class='col-md-4'>
+                  <h3 class='text-success'><i class="fas fa-box"></i>9</h3>
+                  <h5 class='text-success'>本周累计收到消息</h5>
+                </div>
+                <div class='col-md-4'>
+                  <h3 class='text-warning'><i class="fas fa-box"></i> 7</h3>
+                  <h5 class='text-warning'>本周累计发送消息</h5>
+                </div>
+              </div>
+              <div id="msg-list">
+                    <!--<a-comment id="comment">
+                      <a slot="author">消息主题</a>
+                      <a-avatar
+                          slot="avatar"
+                          shape="square"
+                          size="large"
+                          :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                        Msg
+                      </a-avatar>
+                      <p slot="content" :style="{verticalAlign:'left'}">
+                        消息描述。
+                      </p>-->
+                      <a-table :columns="columns" :data-source="data">
+                        <a slot="name" slot-scope="text">{{ text }}</a>
+                        <span slot="customTitle"><a-icon type="smile-o" />发送者/接收者</span>
+                        <span slot="tags" slot-scope="tags">
+                          <a-tag
+                              v-for="tag in tags"
+                              :key="tag"
+                              :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+                          >
+                            {{ tag.toUpperCase() }}
+                          </a-tag>
+                        </span>
+                        <span slot="action" slot-scope="text, record">
+                          <a>查看详情</a>
+                          <a-divider type="vertical" />
+                          <a>删除</a>
+                          <a-divider type="vertical" />
+                          <a class="ant-dropdown-link">更多<a-icon type="down" /> </a>
+                        </span>
+                      </a-table>
+                      <!--<span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                    </a-comment>-->
+                </div>
+              </div>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -73,7 +124,59 @@ import Navigation from "../components/Navigation.vue";
 })
 
 export default class PersonalInfoTab extends Vue {
+  columns = [
+    {
+      dataIndex: 'name',
+      key: 'name',
+      slots: { title: 'customTitle' },
+      scopedSlots: { customRender: 'name' },
+    },
+    {
+      title: '发送时间',
+      dataIndex: 'time',
+      key: 'time',
+    },
+    {
+      title: '消息主题',
+      dataIndex: 'theme',
+      key: 'theme',
+    },
+    {
+      title: '标注',
+      key: 'tags',
+      dataIndex: 'tags',
+      scopedSlots: { customRender: 'tags' },
+    },
+    {
+      title: '...',
+      key: 'action',
+      scopedSlots: { customRender: 'action' },
+    },
+  ];
 
+  data = [
+    {
+      key: '1',
+      name: 'John Brown',
+      time: '2020.11.16 20:30',
+      theme: 'Hello world',
+      tags: ['nice', 'developer'],
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+      time: '2020.11.16 20:30',
+      theme: 'Hello world',
+      tags: ['loser'],
+    },
+    {
+      key: '3',
+      name: 'Joe Black',
+      time: '2020.11.16 20:30',
+      theme: 'Hello world',
+      tags: ['cool', 'teacher'],
+    },
+  ];
 
 }
 </script>
@@ -92,4 +195,18 @@ a-tab-pane {
   overflow: scroll;
 }
 
+ul,li {
+  list-style-type: none;
+}
+
+#comment >>> p {
+  text-align: left;
+}
+
+#msg-list {
+  margin: 5%;
+}
+.row{
+  margin-left: 10%;
+}
 </style>

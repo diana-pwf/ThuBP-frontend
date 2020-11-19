@@ -3,7 +3,7 @@
     <div id="personalMenu">
       <Navigation></Navigation>
       <div id="menu">
-        <div style="width: 85%; height:100%">
+        <div style="width: 100%%; height:100%">
           <a-tabs
               default-active-key="1"
               :tab-position="'left'"
@@ -69,7 +69,7 @@
                 <div>
                   <span class="list_title">队伍列表</span>
                   <br/>
-              <a-button class="add" icon="plus">添加</a-button>
+                  <b-button variant="outline-success" class="add"><b-icon icon="person-plus-fill"/> 添加队伍</b-button>
               <ul id="team">
                 <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
                   <a-comment>
@@ -91,7 +91,7 @@
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
-                  <a-button class="add" icon="plus">添加</a-button>
+                  <b-button variant="outline-success" b-icon="person-plus" class="add"><b-icon icon="person-plus"/> 添加裁判</b-button>
               <ul id="referee">
                 <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
                   <a-comment>
@@ -118,13 +118,14 @@
               <a-icon type="unordered-list" />
                 比赛列表
             </span>
+              <b-button class="button" block variant="outline-success"><b-icon icon="journal-plus"></b-icon>添加赛事</b-button>
               <b-card bg-variant="default">
                 <b-card-text>
                     <div>
                       <div class="matchCard">
                     <img src="background.png" alt="赛事图片"/>
                     <div>
-                      <h4>第一轮小组赛</h4>
+                      <h4>第一轮小组赛<b-button  id="edit_button" variant="danger">修改赛事</b-button></h4>
                       <a-descriptions style="margin-top:5%">
                         <a-descriptions-item label="比赛场数">
                           8场
@@ -136,36 +137,27 @@
                           进行中
                         </a-descriptions-item>
                       </a-descriptions>
+
                     </div>
                     </div>
-                      <ul>
-                        <li>
-                          <div class="game">
-                          <a-avatar
-                              slot="avatar"
-                              shape="square"
-                              size="large"
-                              :style="{ backgroundColor:'rgba(104,235,191,1)'}">
-                            Game
-                          </a-avatar>
-                      <a-descriptions layout="vertical">
-                        <a-descriptions-item class="game_name" label="比赛名称">
-                          名称
-                        </a-descriptions-item>
-                        <a-descriptions-item label="组织者">
-                          NPC
-                        </a-descriptions-item>
-                        <a-descriptions-item label="时间">
-                          2020/12/09
-                        </a-descriptions-item>
-                        <a-descriptions-item label="地点">
-                          紫荆操场
-                        </a-descriptions-item>
-                      </a-descriptions>
-                          </div>
-                        </li>
-                      </ul>
+                          <a-table class="table" :columns="columns" :data-source="data">
+                            <a slot="name" slot-scope="text">{{ text }}</a>
+                            <span slot="customTitle">比赛名称</span>
+                            <span slot="tags" slot-scope="tags">
+                          <a-tag
+                              v-for="tag in tags"
+                              :key="tag"
+                              :color="tag === 'onprocess' ? '' : tag.length > 5 ? 'geekblue' : 'green'"
+                          >
+                            {{ tag.toUpperCase() }}
+                          </a-tag>
+                            </span>
+                            <span slot="action" slot-scope="text, record">
+                          <a class="ant-dropdown-link">查看详情</a>
+                        </span>
+                          </a-table>
                   </div>
+
                 </b-card-text>
               </b-card>
             </a-tab-pane>
@@ -187,6 +179,65 @@ import Navigation from "@/components/Navigation.vue";
 
 @Component({components:{Navigation}})
 export default class MatchDetail extends Vue{
+  columns = [
+    {
+      dataIndex: 'name',
+      key: 'name',
+      slots: { title: 'customTitle' },
+      scopedSlots: { customRender: 'name' },
+    },
+    {
+      title: '组织者',
+      dataIndex: 'owner',
+      key: 'owner',
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'begin_time',
+      key: 'begin_time',
+    },
+    {
+      title: '结束时间',
+      key: 'end_time',
+      dataIndex: 'end_time',
+    },
+    {
+      title: '地点',
+      key: 'location',
+      dataIndex: 'location',
+    },
+    {
+      title: 'tags',
+      key: 'tags',
+      dataIndex: 'tags',
+      scopedSlots: { customRender: 'tags' },
+    },
+    {
+      title: '...',
+      key: 'action',
+      scopedSlots: { customRender: 'action' },
+    },
+  ];
+  data = [
+    {
+      key: '1',
+      name: '赛事名称',
+      owner: 'npc',
+      location: '紫荆操场',
+      begin_time:'2020/10/22',
+      end_time:'2020/12/04',
+      tags: ['nice', 'on_process'],
+    },
+    {
+      key: '2',
+      name: '赛事名称',
+      owner: 'npc',
+      location: '紫荆操场',
+      begin_time:'2020/10/22',
+      end_time:'2020/12/04',
+      tags: ['nice', 'on_process'],
+    }
+  ]
 
 }
 </script>
@@ -252,12 +303,25 @@ h4{
 
 }
 
-.game{
-  display: grid;
-  grid-template-columns: 10% 90%;
-  margin-top: 5%;
+.table{
+  margin-top:2%
 }
-.game_name{
-  left: 2%;
+/*.game{*/
+/*  display: grid;*/
+/*  grid-template-columns: 10% 90%;*/
+/*  margin-top: 5%;*/
+/*}*/
+/*.game_name{*/
+/*  left: 2%;*/
+/*}*/
+.button {
+  margin-bottom: 2%;
+}
+#edit_button{
+  margin-top:-6%;
+  margin-left: 85%;
+}
+.row{
+  margin-left: 10%;
 }
 </style>

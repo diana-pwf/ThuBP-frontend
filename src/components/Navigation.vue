@@ -6,10 +6,10 @@
       id="navigation-bar"
       :default-selected-keys="['1']"
      >
-    <a-menu-item id="main" key="1">
+    <a-menu-item id="main" @click="goHome" key="1">
       赛事主页
     </a-menu-item>
-    <a-menu-item id="create" key="2">
+    <a-menu-item id="create" @click="goCreateMatch" key="2">
       创建比赛
     </a-menu-item>
     <a-menu-item id="user">
@@ -50,10 +50,18 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 
-export  default class Navigation extends Vue{
-goPersonInfo(){
-this.$router.push('personal');
-}
+export default class Navigation extends Vue{
+  goPersonInfo(){
+    this.$router.push('personal');
+  }
+
+  goHome(){
+    this.$router.push('home');
+  }
+
+  goCreateMatch(){
+    this.$router.push('createMatch');
+  }
 }
 </script>
 
