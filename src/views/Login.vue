@@ -44,6 +44,7 @@ export default class Login extends Vue {
           }})
         if (response.status === 200) {
           this.$message.success('log in success!')
+          localStorage.setItem('jwt',response.headers.authorization)
           this.$router.push('/home')
           // 在此处弹出提示 注册成功
         }
