@@ -38,7 +38,7 @@
                 创建的比赛
             </span>
             <ResultCardList
-                :match-lists="new Array(20).fill(1)">
+                :matchLists="this.myOrganizedMatches">
             </ResultCardList>
           </a-tab-pane>
           <a-tab-pane  key="3">
@@ -119,7 +119,7 @@ import axios from "axios";
 import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
-import {qwq} from '../../myQuery.js';
+import {findMatchesByOrganizerId} from '../../myQuery.js';
 import { createDecorator } from 'vue-class-component'
 
 // Declare Log decorator.
@@ -135,14 +135,11 @@ import { createDecorator } from 'vue-class-component'
 
 @Component({
   components: {ResultCardList, Navigation},
-
 })
 
 
 
 export default class PersonalInfoTab extends Vue {
-  res={}
-
   columns = [
     {
       dataIndex: 'name',
@@ -205,19 +202,28 @@ export default class PersonalInfoTab extends Vue {
     role:''
   }
 
+  myOrganizedMatches = []
+  myParticipatedMatches = []
 
-  async xxx() {
-    let res = await this.$apollo.query({
-      query: qwq,
-    });
-    console.log(res);
+  async getMyOrganizeMatch(userId) {
+    try {
+      let res = await this.$apollo.query({
+        query: findMatchesByOrganizerId,
+        variables:{userIds:userId}
+      });
+      this.myOrganizedMatches = res.data.findUserById[0].organizedMatches
+      console.log(this.myOrganizedMatches)
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
-  async callback(key)
+  callback(key)
   {
-    if (key === 2)
+    if (key === "2")
     {
-
+      this.getMyOrganizeMatch(this.user.userId);
     }
   }
 
@@ -250,7 +256,7 @@ export default class PersonalInfoTab extends Vue {
 
   mounted()
   {
-    this.xxx();
+    this.getUserInfo();
   }
 }
 </script>

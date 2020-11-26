@@ -1,15 +1,13 @@
 import gql from 'graphql-tag';
 
-export const qwq = gql`query {
-    findMatches(matchIds: ["1"]) {
-       matchId
-       matchTypeId
-       organizerUser {
-          username
-       }
+export const findMatchesByOrganizerId = gql`query findMatchesByOrganizerId($userIds: [String!]!){
+    findUserById(userIds: $userIds) {
+        organizedMatches {
+            name
+            description
+        }
     }
 }`;
-
 
 export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
     findMatchesByType(typeIds:$typeIds){
@@ -18,4 +16,4 @@ export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
     name
     description
     }
-    }`;
+}`;
