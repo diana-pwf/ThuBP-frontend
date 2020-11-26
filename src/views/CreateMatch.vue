@@ -1,9 +1,15 @@
 <template>
   <div>
   <Navigation></Navigation>
-  <a-form-model id="entire-form" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-    <a-form-model-item label="赛事名称" required="true">
-      <a-input v-model="form.name" placeholder=""/>
+  <a-form-model id="entire-form"
+                ref="ruleForm"
+                :model="form"
+                :rules="rules"
+                :label-col="labelCol"
+                :wrapper-col="wrapperCol"
+  >
+    <a-form-model-item prop="name" label="赛事名称">
+      <a-input v-model="form.name"/>
     </a-form-model-item>
     <!--<a-form-model-item label="赛事地点" required="true">
       <a-select v-model="form.region" placeholder="请选择赛事地点">
@@ -21,7 +27,7 @@
         </a-select-option>
       </a-select>
     </a-form-model-item>-->
-    <a-form-model-item label="赛事开始时间">
+    <a-form-model-item prop="startDate" label="赛事开始时间">
       <a-date-picker
           v-model="form.startDate"
           show-time
@@ -30,7 +36,7 @@
           style="width: 100%;"
       />
     </a-form-model-item>
-    <a-form-model-item label="赛事结束时间">
+    <a-form-model-item prop="endDate" label="赛事结束时间">
       <a-date-picker
           v-model="form.endDate"
           show-time
@@ -39,10 +45,11 @@
           style="width: 100%;"
       />
     </a-form-model-item>
-    <a-form-model-item label="面向人群" required="true">
-      <a-input v-model="form.targetGroup" placeholder="请描述你服务的客户，内部客户直接 @姓名 / 工号"/>
+    <a-form-model-item prop="targetGroup" label="面向人群">
+      <a-input v-model="form.targetGroup"
+      />
     </a-form-model-item>
-    <a-form-model-item label="赛事类型" required="true">
+    <a-form-model-item default-value="basketball" prop="matchtypeId" label="赛事类型">
       <a-select v-model="form.matchtypeId" placeholder="请选择赛事类型">
         <a-select-option value="basketball">
           篮球
@@ -55,11 +62,14 @@
         </a-select-option>
       </a-select>
     </a-form-model-item>
-    <a-form-model-item label="赛事简介">
-      <a-input v-model="form.description" placeholder="输入赛事描述" type="textarea" />
+    <a-form-model-item prop="description" label="赛事简介">
+      <a-input v-model="form.description"
+               placeholder="输入赛事描述"
+               type="textarea"
+      />
     </a-form-model-item>
-    <a-form-model-item label="赛事开放限制" required="true">
-      <a-radio-group :options="options" :default-value="0" v-model="publicRestriction" />
+    <a-form-model-item prop="publicRestriction" label="赛事开放限制">
+      <a-radio-group :options="options" :default-value="0" v-model="form.publicRestriction" />
     </a-form-model-item>
     <!--<a-form-model-item label="允许赛事公开" required="true">
       <a-radio-group v-model="form.public">
@@ -87,7 +97,6 @@
           name="file"
           :multiple="false"
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          @change="handleChange"
       >
         <p class="ant-upload-drag-icon">
           <a-icon type="inbox" />
@@ -101,7 +110,7 @@
       <a-button style="float:right">
         取消
       </a-button>
-      <a-button id="submit-button" type="primary" @click="createMatch" style="float:right">
+      <a-button id="submit-button" type="primary" @click="onSubmit" style="float:right">
         提交
       </a-button>
     </a-form-model-item>
@@ -124,7 +133,6 @@ import Navigation from "@/components/Navigation.vue";
 export default class CreateMatch extends Vue {
   labelCol = { span: 4 }
   wrapperCol = { span: 10 }
-  publicRestriction = 0
   form = {
     name: '',
     // region: '',
@@ -133,6 +141,7 @@ export default class CreateMatch extends Vue {
     targetGroup: '',
     matchtypeId: '',
     description: '',
+    publicRestriction: 0,
     publicSignUp: false,
     publicShow: false
   }
@@ -143,13 +152,51 @@ export default class CreateMatch extends Vue {
     { label: '赛事不公开，不允许自由报名', value: 2 },
   ];
 
+  rules = {
+    name: [
+      { required: true, message: 'Please input Activity name'},
+      { min: 3, max: 30, message: 'Length should be 3 to 30'},
+    ],
+    targetGroup: [
+      { required: true, message: 'Please input TargetGroup'},
+      { min: 1, max: 100, message: 'Length should be 1 to 100'},
+    ],
+    description: [
+      { required: true, message: 'Please input Match description'},
+      { min: 1, max: 500, message: 'Length should be 1 to 500'},
+    ],
+    matchtypeId: [
+      {
+        required: true,
+      },
+    ],
+    publicRestriction: [
+      {
+        required: true,
+      },
+    ],
+  }
+
+  onSubmit() {
+    this.$refs.ruleForm.validate(valid => {
+      console.log(valid);
+      if (valid) {
+        this.createMatch();
+      } else {
+        console.log('error submit!!');
+        return false;
+      }
+    });
+  }
+
+
   async createMatch() {
-    if(this.publicRestriction === 0)
+    if(this.form.publicRestriction === 0)
     {
       this.form.publicSignUp = true
       this.form.publicShow = true
     }
-    else if(this.publicRestriction === 1)
+    else if(this.form.publicRestriction === 1)
     {
       this.form.publicSignUp = true
       this.form.publicShow = false
