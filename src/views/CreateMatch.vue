@@ -178,6 +178,7 @@ export default class CreateMatch extends Vue {
   }
 
   onSubmit() {
+    //@ts-ignore
     this.$refs.ruleForm.validate(valid => {
       console.log(valid);
       if (valid) {

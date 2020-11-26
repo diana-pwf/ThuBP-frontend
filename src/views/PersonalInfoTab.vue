@@ -123,32 +123,26 @@ import {qwq} from '../../myQuery.js';
 import { createDecorator } from 'vue-class-component'
 
 // Declare Log decorator.
-export const Log = createDecorator((options, key) => {
-  console.log(options)
-  // Keep the original method for later.
-  const originalMethod = options.data[key]
-  options[key] = originalMethod
-  options.data[key] = undefined
-})
+// export const Log = createDecorator((options, key) => {
+//   console.log(options)
+//   // Keep the original method for later.
+//   const originalMethod = options.data[key]
+//   options[key] = originalMethod
+//   options.data[key] = undefined
+// })
 
 
 
 @Component({
   components: {ResultCardList, Navigation},
-//   apollo: {
-//     qwq: gql`query {findMatches(matchIds: ["3"]) {
-//       matchId
-//       matchTypeId
-//       organizerUser {
-//          username
-//     }
-// }}`
-//   }
+
 })
 
 
 
 export default class PersonalInfoTab extends Vue {
+  res={}
+
   columns = [
     {
       dataIndex: 'name',
@@ -211,18 +205,18 @@ export default class PersonalInfoTab extends Vue {
     role:''
   }
 
-  apollo =  {
-    data: {
-      query: qwq,
-    }
-  }
 
+  async xxx() {
+    let res = await this.$apollo.query({
+      query: qwq,
+    });
+    console.log(res);
+  }
 
   async callback(key)
   {
     if (key === 2)
     {
-      // TODO:
 
     }
   }
@@ -252,11 +246,11 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
+  querystring = require('querystring')
+
   mounted()
   {
-    // this.getUserInfo()
-    //@ts-ignore
-    setTimeout(()=>{console.log(this.$apollo.data)}, 5000)
+    this.xxx();
   }
 }
 </script>
