@@ -6,20 +6,20 @@
         <div class="make-center">
           <search-input ></search-input>
         </div>
-        <a-tabs class="tab" default-active-key="1" :tabBarStyle="{'text-align': 'center'}">
+        <a-tabs class="tab" default-active-key="1" :tabBarStyle="{'text-align': 'center'}"  @change="callback">
           <a-tab-pane key="1" tab="综合">
             <Carousel></Carousel>
             <ul class="wrapper">
-              <li class="list" v-for="(item,index) in new Array(30).fill(1)" :key="index">
-                <a-card style="width: 240px; text-align: center;">
+              <li class="list" v-for="(item,index) in this.matchesList ">
+                <a-card @click="goMatchDetail" style="width: 240px; text-align: center;">
                   <img
                           slot="cover"
                           alt="example"
                           src="background.png"
                   />
-                  <a-card-meta title="Match Title">
+                  <a-card-meta :title="item.name">
                     <template slot="description">
-                      decription
+                      {{ item.description }}
                     </template>
                   </a-card-meta>
                 </a-card>
@@ -27,16 +27,16 @@
             </ul>
           </a-tab-pane>
           <a-tab-pane  key="2" tab="篮球" force-render>
-            <ResultCardList class="matchLists" :match-lists="new Array(20).fill('1')"></ResultCardList>
+            <ResultCardList class="matchLists" :match-lists="this.matchesList" :key="index"></ResultCardList>
             <Pagination class="pagination" :total="30"></Pagination>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="足球">
-            Content of Tab Pane 3
+          <a-tab-pane key="3" tab="网球">
+            <ResultCardList class="matchLists" :match-lists="this.matchesList" :key="index"></ResultCardList>
           </a-tab-pane>
           <a-tab-pane key="4" tab="羽毛球">
             Content of Tab Pane 3
           </a-tab-pane>
-          <a-tab-pane key="5" tab="网球">
+          <a-tab-pane key="5" tab="足球">
             Content of Tab Pane 3
           </a-tab-pane>
           <a-tab-pane key="6" tab="乒乓球">
@@ -55,13 +55,40 @@ import SearchInput from "@/components/SearchInput.vue";
 import Carousel from "@/components/Carousel.vue";
 import ResultCardList from "@/components/ResultCardList.vue" ;
 import Pagination from '@/components/Pagination.vue'
+import {getMatchesList} from "../../myQuery";
 
 @Component({
   components: { Navigation,SearchInput,Carousel,ResultCardList,Pagination
   },
 })
 export default class Home extends Vue {
+  matchesList=[]
+  async getMatchesList(type){
+    let res = await this.$apollo.query({
+      query: getMatchesList,
+      variables:{typeIds:type}
+    });
+    this.matchesList=res.data.findMatchesByType
+  }
 
+  callback(key){
+    if(key==1){
+      this.getMatchesList([])
+    }
+    else if(key==2){
+      this.getMatchesList(['basketball'])
+    }
+    else if(key==3){
+      this.getMatchesList(['tennis'])
+    }
+  }
+  goMatchDetail(){
+    this.$router.push('/matchDetail')
+  }
+
+  mounted(){
+    this.getMatchesList([])
+}
 }
 </script>
 

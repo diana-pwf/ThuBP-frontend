@@ -7,8 +7,8 @@
             src="background.png"
             slot="card-img"
         />
-        <h2 slot="card-title"> name  </h2>
-        <p slot="card-content"> content </p>
+        <h2 slot="card-title"> {{item.name}}  </h2>
+        <p slot="card-content"> {{item.description}} </p>
       </SearchResultCard>
     </li>
   </ul>

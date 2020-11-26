@@ -9,3 +9,13 @@ export const qwq = gql`query {
        }
     }
 }`;
+
+
+export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
+    findMatchesByType(typeIds:$typeIds){
+    matchId
+    matchTypeId
+    name
+    description
+    }
+    }`;
