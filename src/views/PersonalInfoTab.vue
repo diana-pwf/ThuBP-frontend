@@ -7,6 +7,7 @@
             default-active-key="1"
             :tab-position="'left'"
             :style="{ height: '100%' }"
+            @change="callback"
         >
           <a-tab-pane  key="1" force-render>
             <span slot="tab">
@@ -118,10 +119,34 @@ import axios from "axios";
 import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
+import {qwq} from '../../myQuery.js';
+import { createDecorator } from 'vue-class-component'
+
+// Declare Log decorator.
+export const Log = createDecorator((options, key) => {
+  console.log(options)
+  // Keep the original method for later.
+  const originalMethod = options.data[key]
+  options[key] = originalMethod
+  options.data[key] = undefined
+})
+
+
 
 @Component({
-  components: {ResultCardList, Navigation}
+  components: {ResultCardList, Navigation},
+//   apollo: {
+//     qwq: gql`query {findMatches(matchIds: ["3"]) {
+//       matchId
+//       matchTypeId
+//       organizerUser {
+//          username
+//     }
+// }}`
+//   }
 })
+
+
 
 export default class PersonalInfoTab extends Vue {
   columns = [
@@ -178,6 +203,61 @@ export default class PersonalInfoTab extends Vue {
     },
   ];
 
+  user = {
+    gender:'',
+    thuId:'',
+    userId:'',
+    username:'',
+    role:''
+  }
+
+  apollo =  {
+    data: {
+      query: qwq,
+    }
+  }
+
+
+  async callback(key)
+  {
+    if (key === 2)
+    {
+      // TODO:
+
+    }
+  }
+
+  async getUserInfo()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: {
+
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.user.userId = response.data.userId
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  mounted()
+  {
+    // this.getUserInfo()
+    //@ts-ignore
+    setTimeout(()=>{console.log(this.$apollo.data)}, 5000)
+  }
 }
 </script>
 
