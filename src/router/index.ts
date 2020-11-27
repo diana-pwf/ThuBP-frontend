@@ -28,7 +28,7 @@ const routes: Array<RouteConfig> = [
     component: PersonalInfoTab
   },
   {
-    path: '/search',
+    path: '/search/:value/:mode',
     name: 'SearchResults',
     component: SearchResults
   },

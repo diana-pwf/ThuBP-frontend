@@ -1,6 +1,16 @@
 <template>
   <div @mouseleave="hideList" >
+    <div id="searchBar">
+    <a-select default-value="matchName"  @change="handleChange">
+      <a-select-option value="matchName">
+        赛事名称
+      </a-select-option>
+      <a-select-option value="organizerName">
+        组织者名称
+      </a-select-option>
+    </a-select>
   <a-input-search class="search" @change="onChange"   v-model="searchKey"  placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch" />
+    </div>
     <ul id="list" class="wrapper" v-if="showList">
       <li class="list" v-for="(item,index) in  searchList ">
         <b-card @click="goMatchDetail" no-body class="overflow-hidden" style="max-height: 100px">
@@ -32,6 +42,8 @@ export default class SearchInput extends Vue {
   searchKey=""
   showList=false
   matchesList=[]
+  searchMode=0
+  list=[]
   async getMatchesList(){
     let res = await this.$apollo.query({
       query: getMatchesList,
@@ -39,8 +51,14 @@ export default class SearchInput extends Vue {
     });
     this.matchesList=res.data.findMatchesByType
   }
-  onSearch(value: string) {
-    this.$router.push('/search')
+  onSearch(value: string)
+  {
+    this.$emit("search",this.list)
+    console.log(value, encodeURIComponent(value))
+    if(this.$router.currentRoute.path!=`/search/${encodeURIComponent(value)}/${this.searchMode}`)
+    {
+      this.$router.push({path:`/search/${encodeURIComponent(value)}/${this.searchMode}`})
+    }
   }
   onChange(value:string){
     this.showList=true
@@ -49,14 +67,26 @@ export default class SearchInput extends Vue {
     this.showList=false
   }
   get searchList(){
-    let list = this.matchesList.filter((matches)=>{return matches.name.match(this.searchKey) })
-    if(list.length>=5){
-      list=list.slice(0,5)
+    if(this.searchMode===0){
+    this.list = this.matchesList.filter((matches)=>{return matches.name.match(this.searchKey) })}
+    else if(this.searchMode === 1){
+      this.list = this.matchesList.filter((matches)=>{return matches.organizerUser.username.match(this.searchKey)})
     }
-    return list
+    if(this.list.length>=5){
+      return this.list.slice(0,5)
+    }
+    return this.list
   }
   goMatchDetail(){
     this.$router.push('/matchDetail')
+  }
+  handleChange(value){
+    if(value==="matchName"){
+      this.searchMode=0
+    }
+    else if(value === 'organizerName'){
+      this.searchMode=1
+    }
   }
   mounted(){
     this.getMatchesList()
@@ -84,5 +114,9 @@ div{
 }
 li{
   list-style-type: none;
+}
+#searchBar{
+  display: grid;
+  grid-template-columns: 20% 80%;
 }
 </style>

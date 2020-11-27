@@ -15,5 +15,10 @@ export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
     matchTypeId
     name
     description
+    organizerUser
+        {
+        username
+        userId
+        }
     }
 }`;
