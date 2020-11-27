@@ -52,15 +52,21 @@ import {Component, Vue} from 'vue-property-decorator';
 
 export default class Navigation extends Vue{
   goPersonInfo(){
-    this.$router.push('personal');
+    if (this.$router.currentRoute.path !== '/personal') {
+      this.$router.push('/personal');
+    }
   }
 
   goHome(){
-    this.$router.push('home');
+    if (this.$router.currentRoute.path !== '/home') {
+      this.$router.push('/home');
+    }
   }
 
   goCreateMatch(){
-    this.$router.push('createMatch');
+    if (this.$router.currentRoute.path !== '/creatematch') {
+      this.$router.push('/creatematch');
+    }
   }
 }
 </script>

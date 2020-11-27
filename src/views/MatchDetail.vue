@@ -250,12 +250,16 @@ export default class MatchDetail extends Vue{
       })
       if (response.status === 200) {
         this.match = response.data
+
         try {
           let res = await this.$apollo.query({
             query: findOrganizerById,
+            //@ts-ignore
             variables:{userIds:this.match.organizerUserId}
           });
+          //@ts-ignore
           this.match.organizerName = res.data.findUserById[0].username
+          //@ts-ignore
           console.log(this.match.organizerName)
         }
         catch (e) {
