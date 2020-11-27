@@ -18,19 +18,16 @@
               <img src="background.png" alt="比赛照片"/>
               <a-descriptions id="description" >
                 <a-descriptions-item label="比赛名称">
-                  一场比赛
+                  {{this.match.name}}
                 </a-descriptions-item>
                 <a-descriptions-item label="组织者">
-                  NPC
+                  {{this.match.organizerName}}
                 </a-descriptions-item>
                 <a-descriptions-item label="开始时间">
                   2020/11/12
                 </a-descriptions-item>
                 <a-descriptions-item label="结束时间">
                   2020/12/04
-                </a-descriptions-item>
-                <a-descriptions-item label="赛事地点">
-                  清华紫荆操场
                 </a-descriptions-item>
                 <a-descriptions-item label="面向人群">
                    软件学院本科生
@@ -39,7 +36,7 @@
               </div>
               <div id="intro">
                 <a-card>
-                  <p>这是一段简介</p>
+                  <p>{{this.match.description}}</p>
                 </a-card>
               </div>
               <a-button id="detail_edit" type="link">
@@ -176,8 +173,10 @@ import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
+import {findMatchesByOrganizerId, findOrganizerById} from "../../myQuery";
 
 @Component({components:{Navigation}})
+
 export default class MatchDetail extends Vue{
   columns = [
     {
@@ -239,6 +238,40 @@ export default class MatchDetail extends Vue{
     }
   ]
 
+  match = {}
+
+  async getMatchDetail()
+  {
+    try{
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: `/api/v1/match/${this.$route.params.matchId}`,
+      })
+      if (response.status === 200) {
+        this.match = response.data
+        try {
+          let res = await this.$apollo.query({
+            query: findOrganizerById,
+            variables:{userIds:this.match.organizerUserId}
+          });
+          this.match.organizerName = res.data.findUserById[0].username
+          console.log(this.match.organizerName)
+        }
+        catch (e) {
+          console.log(e);
+        }
+      }
+    }
+    catch (e) {
+
+    }
+  }
+
+  created()
+  {
+    this.getMatchDetail();
+  }
 }
 </script>
 

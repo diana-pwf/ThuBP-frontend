@@ -1,7 +1,7 @@
 <template>
   <ul id="result-card-list">
     <li v-for="(item,index) in matchLists" :key="index">
-      <SearchResultCard class="card">
+      <SearchResultCard class="card" :matchId="item.matchId">
         <img
             alt="example"
             src="background.png"

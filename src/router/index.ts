@@ -51,7 +51,7 @@ const routes: Array<RouteConfig> = [
     component:GameDetail
   },
   {
-    path:'/matchDetail',
+    path:'/matchDetail/:matchId',
     name:'matchDetail',
     component:MatchDetail
   },

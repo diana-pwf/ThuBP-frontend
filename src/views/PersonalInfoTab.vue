@@ -120,6 +120,8 @@ import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
 import {findMatchesByOrganizerId} from '../../myQuery.js';
+import {findMatchesByParticipantId} from '../../myQuery.js';
+
 import { createDecorator } from 'vue-class-component'
 
 // Declare Log decorator.
@@ -212,7 +214,21 @@ export default class PersonalInfoTab extends Vue {
         variables:{userIds:userId}
       });
       this.myOrganizedMatches = res.data.findUserById[0].organizedMatches
-      console.log(this.myOrganizedMatches)
+      // console.log(this.myOrganizedMatches)
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  async getMyParticipateMatch(userId) {
+    try {
+      let res = await this.$apollo.query({
+        query: findMatchesByParticipantId,
+        variables:{userIds:userId}
+      });
+      this.myParticipatedMatches = res.data.findUserById[0].participatedMatches
+      // console.log(this.myParticipatedMatches)
     }
     catch (e) {
       console.log(e);
@@ -234,14 +250,13 @@ export default class PersonalInfoTab extends Vue {
       let response = await axios({
         method: 'get',
         url: '/api/v1/user/info',
-        params: {
-
-        }
+        params: { }
       })
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.user.userId = response.data.userId
+
       }
       else
       {
@@ -252,7 +267,7 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
-  querystring = require('querystring')
+
 
   mounted()
   {

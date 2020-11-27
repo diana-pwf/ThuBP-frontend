@@ -220,7 +220,7 @@ export default class CreateMatch extends Vue {
           "description": this.form.description,
           "targetGroup": this.form.targetGroup,
           "matchTypeId": this.form.matchtypeId,
-          //"publicShow": this.form.publicShow,
+          "publicShowUp": this.form.publicShow,
           "publicSignUp": this.form.publicSignUp
         }
       })

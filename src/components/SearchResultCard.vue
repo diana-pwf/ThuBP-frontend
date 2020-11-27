@@ -13,13 +13,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class SearchResultCard extends Vue {
-goMatchDetail(){
-  this.$router.push('/matchDetail')
-}
+  @Prop({type:String, default:function (){return ""}})matchId
+
+  goMatchDetail(){
+    this.$router.push(`/matchdetail/${this.matchId}`)
+  }
 }
 </script>
 
