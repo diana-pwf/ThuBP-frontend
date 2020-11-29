@@ -64,6 +64,7 @@ import {getMatchesList} from "../../myQuery";
 export default class Home extends Vue {
   matchesList=[]
   async getMatchesList(type){
+    console.log("sent");
     let res = await this.$apollo.query({
       query: getMatchesList,
       variables:{typeIds:type}
@@ -88,7 +89,7 @@ export default class Home extends Vue {
 
   mounted(){
     this.getMatchesList([])
-}
+  }
 }
 </script>
 

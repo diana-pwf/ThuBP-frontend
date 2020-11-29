@@ -9,10 +9,10 @@
         <h1>清球汇</h1>
       </div>
       <div id="form-body">
-        <a-input class="user" placeholder="input thuID" v-model="thuID">
+        <a-input class="user" placeholder="input thuID" name="username" v-model="thuID">
           <a-icon slot="prefix" type="user"></a-icon>
         </a-input>
-        <a-input-password class="password" placeholder="input password" v-model="password">
+        <a-input-password class="password" placeholder="input password" name="password" v-model="password">
           <a-icon slot="prefix" type="lock"></a-icon>
         </a-input-password>
         <a-button id="button-login" type="primary" v-on:click="login()">login</a-button>
@@ -62,18 +62,21 @@ export default class Login extends Vue {
 
 <style scoped>
 #center {
-  width: 800px;
   height: 600px;
-  margin: auto;
   position: relative;
-  top: 100px;
+  margin-top: 100px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 #form-body {
   width: 300px;
   margin-left: 20px;
+}
+
+#left img {
+  height: 100%;
 }
 
 .user {

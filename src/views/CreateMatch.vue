@@ -1,6 +1,7 @@
 <template>
   <div>
   <Navigation></Navigation>
+  <div id="container">
   <a-form-model id="entire-form"
                 ref="ruleForm"
                 :model="form"
@@ -116,6 +117,7 @@
     </a-form-model-item>
   </a-form-model>
   </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -132,7 +134,7 @@ import Navigation from "@/components/Navigation.vue";
 
 export default class CreateMatch extends Vue {
   labelCol = { span: 4 }
-  wrapperCol = { span: 10 }
+  wrapperCol = { span: 20 }
   form = {
     name: '',
     // region: '',
@@ -244,10 +246,18 @@ export default class CreateMatch extends Vue {
 
 
 <style scoped>
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #entire-form {
-  margin-top: 2%;
-  width: 80%;
-  margin-left: 20%;
+  margin-top: 16px;
+  max-width: 960px;
+  box-sizing: border-box;
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 #submit-button {
