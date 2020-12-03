@@ -11,7 +11,7 @@
             <Carousel></Carousel>
             <ul class="wrapper">
               <li class="list" v-for="(item,index) in this.matchesList ">
-                <a-card @click="goMatchDetail" style="width: 240px; text-align: center;">
+                <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
                   <img
                           slot="cover"
                           alt="example"
@@ -64,12 +64,12 @@ import {getMatchesList} from "../../myQuery";
 export default class Home extends Vue {
   matchesList=[]
   async getMatchesList(type){
-    console.log("sent");
     let res = await this.$apollo.query({
       query: getMatchesList,
       variables:{typeIds:type}
     });
     this.matchesList=res.data.findMatchesByType
+    console.log(this.matchesList)
   }
 
   callback(key){
@@ -83,12 +83,13 @@ export default class Home extends Vue {
       this.getMatchesList(['tennis'])
     }
   }
-  goMatchDetail(){
-    this.$router.push('/matchDetail')
+  goMatchDetail(item){
+    this.$router.push(`/matchDetail/${item.matchId}`)
   }
 
   mounted(){
     this.getMatchesList([])
+    // TODO：增加赛事后重新进入主页面，赛事列表未更新
   }
 }
 </script>

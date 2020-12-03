@@ -10,6 +10,8 @@ export const findMatchesByOrganizerId = gql`query findMatchesByOrganizerId($user
     }
 }`;
 
+
+
 export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($userIds: [String!]!){
     findUserById(userIds: $userIds) {
         participatedMatches {
@@ -18,6 +20,7 @@ export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($
         }
     }
 }`;
+
 
 export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
     findMatchesByType(typeIds:$typeIds){

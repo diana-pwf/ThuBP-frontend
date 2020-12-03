@@ -88,8 +88,18 @@
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
-                  <b-button variant="outline-success" b-icon="person-plus" class="add"><b-icon icon="person-plus"/> 添加裁判</b-button>
-              <ul id="referee">
+                  <b-button v-b-modal.addReferee variant="outline-success" b-icon="person-plus" class="add"><b-icon icon="person-plus"/> 添加裁判</b-button>
+                  <b-modal id="addReferee" hide-footer >
+                    <div class="d-block text-center">
+                      <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
+                      <span style="font-size: large">邀请用户成为<strong>{{match.name}}</strong>裁判</span>
+                      <b-input-group>
+                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>
+                      </b-input-group>
+                      <b-button block variant="success">确认邀请</b-button>
+                    </div>
+                  </b-modal>
+                  <ul id="referee">
                 <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
                   <a-comment>
                     <a slot="author">裁判名称</a>
@@ -238,6 +248,10 @@ export default class MatchDetail extends Vue{
     }
   ]
 
+  refereeSearchKey = ""
+  selectRefereeChange(){
+
+  }
   match = {}
 
   async getMatchDetail()

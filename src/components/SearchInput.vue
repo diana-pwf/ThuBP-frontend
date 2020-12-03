@@ -13,7 +13,7 @@
     </div>
     <ul id="list" class="wrapper" v-if="showList">
       <li class="list" v-for="(item,index) in  searchList ">
-        <b-card @click="goMatchDetail" no-body class="overflow-hidden" style="max-height: 100px">
+        <b-card @click="goMatchDetail(item)" no-body class="overflow-hidden" style="max-height: 100px">
           <b-row no-gutters>
             <b-col md="6">
               <b-card-img id="img" src="background.png" alt="Image" class="rounded-0"></b-card-img>
@@ -77,8 +77,8 @@ export default class SearchInput extends Vue {
     }
     return this.list
   }
-  goMatchDetail(){
-    this.$router.push('/matchDetail')
+  goMatchDetail(item){
+    this.$router.push(`/matchDetail/${item.matchId}`)
   }
   handleChange(value){
     if(value==="matchName"){
