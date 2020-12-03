@@ -93,9 +93,16 @@
                     <div class="d-block text-center">
                       <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
                       <span style="font-size: large">邀请用户成为<strong>{{match.name}}</strong>裁判</span>
-                      <b-input-group>
-                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>
-                      </b-input-group>
+<!--                      <b-input-group>-->
+<!--                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>-->
+<!--                      </b-input-group>-->
+                      <a-input-search class="search" @change="selectRefereeChange"   v-model="refereeSearchKey"  placeholder="Search by username"   />
+
+                      <ul  id="list" class="wrapper" v-if="showRefereeList">
+                        <li class="list" v-for="(item,index) in  refereeSearchList ">
+                          <span>{{item.username}}</span>
+                        </li>
+                      </ul>
                       <b-button block variant="success">确认邀请</b-button>
                     </div>
                   </b-modal>
@@ -183,7 +190,7 @@ import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
-import {findMatchesByOrganizerId, findOrganizerById} from "../../myQuery";
+import {findMatchesByOrganizerId,findUserByName, findOrganizerById} from "../../myQuery";
 
 @Component({components:{Navigation}})
 
@@ -248,11 +255,26 @@ export default class MatchDetail extends Vue{
     }
   ]
 
+  showRefereeList = false
   refereeSearchKey = ""
-  selectRefereeChange(){
-
+  selectRefereeChange(value:string){
+    console.log("change")
+    this.showRefereeList=true
+    this.getUserList()
   }
   match = {}
+
+  selectReferee={}
+  refereeSearchList=[]
+
+  // 添加裁判时拿到用户列表
+  async getUserList(){
+    let res = await this.$apollo.query({
+      query: findUserByName,
+      variables:{username:this.refereeSearchKey}
+    });
+    this.refereeSearchList=res.data.findUserByFuzzy
+  }
 
   async getMatchDetail()
   {

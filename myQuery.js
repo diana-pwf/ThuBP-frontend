@@ -41,3 +41,11 @@ export const findOrganizerById = gql`query  findOrganizerById($userIds: [String!
         username
     }
 }`;
+
+export const findUserByName = gql`query findUserByName($username: String!){
+    findUserByFuzzy(username:$username){
+        username
+        userId
+        createdAt
+    }
+}`;
