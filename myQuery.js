@@ -42,6 +42,44 @@ export const findOrganizerById = gql`query  findOrganizerById($userIds: [String!
     }
 }`;
 
+export const getParticipants = gql`query getParticipants($matchId: String!){
+    findMatchById(matchId: $matchId) {
+        participants {
+            userId
+            username
+        }
+    }
+}`;
+
+export const findMatchDetailById = gql`query findMatchDetailById($matchId: String!){
+    findMatchById(matchId: $matchId) {
+        matchTypeId
+        organizerUser {
+            userId
+            username
+        }
+        name
+        description
+        targetGroup
+        participants {
+            userId
+            username
+        }
+        units {
+            unitId
+            name
+            creator {
+                userId
+                username
+            }
+            members {
+                userId
+                username
+            }
+        }
+    }
+}`;
+
 export const findUserByName = gql`query findUserByName($username: String!){
     findUserByFuzzy(username:$username){
         username

@@ -18,7 +18,7 @@
               <img src="background.png" alt="比赛照片"/>
               <a-descriptions id="description" >
                 <a-descriptions-item label="比赛名称">
-                  {{this.match.name}}
+                  {{this.match.matchName}}
                 </a-descriptions-item>
                 <a-descriptions-item label="组织者">
                   {{this.match.organizerName}}
@@ -31,6 +31,9 @@
                 </a-descriptions-item>
                 <a-descriptions-item label="面向人群">
                    软件学院本科生
+                </a-descriptions-item>
+                <a-descriptions-item label="球赛类型">
+                  {{this.match.matchType}}
                 </a-descriptions-item>
               </a-descriptions>
               </div>
@@ -64,31 +67,112 @@
               </div>
               <div id="person_list">
                 <div>
+                  <div class="selective-button">
+                    <div v-if="isSingleMatch">
+                      <b-button v-if="isOrganizer" variant="outline-success" class="add">
+                        <b-icon icon="person-plus-fill"/>
+                        添加选手
+                      </b-button>
+                      <b-button v-else-if="isParticipant" variant="outline-success" class="add">
+                        <b-icon icon="person-plus-fill"/>
+                        取消报名
+                      </b-button>
+                      <b-button v-if="!isOrganizer && !isParticipant"
+                                variant="outline-success"
+                                class="add"
+                                @click="signUpPersonal">
+                        <b-icon icon="person-plus-fill"/>
+                        我要报名
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
+                        添加队伍
+                      </b-button>
+                      <b-button v-else-if="isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
+                        取消报名
+                      </b-button>
+                      <b-button v-if="!isOrganizer && !isParticipant"
+                                variant="outline-success"
+                                class="add"
+                                @click="createNewTeam"
+                                v-b-toggle.sidebar-backdrop>
+                        <b-icon icon="person-plus-fill"/>
+                        新建我的队伍
+                      </b-button>
+                      <div>
+                        <b-sidebar
+                            id="sidebar-backdrop"
+                            :backdrop-variant="'dark'"
+                            :width="'50%'"
+                            backdrop
+                            right
+                            shadow
+                        >
+                          <div class="px-3 py-2">
+                            <h4 id="sidebar-title">组建我的队伍</h4>
+                            <b-form-group label="qwq" label-for="backdrop-variant">
+
+                            </b-form-group>
+                          </div>
+                        </b-sidebar>
+                      </div>
+                    </div>
+                  </div>
                   <span class="list_title">队伍列表</span>
-                  <br/>
-                  <b-button variant="outline-success" class="add"><b-icon icon="person-plus-fill"/> 添加队伍</b-button>
-              <ul id="team">
-                <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
-                  <a-comment>
-                    <a slot="author">这是一支队伍名称</a>
-                    <a-avatar
-                        slot="avatar"
-                        shape="square"
-                        size="large"
-                        :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                      Team
-                    </a-avatar>
-                    <p slot="content" :style="{verticalAlign:'left'}">
-                      这是一段简短的对比赛队伍的描述。
-                    </p>
-                    <span class="more" style="color: dodgerblue" slot="actions">更多</span>
-                  </a-comment>
-                </li>
-              </ul>
+                  <ul id="athlete" v-if="this.isSingleMatch">
+                    <li v-for="(item,index) in this.match.participants" :key="index">
+                      <a-comment>
+                        <a slot="author">{{item.username}}</a>
+                        <a-avatar
+                            slot="avatar"
+                            shape="square"
+                            size="large"
+                            :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                          Athlete
+                        </a-avatar>
+                        <p slot="content" :style="{verticalAlign:'left'}">
+                          选手简介
+                        </p>
+                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                      </a-comment>
+                    </li>
+                  </ul>
+                  <ul id="team" v-else>
+                    <li v-for="(item,index) in this.match.teams" :key="index">
+                      <a-comment>
+                        <a slot="author">这是一支队伍名称</a>
+                        <a-avatar
+                            slot="avatar"
+                            shape="square"
+                            size="large"
+                            :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                          {{item.name}}
+                        </a-avatar>
+                        <p slot="content" :style="{verticalAlign:'left'}">
+                          队伍简介
+                        </p>
+                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                      </a-comment>
+                    </li>
+                  </ul>
                 </div>
                 <div>
+                  <div class="selective-button">
+                    <b-button v-if="isSingleMatch" :disabled="!isOrganizer"
+                        v-b-modal.addReferee variant="outline-success"
+                        b-icon="person-plus" class="add">
+                      <b-icon icon="person-plus"/>
+                      添加裁判
+                    </b-button>
+                    <b-button v-else-if="!isOrganizer && !isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
+                      加入现有队伍
+                    </b-button>
+                    <b-button v-else-if="isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
+                      查看现有队伍
+                    </b-button>
+                  </div>
                   <span class="list_title">裁判列表</span>
-                  <b-button v-b-modal.addReferee variant="outline-success" b-icon="person-plus" class="add"><b-icon icon="person-plus"/> 添加裁判</b-button>
                   <b-modal id="addReferee" hide-footer >
                     <div class="d-block text-center">
                       <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
@@ -107,24 +191,24 @@
                     </div>
                   </b-modal>
                   <ul id="referee">
-                <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
-                  <a-comment>
-                    <a slot="author">裁判名称</a>
-                    <a-avatar
-                        slot="avatar"
-                        shape="square"
-                        size="large"
-                        :style="{ backgroundColor:'#9400D3', verticalAlign: 'left' }">
-                      Referee
-                    </a-avatar>
-                    <p slot="content" :style="{verticalAlign:'left'}">
-                      这是一段简介
-                    </p>
-                    <span class="more" style="color: dodgerblue" slot="actions">更多</span>
-                  </a-comment>
-                </li>
-              </ul>
-              </div>
+                    <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
+                      <a-comment>
+                        <a slot="author">裁判名称</a>
+                        <a-avatar
+                            slot="avatar"
+                            shape="square"
+                            size="large"
+                            :style="{ backgroundColor:'#9400D3', verticalAlign: 'left' }">
+                          Referee
+                        </a-avatar>
+                        <p slot="content" :style="{verticalAlign:'left'}">
+                          这是一段简介
+                        </p>
+                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                      </a-comment>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </a-tab-pane>
             <a-tab-pane  key="3">
@@ -132,7 +216,10 @@
               <a-icon type="unordered-list" />
                 比赛列表
             </span>
-              <b-button class="button" block variant="outline-success"><b-icon icon="journal-plus"></b-icon>添加赛事</b-button>
+              <b-button class="button" block variant="outline-success">
+                <b-icon icon="journal-plus"></b-icon>
+                添加赛事
+              </b-button>
               <b-card bg-variant="default">
                 <b-card-text>
                     <div>
@@ -190,7 +277,7 @@ import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
-import {findMatchesByOrganizerId,findUserByName, findOrganizerById} from "../../myQuery";
+import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
 
 @Component({components:{Navigation}})
 
@@ -263,6 +350,14 @@ export default class MatchDetail extends Vue{
     this.getUserList()
   }
   match = {}
+  // isSingleMatch = true  // TODO：判断是否为个人赛
+  isSingleMatch = true
+
+  currentUserId = ''
+  isOrganizer = false
+  isParticipant = false
+
+  refereeInfos = [] // TODO
 
   selectReferee={}
   refereeSearchList=[]
@@ -278,39 +373,101 @@ export default class MatchDetail extends Vue{
 
   async getMatchDetail()
   {
-    try{
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'get',
-        url: `/api/v1/match/${this.$route.params.matchId}`,
-      })
-      if (response.status === 200) {
-        this.match = response.data
-
-        try {
-          let res = await this.$apollo.query({
-            query: findOrganizerById,
-            //@ts-ignore
-            variables:{userIds:this.match.organizerUserId}
-          });
-          //@ts-ignore
-          this.match.organizerName = res.data.findUserById[0].username
-          //@ts-ignore
-          console.log(this.match.organizerName)
-        }
-        catch (e) {
-          console.log(e);
-        }
+    try {
+      let res = await this.$apollo.query({
+        query: findMatchDetailById,
+        variables:{matchId:this.$route.params.matchId}
+      });
+      this.match = {
+        description: res.data.findMatchById.description,
+        matchType: res.data.findMatchById.matchTypeId,
+        matchName: res.data.findMatchById.name,
+        organizerId: res.data.findMatchById.organizerUser.userId,
+        organizerName: res.data.findMatchById.organizerUser.username,
+        targetGroup: res.data.findMatchById.targetGroup,
+        participants: res.data.findMatchById.participants,
+        teams: res.data.findMatchById.units,
       }
     }
     catch (e) {
-
+      console.log(e);
     }
+  }
+
+  async getCurrentUserRole()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.currentUserId = response.data.userId
+        //@ts-ignore
+        if(this.currentUserId === this.match.organizerId)
+        {
+          this.isOrganizer = true
+          return
+        }
+        // @ts-ignore
+        for (let person of this.match.participants)
+        {
+          if(this.currentUserId === person.userId)
+          {
+            this.isParticipant = true
+            return
+          }
+        }
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  async signUpPersonal()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/register/${this.$route.params.matchId}`,
+        data: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('sign up success!')
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  async signUpTeam()
+  {
+
+  }
+
+  async createNewTeam()
+  {
+
   }
 
   created()
   {
     this.getMatchDetail();
+    this.getCurrentUserRole();
   }
 }
 </script>
@@ -349,6 +506,7 @@ img{
   margin-top: 2%;
   margin-left: 80%;
 }
+
 #person_list{
   margin-top: 10%;
   display: grid;
@@ -397,4 +555,12 @@ h4{
 .row{
   margin-left: 10%;
 }
+
+.selective-button {
+  margin-bottom: 15%;
+}
+#sidebar-title {
+  text-align: center;
+}
+
 </style>

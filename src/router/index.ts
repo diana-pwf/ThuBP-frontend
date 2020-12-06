@@ -8,6 +8,7 @@ import PersonalInfoTab from "@/views/PersonalInfoTab.vue";
 import GameDetail from "@/views/GameDetail.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import CreateMatch from "@/views/CreateMatch.vue";
+import TeamDetail from "@/views/TeamDetail.vue";
 
 Vue.use(VueRouter)
 
@@ -59,6 +60,11 @@ const routes: Array<RouteConfig> = [
     path:'/createMatch',
     name:'createMatch',
     component:CreateMatch
+  },
+  {
+    path:'/teamDetail',
+    name:'teamDetail',
+    component:TeamDetail
   }
 
 ]

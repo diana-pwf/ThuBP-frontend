@@ -51,6 +51,7 @@ import {Component, Vue} from 'vue-property-decorator';
 @Component
 
 export default class Navigation extends Vue{
+
   goPersonInfo(){
     if (this.$router.currentRoute.path !== '/personal') {
       this.$router.push('/personal');
@@ -68,6 +69,7 @@ export default class Navigation extends Vue{
       this.$router.push('/creatematch');
     }
   }
+
 }
 </script>
 

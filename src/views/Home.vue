@@ -69,7 +69,7 @@ export default class Home extends Vue {
       variables:{typeIds:type}
     });
     this.matchesList=res.data.findMatchesByType
-    console.log(this.matchesList)
+    // console.log(this.matchesList)
   }
 
   callback(key){

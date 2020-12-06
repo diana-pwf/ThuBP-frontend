@@ -142,10 +142,13 @@ export default class CreateMatch extends Vue {
     endDate: undefined,
     targetGroup: '',
     matchtypeId: '',
+    matchRuleType: 0,
     description: '',
     publicRestriction: 0,
     publicSignUp: false,
-    publicShow: false
+    publicShow: false,
+    maxTeamMember: 1,
+    minTeamMember: 1,
   }
 
   options = [
@@ -173,6 +176,21 @@ export default class CreateMatch extends Vue {
       },
     ],
     publicRestriction: [
+      {
+        required: true,
+      },
+    ],
+    matchRuleType: [
+      {
+        required: true,
+      },
+    ],
+    maxTeamMember: [
+      {
+        required: true,
+      },
+    ],
+    minTeamMember: [
       {
         required: true,
       },
