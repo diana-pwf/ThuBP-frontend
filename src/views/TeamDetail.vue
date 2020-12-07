@@ -100,4 +100,7 @@ export default class TeamDetail extends Vue{
   margin-top: 5%;
   margin-bottom: 5%;
 }
+table>>>thead{
+  display: none;
+}
 </style>

@@ -12,22 +12,6 @@
     <a-form-model-item prop="name" label="赛事名称">
       <a-input v-model="form.name"/>
     </a-form-model-item>
-    <!--<a-form-model-item label="赛事地点" required="true">
-      <a-select v-model="form.region" placeholder="请选择赛事地点">
-        <a-select-option value="zicao">
-          紫操
-        </a-select-option>
-        <a-select-option value="dongcao">
-          东操
-        </a-select-option>
-        <a-select-option value="xicao">
-          西操
-        </a-select-option>
-        <a-select-option value="beicao">
-          北操
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>-->
     <a-form-model-item prop="startDate" label="赛事开始时间">
       <a-date-picker
           v-model="form.startDate"
@@ -72,27 +56,16 @@
     <a-form-model-item prop="publicRestriction" label="赛事开放限制">
       <a-radio-group :options="options" :default-value="0" v-model="form.publicRestriction" />
     </a-form-model-item>
-    <!--<a-form-model-item label="允许赛事公开" required="true">
-      <a-radio-group v-model="form.public">
-        <a-radio value="true">
-          是
-        </a-radio>
-        <a-radio value="false">
-          否
-        </a-radio>
-      </a-radio-group>
+    <a-form-model-item prop="matchRuleType" label="赛制">
+      <a-radio-group :options="[{ label: '个人赛', value: 0 },{ label: '团体赛', value: 1 },]"
+                     :default-value="0" v-model="form.matchRuleType" />
     </a-form-model-item>
-    <a-form-model-item label="允许自由报名" required="true">
-      <a-radio-group v-model="form.publicSignUp">
-        <a-radio value="1">
-          是
-        </a-radio>
-        <a-radio value="0">
-          否
-        </a-radio>
-      </a-radio-group>
-    </a-form-model-item>-->
-
+    <a-form-model-item v-if="form.matchRuleType" prop="minTeamMember" label="队伍最小人数">
+      <a-input-number :min="1" :precision="0" v-model="form.minTeamMember"/>
+    </a-form-model-item>
+    <a-form-model-item v-if="form.matchRuleType" prop="maxTeamMember" label="队伍最大人数">
+      <a-input-number :min="form.minTeamMember" :precision="0" v-model="form.maxTeamMember"/>
+    </a-form-model-item>
     <a-form-model-item label="上传赛事照片">
       <a-upload-dragger
           name="file"
@@ -241,7 +214,9 @@ export default class CreateMatch extends Vue {
           "targetGroup": this.form.targetGroup,
           "matchTypeId": this.form.matchtypeId,
           "publicShowUp": this.form.publicShow,
-          "publicSignUp": this.form.publicSignUp
+          "publicSignUp": this.form.publicSignUp,
+          "minUnitMember": this.form.minTeamMember,
+          "maxUnitMember": this.form.maxTeamMember
         }
       })
       // 对response做处理
