@@ -65,113 +65,137 @@
                   <h5 class='text-warning'>比赛裁判</h5>
                 </div>
               </div>
+              <div id="selective-buttons">
+                <div v-if="isSingleMatch">
+                  <b-button v-if="isOrganizer" variant="outline-success" class="add">
+                    <b-icon icon="person-plus-fill"/>
+                    添加选手
+                  </b-button>
+                  <b-button v-else-if="isParticipant"
+                            variant="outline-success" class="add"
+                            @click="cancelSignUp">
+                    <b-icon icon="person-plus-fill"/>
+                    取消报名
+                  </b-button>
+                  <b-button v-if="!isOrganizer && !isParticipant"
+                            variant="outline-success"
+                            class="add"
+                            @click="signUpPersonal">
+                    <b-icon icon="person-plus-fill"/>
+                    我要报名
+                  </b-button>
+                </div>
+                <div v-else>
+                  <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
+                    添加队伍
+                  </b-button>
+                  <b-button v-else-if="isParticipant"
+                            variant="outline-success" class="add"
+                            @click="gotoTeamDetail">
+                    <b-icon icon="person-plus-fill"/>
+                    查看我的队伍
+                  </b-button>
+                  <b-button v-if="!isOrganizer && !isParticipant"
+                            variant="outline-success"
+                            class="add"
+                            v-b-toggle.sidebar-backdrop>
+                    <b-icon icon="person-plus-fill"/>
+                    创建我的队伍
+                  </b-button>
+                </div>
+                <b-button v-if="isOrganizer"
+                          v-b-modal.addReferee variant="outline-success"
+                          b-icon="person-plus" class="add">
+                  <b-icon icon="person-plus"/>
+                  添加裁判
+                </b-button>
+                <b-sidebar
+                        id="sidebar-backdrop"
+                        :backdrop-variant="'dark'"
+                        :width="'50%'"
+                        backdrop
+                        right
+                        shadow
+                    >
+                      <div class="px-3 py-2">
+                        <h4 id="sidebar-title">组建我的队伍</h4>
+                        <b-form @submit="createNewTeam" @reset="resetForm">
+                          <b-form-group
+                              id="input-group-1"
+                              label="队伍名称"
+                              label-for="input-1"
+                              description="有趣的队名会吸引更多的观众哦~"
+                          >
+                            <b-form-input
+                                id="input-1"
+                                v-model="form.name"
+                                required
+                                placeholder="Enter name"
+                            ></b-form-input>
+                          </b-form-group>
+                          <b-form-group
+                              label="队伍简介"
+                              label-for="input-2"
+                              description="说点什么吧~"
+                          >
+                          <b-form-textarea
+                              v-model="form.description"
+                              placeholder="Enter something..."
+                              rows="3"
+                          ></b-form-textarea>
+                          </b-form-group>
+                          <b-button class="form-button" type="submit" variant="outline-primary">Submit</b-button>
+                          <b-button class="form-button" type="reset" variant="outline-danger">Reset</b-button>
+                        </b-form>
+                      </div>
+                  </b-sidebar>
+              </div>
               <div id="person_list">
                 <div>
-                  <div class="selective-button">
-                    <div v-if="isSingleMatch">
-                      <b-button v-if="isOrganizer" variant="outline-success" class="add">
-                        <b-icon icon="person-plus-fill"/>
-                        添加选手
-                      </b-button>
-                      <b-button v-else-if="isParticipant" variant="outline-success" class="add">
-                        <b-icon icon="person-plus-fill"/>
-                        取消报名
-                      </b-button>
-                      <b-button v-if="!isOrganizer && !isParticipant"
-                                variant="outline-success"
-                                class="add"
-                                @click="signUpPersonal">
-                        <b-icon icon="person-plus-fill"/>
-                        我要报名
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
-                        添加队伍
-                      </b-button>
-                      <b-button v-else-if="isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
-                        取消报名
-                      </b-button>
-                      <b-button v-if="!isOrganizer && !isParticipant"
-                                variant="outline-success"
-                                class="add"
-                                @click="createNewTeam"
-                                v-b-toggle.sidebar-backdrop>
-                        <b-icon icon="person-plus-fill"/>
-                        新建我的队伍
-                      </b-button>
-                      <div>
-                        <b-sidebar
-                            id="sidebar-backdrop"
-                            :backdrop-variant="'dark'"
-                            :width="'50%'"
-                            backdrop
-                            right
-                            shadow
-                        >
-                          <div class="px-3 py-2">
-                            <h4 id="sidebar-title">组建我的队伍</h4>
-                            <b-form-group label="qwq" label-for="backdrop-variant">
-
-                            </b-form-group>
-                          </div>
-                        </b-sidebar>
-                      </div>
-                    </div>
+                  <div v-if="isSingleMatch">
+                    <span class="list_title">选手列表</span>
+                    <ul id="athlete">
+                      <li v-for="(item,index) in this.match.teams" :key="index">
+                        <a-comment>
+                          <a slot="author">{{item.creator.username}}</a>
+                          <a-avatar
+                              slot="avatar"
+                              shape="square"
+                              size="large"
+                              :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                            Athlete
+                          </a-avatar>
+                          <p slot="content" :style="{verticalAlign:'left'}">
+                            选手简介
+                          </p>
+                          <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                        </a-comment>
+                      </li>
+                    </ul>
                   </div>
-                  <span class="list_title">队伍列表</span>
-                  <ul id="athlete" v-if="this.isSingleMatch">
-                    <li v-for="(item,index) in this.match.participants" :key="index">
-                      <a-comment>
-                        <a slot="author">{{item.username}}</a>
-                        <a-avatar
-                            slot="avatar"
-                            shape="square"
-                            size="large"
-                            :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                          Athlete
-                        </a-avatar>
-                        <p slot="content" :style="{verticalAlign:'left'}">
-                          选手简介
-                        </p>
-                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
-                      </a-comment>
-                    </li>
-                  </ul>
-                  <ul id="team" v-else>
-                    <li v-for="(item,index) in this.match.teams" :key="index">
-                      <a-comment>
-                        <a slot="author">这是一支队伍名称</a>
-                        <a-avatar
-                            slot="avatar"
-                            shape="square"
-                            size="large"
-                            :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                          {{item.name}}
-                        </a-avatar>
-                        <p slot="content" :style="{verticalAlign:'left'}">
-                          队伍简介
-                        </p>
-                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
-                      </a-comment>
-                    </li>
-                  </ul>
+                  <div v-else>
+                    <span class="list_title">队伍列表</span>
+                    <ul id="team">
+                      <li v-for="(item,index) in this.match.teams" :key="index">
+                        <a-comment>
+                          <a slot="author">{{item.name}}</a>
+                          <a-avatar
+                              slot="avatar"
+                              shape="square"
+                              size="large"
+                              :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                            {{item.name}}
+                          </a-avatar>
+                          <p slot="content" :style="{verticalAlign:'left'}">
+                            队伍简介
+                          </p>
+                          <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                        </a-comment>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 <div>
-                  <div class="selective-button">
-                    <b-button v-if="isSingleMatch" :disabled="!isOrganizer"
-                        v-b-modal.addReferee variant="outline-success"
-                        b-icon="person-plus" class="add">
-                      <b-icon icon="person-plus"/>
-                      添加裁判
-                    </b-button>
-                    <b-button v-else-if="!isOrganizer && !isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
-                      加入现有队伍
-                    </b-button>
-                    <b-button v-else-if="isParticipant" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
-                      查看现有队伍
-                    </b-button>
-                  </div>
                   <span class="list_title">裁判列表</span>
                   <b-modal id="addReferee" hide-footer >
                     <div class="d-block text-center">
@@ -266,8 +290,6 @@
         </div>
       </div>
     </div>
-  <div>
-  </div>
   </div>
 </template>
 
@@ -350,12 +372,17 @@ export default class MatchDetail extends Vue{
     this.getUserList()
   }
   match = {}
-  // isSingleMatch = true  // TODO：判断是否为个人赛
-  isSingleMatch = true
+  isSingleMatch = false
 
   currentUserId = ''
   isOrganizer = false
   isParticipant = false
+  myUnitId = -1
+
+  form = {
+    name: '',
+    description: ''
+  }
 
   refereeInfos = [] // TODO
 
@@ -378,6 +405,7 @@ export default class MatchDetail extends Vue{
         query: findMatchDetailById,
         variables:{matchId:this.$route.params.matchId}
       });
+
       this.match = {
         description: res.data.findMatchById.description,
         matchType: res.data.findMatchById.matchTypeId,
@@ -385,8 +413,14 @@ export default class MatchDetail extends Vue{
         organizerId: res.data.findMatchById.organizerUser.userId,
         organizerName: res.data.findMatchById.organizerUser.username,
         targetGroup: res.data.findMatchById.targetGroup,
-        participants: res.data.findMatchById.participants,
         teams: res.data.findMatchById.units,
+        minUnitMember: res.data.findMatchById.minUnitMember,
+        maxUnitMember: res.data.findMatchById.maxUnitMember
+      }
+      // @ts-ignore
+      if (this.match.minUnitMember === 1 && this.match.maxUnitMember === 1)
+      {
+        this.isSingleMatch = true
       }
     }
     catch (e) {
@@ -413,13 +447,23 @@ export default class MatchDetail extends Vue{
           this.isOrganizer = true
           return
         }
-        // @ts-ignore
-        for (let person of this.match.participants)
+        //@ts-ignore
+        if (this.match.teams.length === 0)
         {
-          if(this.currentUserId === person.userId)
+          this.isParticipant = false
+          return
+        }
+        // @ts-ignore
+        for (let team of this.match.teams)
+        {
+          for (let person of team.members)
           {
-            this.isParticipant = true
-            return
+            if (this.currentUserId === person.userId)
+            {
+              this.isParticipant = true
+              this.myUnitId = team.unitId
+              return
+            }
           }
         }
       }
@@ -444,6 +488,7 @@ export default class MatchDetail extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('sign up success!')
+        window.location.reload()
       }
       else
       {
@@ -454,14 +499,75 @@ export default class MatchDetail extends Vue{
     }
   }
 
-  async signUpTeam()
+  async cancelSignUp()
   {
+    if (this.isSingleMatch)
+    {
+      try {
+        axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+        let response = await axios({
+          method: 'delete',
+          url: `/api/v1/match/${this.$route.params.matchId}/unit/${this.myUnitId}`,
+          data: {}
+        })
+        if (response.status === 200)
+        {
+          this.$message.success('cancel signup success!')
+          window.location.reload()
+        }
+        else
+        {
 
+        }
+      }
+      catch (e) {
+        this.$message.error(JSON.stringify(e.response.data.error))
+      }
+    }
+    else
+    {
+
+    }
   }
 
-  async createNewTeam()
+  gotoTeamDetail()
   {
+    this.$router.push(`/teamDetail/${this.myUnitId}`)
+  }
 
+  async createNewTeam(evt)
+  {
+    evt.preventDefault()
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/register/${this.$route.params.matchId}`,
+        data: {
+          unitName: this.form.name
+          // TODO:description
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('create New Team success!')
+        window.location.reload()
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  resetForm(evt)
+  {
+    evt.preventDefault()
+    // Reset our form values
+    this.form.name = ''
+    this.form.description = ''
   }
 
   created()
@@ -556,11 +662,10 @@ h4{
   margin-left: 10%;
 }
 
-.selective-button {
-  margin-bottom: 15%;
-}
 #sidebar-title {
   text-align: center;
 }
-
+.form-button {
+  margin-right: 10px;
+}
 </style>

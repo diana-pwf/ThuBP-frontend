@@ -10,8 +10,6 @@ export const findMatchesByOrganizerId = gql`query findMatchesByOrganizerId($user
     }
 }`;
 
-
-
 export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($userIds: [String!]!){
     findUserById(userIds: $userIds) {
         participatedMatches {
@@ -21,8 +19,7 @@ export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($
     }
 }`;
 
-
-export const getMatchesList = gql`query  getMatchesList($typeIds:[String!]){
+export const getMatchesList = gql`query getMatchesList($typeIds:[String!]){
     findMatchesByType(typeIds:$typeIds){
     matchId
     matchTypeId
@@ -61,22 +58,18 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
         name
         description
         targetGroup
-        participants {
-            userId
-            username
-        }
         units {
             unitId
             name
             creator {
-                userId
-                username
+                username   
             }
             members {
                 userId
-                username
             }
         }
+        minUnitMember
+        maxUnitMember
     }
 }`;
 
@@ -85,5 +78,19 @@ export const findUserByName = gql`query findUserByName($username: String!){
         username
         userId
         createdAt
+    }
+}`;
+
+export const getUnitDetail = gql`query getUnitDetail($unitId: String!){
+    findUnitById(unitId:$unitId){
+        name
+        creator {
+            userId
+            username
+        }
+        members {
+            userId
+            username
+        }
     }
 }`;
