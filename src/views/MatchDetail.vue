@@ -103,7 +103,7 @@
                     创建我的队伍
                   </b-button>
                 </div>
-                <b-button v-if="isOrganizer"
+                <b-button
                           v-b-modal.addReferee variant="outline-success"
                           b-icon="person-plus" class="add">
                   <b-icon icon="person-plus"/>
@@ -204,14 +204,29 @@
 <!--                      <b-input-group>-->
 <!--                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>-->
 <!--                      </b-input-group>-->
-                      <a-input-search class="search" @change="selectRefereeChange"   v-model="refereeSearchKey"  placeholder="Search by username"   />
 
-                      <ul  id="list" class="wrapper" v-if="showRefereeList">
-                        <li class="list" v-for="(item,index) in  refereeSearchList ">
-                          <span>{{item.username}}</span>
-                        </li>
-                      </ul>
-                      <b-button block variant="success">确认邀请</b-button>
+                      <b-form-tags   no-outer-focus v-model="selectedRefereeList">
+                        <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
+                          <a-input-search class="search" @change="selectRefereeChange"   v-model="refereeSearchKey"  placeholder="Search by username"   />
+                        <b-form-tag
+                          v-for="tag in tags"
+                          @remove="removeTag(tag)"
+                          :key="tag"
+                          :title="tag"
+                          :variant="tagVariant"
+                          class="mr-1"
+                      >{{ tag}}</b-form-tag>
+                        </template>
+                      </b-form-tags>
+                          <b-list-group  id="list" class="wrapper" v-if="showRefereeList">
+                            <b-list-group-item @click="chooseReferee(item)" class="d-flex align-items-center" v-for="(item,index) in  refereeSearchList ">
+                              <!--                          <span>{{item.username}}</span>-->
+                              <b-avatar variant="info" class="mr-3"></b-avatar>
+                              <span class="mr-auto">{{item.username}}</span>
+                            </b-list-group-item>
+                          </b-list-group>
+
+                      <b-button block v-if="selectedRefereeList.length!==0" variant="success">确认邀请</b-button>
                     </div>
                   </b-modal>
                   <ul id="referee">
@@ -300,6 +315,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
+import {isStringElement} from "ant-design-vue/es/_util/props-util";
 
 @Component({components:{Navigation}})
 
@@ -364,12 +380,26 @@ export default class MatchDetail extends Vue{
     }
   ]
 
+
+  // TODO:添加裁判按钮的选择性
+  showSelectedRefereeName=[]
+  selectedRefereeList=[]
+  // removeReferee(tag){
+  //   let index=this.selectedRefereeList.indexOf(tag)
+  //   this.selectedRefereeList.slice(index,1)
+  // }
+  // get selectedRefereeName(){
+  //   return this.selectedRefereeList.map(x=>{return x.username})
+  // }
   showRefereeList = false
   refereeSearchKey = ""
   selectRefereeChange(value:string){
     console.log("change")
     this.showRefereeList=true
     this.getUserList()
+  }
+  chooseReferee(item){
+    this.selectedRefereeList.push([item.username,item.userId])
   }
   match = {}
   isSingleMatch = false
