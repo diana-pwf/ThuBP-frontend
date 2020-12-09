@@ -212,10 +212,9 @@
                           v-for="tag in tags"
                           @remove="removeTag(tag)"
                           :key="tag"
-                          :title="tag"
                           :variant="tagVariant"
                           class="mr-1"
-                      >{{ tag}}</b-form-tag>
+                      >{{getSelectedUserName(tag)}}</b-form-tag>
                         </template>
                       </b-form-tags>
                       <b-list-group  id="list" class="wrapper" v-if="showRefereeList">
@@ -225,7 +224,7 @@
                           <span class="mr-auto">{{item.username}}</span>
                         </b-list-group-item>
                       </b-list-group>
-                      <b-button block v-if="selectedRefereeList.length!==0" variant="success">确认邀请</b-button>
+                      <b-button block @click="inviteReferee" v-if="selectedRefereeList.length!==0" variant="success">确认邀请</b-button>
                     </div>
                   </b-modal>
                   <ul id="referee">
@@ -258,38 +257,6 @@
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
-              <!--<div class="mt-3">
-                Submitted Names:
-                <div v-if="submittedNames.length === 0">--</div>
-                <ul v-else class="mb-0 pl-3">
-                  <li v-for="name in submittedNames">{{ name }}</li>
-                </ul>
-              </div>
-
-              <b-modal
-                  id="modal-prevent-closing"
-                  ref="modal"
-                  title="Submit Your Name"
-                  @show="resetModal"
-                  @hidden="resetModal"
-                  @ok="handleOk"
-              >
-                <form ref="form" @submit.stop.prevent="handleSubmit">
-                  <b-form-group
-                      :state="nameState"
-                      label="Name"
-                      label-for="name-input"
-                      invalid-feedback="Name is required"
-                  >
-                    <b-form-input
-                        id="name-input"
-                        v-model="name"
-                        :state="nameState"
-                        required
-                    ></b-form-input>
-                  </b-form-group>
-                </form>
-              </b-modal>-->
 
               <b-card bg-variant="default">
                 <b-card-text>
@@ -347,6 +314,7 @@ import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
 import {isStringElement} from "ant-design-vue/es/_util/props-util";
+import {concat} from "apollo-link";
 
 @Component({components:{Navigation}})
 
@@ -412,8 +380,12 @@ export default class MatchDetail extends Vue{
   ]
 
 
-  // TODO:添加裁判按钮的选择性
-  showSelectedRefereeName=[]
+  getSelectedUserName(tag){
+    let index_left = tag.indexOf('"')
+    let index_right = tag.slice(index_left + 1).indexOf('"')
+    return tag.substr(index_left + 1, index_right)
+  }
+
   selectedRefereeList=[]
   // removeReferee(tag){
   //   let index=this.selectedRefereeList.indexOf(tag)
@@ -422,6 +394,61 @@ export default class MatchDetail extends Vue{
   // get selectedRefereeName(){
   //   return this.selectedRefereeList.map(x=>{return x.username})
   // }
+
+  async getRefereeToken(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/assign-referee-token/${this.match['matchId']}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$bvModal.msgBoxOk(`签发裁判邀请码成功！过期时间：${response.data.expirationTime}`)
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  async inviteReferee(){
+    this.getRefereeToken()
+    let list = []
+    for(let x of this.selectedRefereeList){
+      let array=x.split('\"')
+      if(list.find(x=>x===array[3])==undefined){
+      list.push(array[3])
+      }
+    }
+
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/invite-referees/${this.match['matchId']}`,
+        data: {
+          userIds:list
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        if(response.data==list){
+          this.$message.success('invite success!')
+        }
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   showRefereeList = false
   refereeSearchKey = ""
   selectRefereeChange(value:string){
@@ -430,7 +457,8 @@ export default class MatchDetail extends Vue{
     this.getUserList()
   }
   chooseReferee(item){
-    this.selectedRefereeList.push([item.username,item.userId])
+    this.selectedRefereeList.push(JSON.stringify([item.username,item.userId]))
+    console.log(this.selectedRefereeList)
   }
   match = {}
   isSingleMatch = false
@@ -469,6 +497,7 @@ export default class MatchDetail extends Vue{
       });
 
       this.match = {
+        matchId:res.data.findMatchById.matchId,
         description: res.data.findMatchById.description,
         matchType: res.data.findMatchById.matchTypeId,
         matchName: res.data.findMatchById.name,

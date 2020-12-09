@@ -51,6 +51,7 @@ export const getParticipants = gql`query getParticipants($matchId: String!){
 
 export const findMatchDetailById = gql`query findMatchDetailById($matchId: String!){
     findMatchById(matchId: $matchId) {
+        matchId
         matchTypeId
         organizerUser {
             userId

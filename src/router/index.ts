@@ -9,6 +9,8 @@ import GameDetail from "@/views/GameDetail.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import CreateMatch from "@/views/CreateMatch.vue";
 import TeamDetail from "@/views/TeamDetail.vue";
+import CreateRound from "@/views/CreateRound.vue";
+import UrlClickResult from "@/views/UrlClickResult.vue";
 
 Vue.use(VueRouter)
 
@@ -65,8 +67,17 @@ const routes: Array<RouteConfig> = [
     path:'/teamDetail/:unitId',
     name:'teamDetail',
     component:TeamDetail
+  },
+  {
+    path:'/createRound',
+    name:'createRound',
+    component:CreateRound
+  },
+  {
+    path:'/urlClickResult/:resultType',
+    name:'urlClickResult',
+    component:UrlClickResult
   }
-
 ]
 
 const router = new VueRouter({
