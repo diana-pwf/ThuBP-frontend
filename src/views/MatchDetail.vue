@@ -205,7 +205,6 @@
 <!--                      <b-input-group>-->
 <!--                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>-->
 <!--                      </b-input-group>-->
-
                       <b-form-tags   no-outer-focus v-model="selectedRefereeList">
                         <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
                           <a-input-search class="search" @change="selectRefereeChange"   v-model="refereeSearchKey"  placeholder="Search by username"   />
@@ -219,14 +218,13 @@
                       >{{ tag}}</b-form-tag>
                         </template>
                       </b-form-tags>
-                          <b-list-group  id="list" class="wrapper" v-if="showRefereeList">
-                            <b-list-group-item @click="chooseReferee(item)" class="d-flex align-items-center" v-for="(item,index) in  refereeSearchList ">
-                              <!--                          <span>{{item.username}}</span>-->
-                              <b-avatar variant="info" class="mr-3"></b-avatar>
-                              <span class="mr-auto">{{item.username}}</span>
-                            </b-list-group-item>
-                          </b-list-group>
-
+                      <b-list-group  id="list" class="wrapper" v-if="showRefereeList">
+                        <b-list-group-item @click="chooseReferee(item)" class="d-flex align-items-center" v-for="(item,index) in  refereeSearchList ">
+                          <!--                          <span>{{item.username}}</span>-->
+                          <b-avatar variant="info" class="mr-3"></b-avatar>
+                          <span class="mr-auto">{{item.username}}</span>
+                        </b-list-group-item>
+                      </b-list-group>
                       <b-button block v-if="selectedRefereeList.length!==0" variant="success">确认邀请</b-button>
                     </div>
                   </b-modal>
@@ -260,6 +258,39 @@
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
+              <!--<div class="mt-3">
+                Submitted Names:
+                <div v-if="submittedNames.length === 0">--</div>
+                <ul v-else class="mb-0 pl-3">
+                  <li v-for="name in submittedNames">{{ name }}</li>
+                </ul>
+              </div>
+
+              <b-modal
+                  id="modal-prevent-closing"
+                  ref="modal"
+                  title="Submit Your Name"
+                  @show="resetModal"
+                  @hidden="resetModal"
+                  @ok="handleOk"
+              >
+                <form ref="form" @submit.stop.prevent="handleSubmit">
+                  <b-form-group
+                      :state="nameState"
+                      label="Name"
+                      label-for="name-input"
+                      invalid-feedback="Name is required"
+                  >
+                    <b-form-input
+                        id="name-input"
+                        v-model="name"
+                        :state="nameState"
+                        required
+                    ></b-form-input>
+                  </b-form-group>
+                </form>
+              </b-modal>-->
+
               <b-card bg-variant="default">
                 <b-card-text>
                     <div>
@@ -418,9 +449,6 @@ export default class MatchDetail extends Vue{
     username: ''
   }
 
-  refereeInfos = [] // TODO
-
-  selectReferee={}
   refereeSearchList=[]
 
   // 添加裁判时拿到用户列表
