@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navigation></Navigation>
+  <Navigation :username="user.username"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
     <div class="list">
     <ResultCardList  :match-lists="searchList"></ResultCardList>
@@ -21,6 +21,10 @@ import {getMatchesList} from "../../myQuery";
   components:{SearchInput,Navigation,ResultCardList}
 })
 export default class SearchResults extends Vue {
+  user = {
+    username: ''
+  }
+
   matchesList=[]
   searchList=[]
   path=""
@@ -42,7 +46,31 @@ export default class SearchResults extends Vue {
     }
   }
 
+  async getUserInfo()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.user.username = response.data.username
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   mounted() {
+    this.getUserInfo()
     this.init()
   }
 }

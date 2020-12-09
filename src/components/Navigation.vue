@@ -17,23 +17,23 @@
         <a class="ant-dropdown-link user-dropdown-link" @click="e => e.preventDefault()">
           <a-avatar class="avatar" icon="user" :style="{}" />
           <span class="delimiter"></span>
-          <span class="text-middle">用户名</span><a-icon class="down-icon" type="down" />
+          <span class="text-middle">{{username}}</span><a-icon class="down-icon" type="down" />
         </a>
         <a-menu slot="overlay" class="dropdown-list">
-          <a-menu-item @click="goPersonInfo" key="0">
+          <a-menu-item @click="goPersonInfo('1')" key="1">
             <a-icon type="user"/>个人资料
           </a-menu-item>
-          <a-menu-item key="1">
+          <a-menu-item @click="goPersonInfo('2')" key="2">
             <a-icon type="schedule" />创建的比赛
           </a-menu-item>
           <a-menu-divider />
-          <a-menu-item key="3">
+          <a-menu-item @click="goPersonInfo('3')" key="3">
             <a-icon type="schedule" />参加的比赛
           </a-menu-item>
-          <a-menu-item key="4">
+          <a-menu-item @click="goPersonInfo('4')" key="4">
             <a-icon type="message" />我的消息
           </a-menu-item>
-          <a-menu-item key="5">
+          <a-menu-item @click="goPersonInfo('5')" key="5">
             <a-icon type="logout" />登出
           </a-menu-item>
         </a-menu>
@@ -46,15 +46,16 @@
 
 <script>
 
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 
 export default class Navigation extends Vue{
+  @Prop({type:String, default:function (){return ""}})username
 
-  goPersonInfo(){
-    if (this.$router.currentRoute.path !== '/personal') {
-      this.$router.push('/personal');
+  goPersonInfo(key){
+    if (this.$router.currentRoute.path !== `/personal/${key}`) {
+      this.$router.push(`/personal/${key}`);
     }
   }
 

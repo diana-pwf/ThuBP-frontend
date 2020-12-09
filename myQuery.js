@@ -15,6 +15,7 @@ export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($
         participatedMatches {
             name
             description
+            matchId
         }
     }
 }`;

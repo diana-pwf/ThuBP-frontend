@@ -24,7 +24,7 @@ const routes: Array<RouteConfig> = [
     component: Logon
   },
   {
-    path: '/personal',
+    path: '/personal/:key',
     name: 'PersonalInfoTab',
     component: PersonalInfoTab
   },

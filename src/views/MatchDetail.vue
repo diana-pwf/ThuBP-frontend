@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="personalMenu">
-      <Navigation></Navigation>
+      <Navigation :username="user.username"></Navigation>
       <div id="menu">
         <div style="width: 100%; height:100%">
           <a-tabs
@@ -251,13 +251,13 @@
               </div>
             </a-tab-pane>
             <a-tab-pane  key="3">
-            <span slot="tab">
-              <a-icon type="unordered-list" />
-                比赛列表
-            </span>
+              <span slot="tab">
+                <a-icon type="unordered-list" />
+                  比赛列表
+              </span>
               <b-button class="button" block variant="outline-success">
                 <b-icon icon="journal-plus"></b-icon>
-                添加赛事
+                添加轮次
               </b-button>
               <b-card bg-variant="default">
                 <b-card-text>
@@ -277,7 +277,6 @@
                           进行中
                         </a-descriptions-item>
                       </a-descriptions>
-
                     </div>
                     </div>
                           <a-table class="table" :columns="columns" :data-source="data">
@@ -414,6 +413,10 @@ export default class MatchDetail extends Vue{
     description: ''
   }
 
+  user = {
+    username: ''
+  }
+
   refereeInfos = [] // TODO
 
   selectReferee={}
@@ -471,6 +474,7 @@ export default class MatchDetail extends Vue{
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.currentUserId = response.data.userId
+        this.user.username = response.data.username
         //@ts-ignore
         if(this.currentUserId === this.match.organizerId)
         {

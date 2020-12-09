@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navigation></Navigation>
+  <Navigation :username="user.username"></Navigation>
   <div id="container">
   <a-form-model id="entire-form"
                 ref="ruleForm"
@@ -39,9 +39,9 @@
         <a-select-option value="basketball">
           篮球
         </a-select-option>
-        <a-select-option value="soccerball">
+        <!--<a-select-option value="soccerball">
           足球
-        </a-select-option>
+        </a-select-option>-->
         <a-select-option value="tennis">
           网球
         </a-select-option>
@@ -108,6 +108,11 @@ import Navigation from "@/components/Navigation.vue";
 export default class CreateMatch extends Vue {
   labelCol = { span: 4 }
   wrapperCol = { span: 20 }
+
+  user = {
+    username: ''
+  }
+
   form = {
     name: '',
     // region: '',
@@ -183,7 +188,6 @@ export default class CreateMatch extends Vue {
     });
   }
 
-
   async createMatch() {
     if(this.form.publicRestriction === 0)
     {
@@ -232,6 +236,33 @@ export default class CreateMatch extends Vue {
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
+  }
+
+  async getUserInfo()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.user.username = response.data.username
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  mounted(){
+    this.getUserInfo()
   }
 
 }

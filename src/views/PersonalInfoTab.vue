@@ -1,11 +1,12 @@
 <template>
   <div id="personalMenu">
-    <Navigation></Navigation>
+    <Navigation :username="user.username"></Navigation>
     <div id="menu">
       <div style="width: 100%; height:100%">
         <a-tabs
-            default-active-key="1"
-            :tab-position="'left'"
+            :default-active-key = this.$route.params.key
+            :activeKey = this.$route.params.key
+            :tab-position = "'left'"
             :style="{ height: '100%' }"
             @change="callback"
         >
@@ -46,7 +47,9 @@
               <a-icon type="schedule" />
                 参加的比赛
             </span>
-            <ResultCardList :match-lists="new Array(20).fill(1)"></ResultCardList>
+            <ResultCardList
+                :match-lists="this.myParticipatedMatches">
+            </ResultCardList>
           </a-tab-pane>
           <a-tab-pane  key="4">
             <span slot="tab">
@@ -119,27 +122,11 @@ import axios from "axios";
 import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
-import {findMatchesByOrganizerId} from '../../myQuery.js';
-import {findMatchesByParticipantId} from '../../myQuery.js';
-
-import { createDecorator } from 'vue-class-component'
-
-// Declare Log decorator.
-// export const Log = createDecorator((options, key) => {
-//   console.log(options)
-//   // Keep the original method for later.
-//   const originalMethod = options.data[key]
-//   options[key] = originalMethod
-//   options.data[key] = undefined
-// })
-
-
+import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
 
 @Component({
   components: {ResultCardList, Navigation},
 })
-
-
 
 export default class PersonalInfoTab extends Vue {
   columns = [
@@ -214,7 +201,6 @@ export default class PersonalInfoTab extends Vue {
         variables:{userIds:userId}
       });
       this.myOrganizedMatches = res.data.findUserById[0].organizedMatches
-      // console.log(this.myOrganizedMatches)
     }
     catch (e) {
       console.log(e);
@@ -228,18 +214,9 @@ export default class PersonalInfoTab extends Vue {
         variables:{userIds:userId}
       });
       this.myParticipatedMatches = res.data.findUserById[0].participatedMatches
-      // console.log(this.myParticipatedMatches)
     }
     catch (e) {
       console.log(e);
-    }
-  }
-
-  callback(key)
-  {
-    if (key === "2")
-    {
-      this.getMyOrganizeMatch(this.user.userId);
     }
   }
 
@@ -256,7 +233,9 @@ export default class PersonalInfoTab extends Vue {
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.user.userId = response.data.userId
-
+        this.user.username = response.data.username
+        await this.getMyOrganizeMatch(this.user.userId)
+        await this.getMyParticipateMatch(this.user.userId)
       }
       else
       {
@@ -267,7 +246,12 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
-
+  callback(key)
+  {
+    if (this.$route.params.key !== key) {
+      this.$router.push(`/personal/${key}`);
+    }
+  }
 
   mounted()
   {
