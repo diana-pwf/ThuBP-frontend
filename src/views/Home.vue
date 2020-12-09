@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Navigation></Navigation>
+    <Navigation :username="user.username"></Navigation>
     <div id="div">
       <div class="container">
         <div class="make-center">
@@ -56,13 +56,19 @@ import Carousel from "@/components/Carousel.vue";
 import ResultCardList from "@/components/ResultCardList.vue" ;
 import Pagination from '@/components/Pagination.vue'
 import {getMatchesList} from "../../myQuery";
+import axios from "axios";
 
 @Component({
   components: { Navigation,SearchInput,Carousel,ResultCardList,Pagination
   },
 })
 export default class Home extends Vue {
+  user = {
+    username: ''
+  }
+
   matchesList=[]
+
   async getMatchesList(type){
     let res = await this.$apollo.query({
       query: getMatchesList,
@@ -87,7 +93,32 @@ export default class Home extends Vue {
     this.$router.push(`/matchDetail/${item.matchId}`)
   }
 
+  async getUserInfo()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.user.username = response.data.username
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+
   mounted(){
+    this.getUserInfo()
     this.getMatchesList([])
     // TODO：增加赛事后重新进入主页面，赛事列表未更新
   }

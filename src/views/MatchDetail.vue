@@ -104,6 +104,7 @@
                   </b-button>
                 </div>
                 <b-button
+                          v-if="isOrganizer"
                           v-b-modal.addReferee variant="outline-success"
                           b-icon="person-plus" class="add">
                   <b-icon icon="person-plus"/>
@@ -455,6 +456,7 @@ export default class MatchDetail extends Vue{
       {
         this.isSingleMatch = true
       }
+      await this.getCurrentUserRole();
     }
     catch (e) {
       console.log(e);
@@ -607,7 +609,6 @@ export default class MatchDetail extends Vue{
   created()
   {
     this.getMatchDetail();
-    this.getCurrentUserRole();
   }
 }
 </script>
