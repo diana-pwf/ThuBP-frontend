@@ -27,7 +27,7 @@
             </ul>
           </a-tab-pane>
           <a-tab-pane  key="2" tab="篮球" force-render>
-            <ResultCardList class="matchLists" :match-lists="this.matchesList"  ></ResultCardList>
+            <ResultCardList class="matchLists" :match-lists="this.matchesList" :isCenter="true"></ResultCardList>
             <Pagination class="pagination" :total="30"></Pagination>
           </a-tab-pane>
           <a-tab-pane key="3" tab="网球">
