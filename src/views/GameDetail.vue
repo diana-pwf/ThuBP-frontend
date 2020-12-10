@@ -3,16 +3,13 @@
     <Navigation></Navigation>
     <div id="content">
       <div id="photo-and-comment">
-        <img
-            id="game-picture"
-            alt="game-picture"
-            src="background.png"
-        />
-        <div id="photo-description">
-          <span>xxx次观看</span>
+        <div id="photo">
+          <b-container fluid class="p-3">
+            <b-img thumbnail fluid src="background.png" alt="Image 3"></b-img>
+          </b-container>
         </div>
         <div id="comment-list">
-          <h6>评论</h6>
+          <h3><b-badge pill variant="success">评论区</b-badge></h3>
           <a-list
               class="comment-list"
               item-layout="horizontal"
@@ -34,29 +31,27 @@
             </a-list-item>
           </a-list>
         </div>
-
         <div id="my-comment">
-          <h6>我的评论</h6>
+          <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
           <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" />
           <a-button id="button" type="primary">发布</a-button>
         </div>
       </div>
-
-      <a-divider dashed type="vertical" id="divider"/>
-
+      <a-divider type="vertical" id="divider"/>
       <div id="records">
+        <h1><b-badge variant="warning">第1轮小组赛</b-badge></h1>
+        <div id="team-info">
+          <span id="unit0-name">可怜程序员队</span>
+          <span>VS</span>
+          <span id="unit1-name">凶残bug队</span>
+        </div>
         <div id="game-info">
-          <h1>第1轮小组赛</h1>
-          <h1>可怜程序员队 vs 凶残bug队</h1>
+          <span id="unit0-score" class="gameScore">10</span>
+          <span class="gameScore">:</span>
+          <span id="unit1-score" class="gameScore">12</span>
         </div>
-
-        <div id="game-score">
-          <h6>比分</h6>
-          <h1>0:1</h1>
-        </div>
-
         <div id="game-detail">
-          <h6>违规/换人记录</h6>
+          <!--<h6>违规/换人记录</h6>
           <a-button>添加</a-button>
           <ul>
             <li>
@@ -74,10 +69,9 @@
                 </p>
               </a-comment>
             </li>
-          </ul>
+          </ul>-->
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -121,34 +115,32 @@ export default class GameDetail extends Vue {
 
 
 <style scoped>
+>>> #divider {
+  height: auto;
+  width: 3px;
+}
+
+
 #content {
   display: flex;
 }
 
+#photo {
+  margin: auto;
+  margin-bottom: 10px;
+  max-width: 60%;
+}
+
 #photo-and-comment {
-  width: 60%;
+  width: 40%;
   height: 100%;
-  margin: 0 5% 5% 5%;
+  margin: 0 20px 20px 20px;
 }
 
 #records {
-  width: 40%;
-  height: 100%;
-  margin: 0 5% 5% 5%;
-}
-
-#divider {
-  height: 100%;
-}
-
-#game-picture {
-  max-width: 30%;
-  max-height: 20%;
-  padding: 0;
-}
-
-#photo-description {
-  height: 8%;
+  width: 60%;
+  max-height: 100%;
+  margin: 1% 20px 20px 20px;
 }
 
 #comment-list {
@@ -160,23 +152,43 @@ export default class GameDetail extends Vue {
   position: relative;
 }
 
-h6 {
-  text-align: left;
-  font-size: 20px;
-}
-
 #button {
   float: right;
   margin: 1%;
 }
 
-#game-info {
-  text-align: left;
-  font-size: 18px;
+#team-info {
+  margin: auto;
+  margin-top: 3%;
+  font-size: 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  justify-items: center;
 }
 
-#game-score {
-  margin: 5%;
+#game-info {
+  margin: auto;
+  font-size: 6rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-items: center;
+}
+
+#unit0-name {
+  color: red;
+}
+
+#unit1-name {
+  color: blue;
+}
+
+#unit0-score {
+  color: red;
+  grid-column-start: 2;
+}
+
+#unit1-score {
+  color: blue;
 }
 
 #game-detail {
