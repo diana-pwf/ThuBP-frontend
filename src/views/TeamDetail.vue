@@ -49,42 +49,7 @@
       </b-button>
       <b-button class="button" v-if="isCreator" variant="outline-success">转让队长</b-button>
       <b-button class="button" v-if="isCreator" variant="outline-danger">解散队伍</b-button>
-
-      <b-modal id="addUser" hide-footer >
-        <div class="d-block text-center">
-          <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
-          <span style="font-size: large">邀请用户成为<strong>{{team.name}}</strong>裁判</span>
-          <!--                      <b-input-group>-->
-          <!--                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>-->
-          <!--                      </b-input-group>-->
-          <b-form-tags   no-outer-focus v-model="selectedUserList">
-
-            <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
-              <a-input-search class="search" @change="selectUserChange"  v-model="userSearchKey"  placeholder="Search by username"   />
-              <b-form-tag
-                  v-for="tag in tags"
-                  @remove="removeTag(tag)"
-                  :key="tag"
-                  :title="tag"
-                  :variant="tagVariant"
-                  class="mr-1"
-              >{{getSelectedUserName(tag)}}</b-form-tag>
-            </template>
-          </b-form-tags>
-          <b-list-group  id="list" class="wrapper" v-if="showUserList">
-            <b-list-group-item @click="chooseUser(item)" class="d-flex align-items-center" v-for="(item,index) in  userSearchList ">
-              <!--                          <span>{{item.username}}</span>-->
-              <b-avatar variant="info" class="mr-3"></b-avatar>
-              <span class="mr-auto">{{item.username}}</span>
-            </b-list-group-item>
-          </b-list-group>
-
-          <b-button block :disabled="!selectedUserList.length" variant="success"
-                    @click="inviteUser">邀请加入</b-button>
-
-        </div>
-      </b-modal>
-
+      <InviteUser type="InviteTeamMember" :unit="team"></InviteUser>
 
     </div>
   </div>
@@ -95,12 +60,13 @@ import axios from "axios";
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
+import InviteUser from "@/components/InviteUser.vue";
 import {getUnitDetail, findUserByName} from "../../myQuery";
 import index from "@/store";
 
 @Component({
   components:{
-    Navigation
+    Navigation,InviteUser
   }
 })
 
@@ -110,43 +76,6 @@ export default class TeamDetail extends Vue{
   currentUserId = ""
   isCreator = false
 
-  showUserList = false
-  userSearchKey = ""
-  selectedUserList = []
-  userSearchList=[]
-  // removeReferee(tag){
-  //   let index=this.selectedRefereeList.indexOf(tag)
-  //   this.selectedRefereeList.slice(index,1)
-  // }
-  // get selectedRefereeName(){
-  //   return this.selectedRefereeList.map(x=>{return x.username})
-  // }
-
-  selectUserChange(value:string){
-    console.log("change")
-    this.showUserList=true
-    this.getUserList()
-  }
-
-  chooseUser(item){
-    this.selectedUserList.push([item.username,item.userId])
-  }
-
-  getSelectedUserName(tag){
-    let index_left = tag.indexOf('"')
-    let index_right = tag.slice(index_left + 1).indexOf('"')
-    return tag.substr(index_left + 1, index_right)
-  }
-
-  // 添加队员时拿到用户列表
-  async getUserList(){
-    let res = await this.$apollo.query({
-      query: findUserByName,
-      variables:{username:this.userSearchKey}
-    });
-    this.userSearchList=res.data.findUserByFuzzy
-  }
-
   async getTeamDetail()
   {
     try {
@@ -155,6 +84,7 @@ export default class TeamDetail extends Vue{
         variables:{unitId:this.$route.params.unitId}
       });
       this.team = res.data.findUnitById
+      this.team['id']=res.data.findUnitById.unitId
       this.items.push({
             // @ts-ignore
             name: this.team.creator.username,
@@ -212,11 +142,11 @@ export default class TeamDetail extends Vue{
       this.$message.error(JSON.stringify(e.response.data.error))
     }
   }
-
-  async inviteUser()
-  {
-    console.log(this.selectedUserList)
-  }
+  //
+  // async inviteUser()
+  // {
+  //   console.log(this.selectedUserList)
+  // }
 
   fields = [
     { key: 'avatar', label: 'Avatar' },

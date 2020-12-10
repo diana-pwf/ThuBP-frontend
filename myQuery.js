@@ -85,6 +85,7 @@ export const findUserByName = gql`query findUserByName($username: String!){
 
 export const getUnitDetail = gql`query getUnitDetail($unitId: String!){
     findUnitById(unitId:$unitId){
+        unitId
         name
         creator {
             userId

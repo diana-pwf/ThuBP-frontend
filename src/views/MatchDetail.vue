@@ -105,7 +105,7 @@
                 </div>
                 <b-button
                           v-if="isOrganizer"
-                          v-b-modal.addReferee variant="outline-success"
+                          v-b-modal.addUser variant="outline-success"
                           b-icon="person-plus" class="add">
                   <b-icon icon="person-plus"/>
                   添加裁判
@@ -198,35 +198,7 @@
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
-                  <b-modal id="addReferee" hide-footer >
-                    <div class="d-block text-center">
-                      <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
-                      <span style="font-size: large">邀请用户成为<strong>{{match.name}}</strong>裁判</span>
-<!--                      <b-input-group>-->
-<!--                        <b-form-input @change="selectRefereeChange"   v-model="refereeSearchKey" placeholder="Search by username"></b-form-input>-->
-<!--                      </b-input-group>-->
-                      <b-form-tags   no-outer-focus v-model="selectedRefereeList">
-                        <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
-                          <a-input-search class="search" @change="selectRefereeChange"   v-model="refereeSearchKey"  placeholder="Search by username"   />
-                        <b-form-tag
-                          v-for="tag in tags"
-                          @remove="removeTag(tag)"
-                          :key="tag"
-                          :variant="tagVariant"
-                          class="mr-1"
-                      >{{getSelectedUserName(tag)}}</b-form-tag>
-                        </template>
-                      </b-form-tags>
-                      <b-list-group  id="list" class="wrapper" v-if="showRefereeList">
-                        <b-list-group-item @click="chooseReferee(item)" class="d-flex align-items-center" v-for="(item,index) in  refereeSearchList ">
-                          <!--                          <span>{{item.username}}</span>-->
-                          <b-avatar variant="info" class="mr-3"></b-avatar>
-                          <span class="mr-auto">{{item.username}}</span>
-                        </b-list-group-item>
-                      </b-list-group>
-                      <b-button block @click="inviteReferee" v-if="selectedRefereeList.length!==0" variant="success">确认邀请</b-button>
-                    </div>
-                  </b-modal>
+                  <InviteUser type="InviteReferee" :unit="match"></InviteUser>
                   <ul id="referee">
                     <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
                       <a-comment>
@@ -312,11 +284,12 @@ import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
+import InviteUser from "@/components/InviteUser.vue";
 import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
 import {isStringElement} from "ant-design-vue/es/_util/props-util";
 import {concat} from "apollo-link";
 
-@Component({components:{Navigation}})
+@Component({components:{InviteUser, Navigation}})
 
 export default class MatchDetail extends Vue{
   columns = [
@@ -380,20 +353,7 @@ export default class MatchDetail extends Vue{
   ]
 
 
-  getSelectedUserName(tag){
-    let index_left = tag.indexOf('"')
-    let index_right = tag.slice(index_left + 1).indexOf('"')
-    return tag.substr(index_left + 1, index_right)
-  }
 
-  selectedRefereeList=[]
-  // removeReferee(tag){
-  //   let index=this.selectedRefereeList.indexOf(tag)
-  //   this.selectedRefereeList.slice(index,1)
-  // }
-  // get selectedRefereeName(){
-  //   return this.selectedRefereeList.map(x=>{return x.username})
-  // }
 
   async getRefereeToken(){
     try {
@@ -415,51 +375,6 @@ export default class MatchDetail extends Vue{
     }
   }
 
-  async inviteReferee(){
-    this.getRefereeToken()
-    let list = []
-    for(let x of this.selectedRefereeList){
-      let array=x.split('\"')
-      if(list.find(x=>x===array[3])==undefined){
-      list.push(array[3])
-      }
-    }
-
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'post',
-        url: `/api/v1/match/invite-referees/${this.match['matchId']}`,
-        data: {
-          userIds:list
-        }
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        if(response.data==list){
-          this.$message.success('invite success!')
-        }
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
-    }
-  }
-
-  showRefereeList = false
-  refereeSearchKey = ""
-  selectRefereeChange(value:string){
-    console.log("change")
-    this.showRefereeList=true
-    this.getUserList()
-  }
-  chooseReferee(item){
-    this.selectedRefereeList.push(JSON.stringify([item.username,item.userId]))
-    console.log(this.selectedRefereeList)
-  }
   match = {}
   isSingleMatch = false
 
@@ -477,16 +392,6 @@ export default class MatchDetail extends Vue{
     username: ''
   }
 
-  refereeSearchList=[]
-
-  // 添加裁判时拿到用户列表
-  async getUserList(){
-    let res = await this.$apollo.query({
-      query: findUserByName,
-      variables:{username:this.refereeSearchKey}
-    });
-    this.refereeSearchList=res.data.findUserByFuzzy
-  }
 
   async getMatchDetail()
   {
@@ -497,10 +402,10 @@ export default class MatchDetail extends Vue{
       });
 
       this.match = {
-        matchId:res.data.findMatchById.matchId,
+        id:res.data.findMatchById.matchId,
         description: res.data.findMatchById.description,
         matchType: res.data.findMatchById.matchTypeId,
-        matchName: res.data.findMatchById.name,
+        name: res.data.findMatchById.name,
         organizerId: res.data.findMatchById.organizerUser.userId,
         organizerName: res.data.findMatchById.organizerUser.username,
         targetGroup: res.data.findMatchById.targetGroup,
