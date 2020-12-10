@@ -72,21 +72,9 @@
                 </div>
               </div>
               <div id="msg-list">
-                    <!--<a-comment id="comment">
-                      <a slot="author">消息主题</a>
-                      <a-avatar
-                          slot="avatar"
-                          shape="square"
-                          size="large"
-                          :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                        Msg
-                      </a-avatar>
-                      <p slot="content" :style="{verticalAlign:'left'}">
-                        消息描述。
-                      </p>-->
                       <a-table :columns="columns" :data-source="data">
                         <a slot="name" slot-scope="text">{{ text }}</a>
-                        <span slot="customTitle"><a-icon type="smile-o" />发送者/接收者</span>
+                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>
                         <span slot="tags" slot-scope="tags">
                           <a-tag
                               v-for="tag in tags"
@@ -194,6 +182,33 @@ export default class PersonalInfoTab extends Vue {
   myOrganizedMatches = []
   myParticipatedMatches = []
 
+  noteData=[]
+  myNotifications=[]
+
+  async getMyNotifications(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/notification'
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.myNotifications=response.data.notifications
+        // for(let index=0;index<this.myNotifications.length;index++){
+        //
+        // }
+        console.log(this.myNotifications)
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   async getMyOrganizeMatch(userId) {
     try {
       let res = await this.$apollo.query({
@@ -236,6 +251,7 @@ export default class PersonalInfoTab extends Vue {
         this.user.username = response.data.username
         await this.getMyOrganizeMatch(this.user.userId)
         await this.getMyParticipateMatch(this.user.userId)
+        await this.getMyNotifications();
       }
       else
       {
