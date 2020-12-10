@@ -1,7 +1,7 @@
 <template>
   <ul id="result-card-list">
     <li v-for="(item,index) in matchLists" :key="index">
-      <SearchResultCard class="card" :matchId="item.matchId">
+      <SearchResultCard class="card" :matchId="item.matchId" :isCenter="isCenter">
         <img
             alt="example"
             src="background.png"
@@ -25,6 +25,7 @@ import SearchResultCard from "./SearchResultCard.vue";
 
 export default class ResultCardList extends Vue {
   @Prop({type:Array,default:function (){return []}})matchLists
+  @Prop({type:Boolean, default:function (){return false}})isCenter
 }
 </script>
 

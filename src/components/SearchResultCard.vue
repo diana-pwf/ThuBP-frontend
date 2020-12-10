@@ -1,15 +1,30 @@
 <template>
-  <a-card @click="goMatchDetail" class="card" hoverable="">
-    <div class="mycard">
-      <div class="card-img">
-        <slot name="card-img"></slot>
+  <div v-if="isCenter" id="card-center">
+    <a-card @click="goMatchDetail" class="card" hoverable="">
+      <div class="mycard">
+        <div class="card-img">
+          <slot name="card-img"></slot>
+        </div>
+        <div class="card-text">
+          <slot name="card-title"></slot>
+          <slot name="card-content"></slot>
+        </div>
       </div>
-      <div class="card-text">
-        <slot name="card-title"></slot>
-        <slot name="card-content"></slot>
+    </a-card>
+  </div>
+  <div v-else id="card">
+    <a-card @click="goMatchDetail" class="card" hoverable="">
+      <div class="mycard">
+        <div class="card-img">
+          <slot name="card-img"></slot>
+        </div>
+        <div class="card-text">
+          <slot name="card-title"></slot>
+          <slot name="card-content"></slot>
+        </div>
       </div>
-    </div>
-  </a-card>
+    </a-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,6 +33,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 @Component
 export default class SearchResultCard extends Vue {
   @Prop({type:String, default:function (){return ""}})matchId
+  @Prop({type:Boolean, default:function (){return false}})isCenter
 
   goMatchDetail(){
     this.$router.push(`/matchdetail/${this.matchId}`)
@@ -26,9 +42,15 @@ export default class SearchResultCard extends Vue {
 </script>
 
 <style scoped>
-/*.card {*/
-/*  height: 25%;*/
-/*}*/
+
+#card {
+  width: 75%;
+}
+
+#card-center {
+  width: 75%;
+  margin: auto;
+}
 
 .mycard {
   height: 100%;
