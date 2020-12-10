@@ -73,8 +73,8 @@
               </div>
               <div id="msg-list">
                       <a-table :columns="columns" :data-source="data">
-                        <a slot="name" slot-scope="text">{{ text }}</a>
-                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>
+<!--                        <a slot="name" slot-scope="text">{{ text }}</a>-->
+<!--                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>-->
                         <span slot="tags" slot-scope="tags">
                           <a-tag
                               v-for="tag in tags"
@@ -111,6 +111,7 @@ import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
 import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
+import {isTypeSystemDefinitionNode} from "graphql";
 
 @Component({
   components: {ResultCardList, Navigation},
@@ -118,12 +119,12 @@ import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuer
 
 export default class PersonalInfoTab extends Vue {
   columns = [
-    {
-      dataIndex: 'name',
-      key: 'name',
-      slots: { title: 'customTitle' },
-      scopedSlots: { customRender: 'name' },
-    },
+    // {
+    //   dataIndex: 'name',
+    //   key: 'name',
+    //   slots: { title: 'customTitle' },
+    //   scopedSlots: { customRender: 'name' },
+    // },
     {
       title: '发送时间',
       dataIndex: 'time',
@@ -195,9 +196,15 @@ export default class PersonalInfoTab extends Vue {
       // 对response做处理
       if (response.status === 200) {
         this.myNotifications=response.data.notifications
-        // for(let index=0;index<this.myNotifications.length;index++){
-        //
-        // }
+        for(let index=0;index<this.myNotifications.length;index++){
+          let dict={}
+          dict['key']=index
+          dict['time']=this.myNotifications[index]['createAt']
+
+
+
+
+        }
         console.log(this.myNotifications)
       }
       else
