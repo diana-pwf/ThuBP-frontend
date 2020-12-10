@@ -72,28 +72,30 @@
                 </div>
               </div>
               <div id="msg-list">
-                      <a-table :columns="columns" :data-source="data">
+                      <a-table :columns="columns" :data-source="myNotifications">
 <!--                        <a slot="name" slot-scope="text">{{ text }}</a>-->
 <!--                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>-->
                         <span slot="tags" slot-scope="tags">
                           <a-tag
                               v-for="tag in tags"
                               :key="tag"
-                              :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+                              :color="tag === 'unread' ? 'volcano' : 'read' ? 'geekblue' : 'green'"
                           >
                             {{ tag.toUpperCase() }}
                           </a-tag>
                         </span>
-                        <span slot="action" slot-scope="text, record">
-                          <a>查看详情</a>
+                        <span  slot='action' slot-scope="text, record">
+<!--                          <a>查看详情</a>-->
                           <a-divider type="vertical" />
-                          <a>删除</a>
+                          <a @click="deleteNote(record)">删除</a>
                           <a-divider type="vertical" />
-                          <a class="ant-dropdown-link">更多<a-icon type="down" /> </a>
+                          <a @click="showModal(record)"  class="ant-dropdown-link">查看详情<a-icon type="down" /> </a>
+                          <a-modal :mask="false" v-model="modalVisible" :title="infoModal.title" @ok="handleOk">
+                            <p>{{infoModal.content}}</p>
+                            <a @click="onClickInviteLink(infoModal)" class="inviteLink" v-if="infoModal.tag==='REFEREE_INVITE'||infoModal.tag==='UNIT_INVITE'">点击链接同意邀请</a>
+                          </a-modal>
                         </span>
                       </a-table>
-                      <!--<span class="more" style="color: dodgerblue" slot="actions">更多</span>
-                    </a-comment>-->
                 </div>
               </div>
           </a-tab-pane>
@@ -119,26 +121,20 @@ import {isTypeSystemDefinitionNode} from "graphql";
 
 export default class PersonalInfoTab extends Vue {
   columns = [
-    // {
-    //   dataIndex: 'name',
-    //   key: 'name',
-    //   slots: { title: 'customTitle' },
-    //   scopedSlots: { customRender: 'name' },
-    // },
     {
       title: '发送时间',
-      dataIndex: 'time',
+      dataIndex: 'createdAt',
       key: 'time',
     },
     {
       title: '消息主题',
-      dataIndex: 'theme',
+      dataIndex: 'tag',
       key: 'theme',
     },
     {
       title: '标注',
-      key: 'tags',
-      dataIndex: 'tags',
+      key: 'readStatus',
+      dataIndex: 'readStatus',
       scopedSlots: { customRender: 'tags' },
     },
     {
@@ -148,29 +144,29 @@ export default class PersonalInfoTab extends Vue {
     },
   ];
 
-  data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      time: '2020.11.16 20:30',
-      theme: 'Hello world',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      time: '2020.11.16 20:30',
-      theme: 'Hello world',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      time: '2020.11.16 20:30',
-      theme: 'Hello world',
-      tags: ['cool', 'teacher'],
-    },
-  ];
+  // data = [
+  //   {
+  //     key: '1',
+  //     name: 'John Brown',
+  //     time: '2020.11.16 20:30',
+  //     theme: 'Hello world',
+  //     tags: ['nice', 'developer'],
+  //   },
+  //   {
+  //     key: '2',
+  //     name: 'Jim Green',
+  //     time: '2020.11.16 20:30',
+  //     theme: 'Hello world',
+  //     tags: ['loser'],
+  //   },
+  //   {
+  //     key: '3',
+  //     name: 'Joe Black',
+  //     time: '2020.11.16 20:30',
+  //     theme: 'Hello world',
+  //     tags: ['cool', 'teacher'],
+  //   },
+  // ];
 
   user = {
     gender:'',
@@ -180,11 +176,71 @@ export default class PersonalInfoTab extends Vue {
     role:''
   }
 
+  infoModal={}
+  modalVisible=false
   myOrganizedMatches = []
   myParticipatedMatches = []
 
   noteData=[]
   myNotifications=[]
+
+  deleteNote(record){
+    // this.myNotifications.slice(record.key,1)
+  }
+
+  async onClickInviteLink(record:Object){
+    let inviteToken={}
+    let token=''
+    let id=''
+    let url=''
+    // console.log(record['extra'])
+    // inviteToken=JSON.parse(record['extra'])
+    // token=inviteToken['token']
+    token = record['extra'].token
+    if(record['tag']==='REFEREE_INVITE'){
+      // id=inviteToken['matchId']
+      id = record['extra'].matchId
+      url=`/api/v1/match/become-referee/${id}`
+    }
+    else if(record['tag']==='UNIT_INVITE'){
+      // id=inviteToken['unitId']
+      id = record['extra'].unitId
+      url=`/api/v1/match/participate/${id}`
+    }
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: url,
+        data: {
+          token:token
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$router.push('/urlClickResult/success')
+      }
+      else
+      {
+        this.$router.push('/urlClickResult/fail')
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  showModal(record:object){
+   this.modalVisible=true
+    this.infoModal =record
+  }
+
+  handleOk(){
+    this.modalVisible=false
+  }
+
+  getNotificationDetail(){
+
+  }
 
   async getMyNotifications(){
     try {
@@ -197,13 +253,8 @@ export default class PersonalInfoTab extends Vue {
       if (response.status === 200) {
         this.myNotifications=response.data.notifications
         for(let index=0;index<this.myNotifications.length;index++){
-          let dict={}
-          dict['key']=index
-          dict['time']=this.myNotifications[index]['createAt']
-
-
-
-
+          this.myNotifications[index]['readStatus']=(this.myNotifications[index]['isRead'])?['read']:['unread']
+          this.myNotifications[index]['key']=index
         }
         console.log(this.myNotifications)
       }
@@ -310,5 +361,9 @@ ul,li {
 }
 .row{
   margin-left: 10%;
+}
+
+.inviteLink{
+  color: dodgerblue;
 }
 </style>
