@@ -2,7 +2,7 @@
   <div>
   <a-result v-if="this.$route.params.resultType==='fail'" id="fail" status="403" title="403" sub-title="Sorry, you are not authorized to access this page.">
     <template #extra>
-      <a-button type="primary">
+      <a-button @click="goHome" type="primary">
         Back Home
       </a-button>
     </template>
@@ -12,8 +12,8 @@
         <a-icon type="smile" theme="twoTone" />
       </template>
       <template #extra>
-        <a-button type="primary">
-          Next
+        <a-button @click="goHome" type="primary">
+          Back Home
         </a-button>
       </template>
     </a-result>
@@ -31,6 +31,9 @@ export default class UrlClickResult extends Vue{
   resultType=false;
   mounted(){
 
+  }
+  goHome(){
+    this.$router.push('/home')
   }
 }
 </script>

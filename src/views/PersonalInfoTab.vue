@@ -87,7 +87,7 @@
                         <span  slot='action' slot-scope="text, record">
 <!--                          <a>查看详情</a>-->
                           <a-divider type="vertical" />
-                          <a @click="deleteNote(record)">删除</a>
+                          <a class="delete-action" @click="onDelete(record)">删除</a>
                           <a-divider type="vertical" />
                           <a @click="showModal(record)"  class="ant-dropdown-link">查看详情<a-icon type="down" /> </a>
                           <a-modal :mask="false" v-model="modalVisible" :title="infoModal.title" @ok="handleOk">
@@ -144,29 +144,6 @@ export default class PersonalInfoTab extends Vue {
     },
   ];
 
-  // data = [
-  //   {
-  //     key: '1',
-  //     name: 'John Brown',
-  //     time: '2020.11.16 20:30',
-  //     theme: 'Hello world',
-  //     tags: ['nice', 'developer'],
-  //   },
-  //   {
-  //     key: '2',
-  //     name: 'Jim Green',
-  //     time: '2020.11.16 20:30',
-  //     theme: 'Hello world',
-  //     tags: ['loser'],
-  //   },
-  //   {
-  //     key: '3',
-  //     name: 'Joe Black',
-  //     time: '2020.11.16 20:30',
-  //     theme: 'Hello world',
-  //     tags: ['cool', 'teacher'],
-  //   },
-  // ];
 
   user = {
     gender:'',
@@ -184,8 +161,70 @@ export default class PersonalInfoTab extends Vue {
   noteData=[]
   myNotifications=[]
 
-  deleteNote(record){
-    // this.myNotifications.slice(record.key,1)
+  async readNote(record){
+    let id = this.myNotifications[record.key]['notificationId']
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/notification/${id}`,
+      })
+      if (response.status === 200) {
+
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  onDelete(record){
+    this.$bvModal.msgBoxConfirm('确定要删除这封站内信吗？', {
+      title: '删除站内信',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+         if(value===true){
+           this.deleteNote(record)
+         }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
+  async deleteNote(record){
+    let id = this.myNotifications[record.key]['notificationId']
+    this.myNotifications.splice(record.key,1)
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: '/api/v1/notification',
+        data: {
+          notifications: [id]
+        }
+      })
+      if (response.status === 200) {
+        this.$message.success('删除成功！')
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
   }
 
   async onClickInviteLink(record:Object){
@@ -193,9 +232,6 @@ export default class PersonalInfoTab extends Vue {
     let token=''
     let id=''
     let url=''
-    // console.log(record['extra'])
-    // inviteToken=JSON.parse(record['extra'])
-    // token=inviteToken['token']
     token = record['extra'].token
     if(record['tag']==='REFEREE_INVITE'){
       // id=inviteToken['matchId']
@@ -229,29 +265,33 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
-  showModal(record:object){
+  showModal(record){
+    this.myNotifications[record.key]['readStatus']=['read']
    this.modalVisible=true
     this.infoModal =record
+    this.readNote(record)
   }
 
   handleOk(){
     this.modalVisible=false
+    window.location.reload()
   }
 
-  getNotificationDetail(){
 
-  }
 
   async getMyNotifications(){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
         method: 'get',
-        url: '/api/v1/notification'
+        url: '/api/v1/notification',
+        data:{
+          pageSize:9999
+        }
       })
       // 对response做处理
       if (response.status === 200) {
-        this.myNotifications=response.data.notifications
+        this.myNotifications=response.data.notifications.reverse()
         for(let index=0;index<this.myNotifications.length;index++){
           this.myNotifications[index]['readStatus']=(this.myNotifications[index]['isRead'])?['read']:['unread']
           this.myNotifications[index]['key']=index
@@ -364,6 +404,9 @@ ul,li {
 }
 
 .inviteLink{
+  color: dodgerblue;
+}
+.delete-action{
   color: dodgerblue;
 }
 </style>
