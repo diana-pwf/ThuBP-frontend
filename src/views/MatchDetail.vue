@@ -53,15 +53,15 @@
             </span>
               <div class='row' style='margin-top: 5ex'>
                 <div class='col-md-4'>
-                  <h3><i class="fas fa-box"></i>5</h3>
+                  <h3><i class="fas fa-box"></i>{{this.match.teams.length}}</h3>
                   <h5>比赛队伍</h5>
                 </div>
                 <div class='col-md-4'>
-                  <h3 class='text-success'><i class="fas fa-box"></i>55</h3>
+                  <h3 class='text-success'><i class="fas fa-box"></i>{{this.match.totalMember}}</h3>
                   <h5 class='text-success'>比赛选手</h5>
                 </div>
                 <div class='col-md-4'>
-                  <h3 class='text-warning'><i class="fas fa-box"></i> 7</h3>
+                  <h3 class='text-warning'><i class="fas fa-box"></i> {{this.match.referees.length}}</h3>
                   <h5 class='text-warning'>比赛裁判</h5>
                 </div>
               </div>
@@ -200,9 +200,9 @@
                   <span class="list_title">裁判列表</span>
                   <InviteUser type="InviteReferee" :unit="match"></InviteUser>
                   <ul id="referee">
-                    <li v-for="(item,index) in new Array(5).fill(1)" :key="index">
+                    <li v-for="(item,index) in this.match.referees" :key="index">
                       <a-comment>
-                        <a slot="author">裁判名称</a>
+                        <a slot="author">{{item.username}}</a>
                         <a-avatar
                             slot="avatar"
                             shape="square"
@@ -382,6 +382,8 @@ export default class MatchDetail extends Vue{
   isParticipant = false
   myUnitId = -1
 
+
+
   form = {
     name: '',
     description: ''
@@ -409,6 +411,7 @@ export default class MatchDetail extends Vue{
         organizerName: res.data.findMatchById.organizerUser.username,
         targetGroup: res.data.findMatchById.targetGroup,
         teams: res.data.findMatchById.units,
+        referees:res.data.findMatchById.referees,
         minUnitMember: res.data.findMatchById.minUnitMember,
         maxUnitMember: res.data.findMatchById.maxUnitMember
       }
@@ -417,6 +420,11 @@ export default class MatchDetail extends Vue{
       {
         this.isSingleMatch = true
       }
+      let totalMember=0
+      for(let x of this.match['teams']){
+        totalMember += x.length
+      }
+      this.match['totalMember']=totalMember
       await this.getCurrentUserRole();
     }
     catch (e) {

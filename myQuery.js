@@ -70,6 +70,9 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
                 userId
             }
         }
+        referees {
+            username
+        }
         minUnitMember
         maxUnitMember
     }
