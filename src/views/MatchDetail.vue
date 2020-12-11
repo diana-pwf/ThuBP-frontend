@@ -250,7 +250,7 @@
                       </a-descriptions>
                     </div>
                     </div>
-                          <a-table class="table" :columns="columns" :data-source="data">
+                          <a-table  class="table" :columns="columns" :data-source="data">
                             <a slot="name" slot-scope="text">{{ text }}</a>
                             <span slot="customTitle">比赛名称</span>
                             <span slot="tags" slot-scope="tags">
@@ -351,7 +351,6 @@ export default class MatchDetail extends Vue{
       tags: ['nice', 'on_process'],
     }
   ]
-
 
 
 

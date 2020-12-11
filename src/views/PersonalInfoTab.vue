@@ -72,7 +72,7 @@
                 </div>
               </div>
               <div id="msg-list">
-                      <a-table :columns="columns" :data-source="myNotifications">
+                      <a-table @change="handleTableChange" :pagination="pagination" :columns="columns" :data-source="myNotifications">
 <!--                        <a slot="name" slot-scope="text">{{ text }}</a>-->
 <!--                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>-->
                         <span slot="tags" slot-scope="tags">
@@ -160,6 +160,21 @@ export default class PersonalInfoTab extends Vue {
 
   noteData=[]
   myNotifications=[]
+
+
+  pagination={
+    pageSize:10,
+    total:0,
+    current:0
+  }
+
+  handleTableChange(pagination){
+    console.log(pagination.current)
+    console.log(pagination)
+    this.pagination=pagination
+    let page=pagination.current - 1
+    this.getMyNotifications(page,pagination.pageSize)
+  }
 
   async readNote(record){
     let id = this.myNotifications[record.key]['notificationId']
@@ -279,18 +294,20 @@ export default class PersonalInfoTab extends Vue {
 
 
 
-  async getMyNotifications(){
+  async getMyNotifications(page,pageSize){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
         method: 'get',
         url: '/api/v1/notification',
-        data:{
-          pageSize:9999
+        params:{
+          page:page,
+          pageSize:pageSize
         }
       })
       // 对response做处理
       if (response.status === 200) {
+        this.pagination.total=response.data.total
         this.myNotifications=response.data.notifications.reverse()
         for(let index=0;index<this.myNotifications.length;index++){
           this.myNotifications[index]['readStatus']=(this.myNotifications[index]['isRead'])?['read']:['unread']
@@ -349,7 +366,7 @@ export default class PersonalInfoTab extends Vue {
         this.user.username = response.data.username
         await this.getMyOrganizeMatch(this.user.userId)
         await this.getMyParticipateMatch(this.user.userId)
-        await this.getMyNotifications();
+        await this.getMyNotifications(0,10);
       }
       else
       {
