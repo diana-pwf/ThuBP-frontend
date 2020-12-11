@@ -58,17 +58,17 @@
             </span>
             <div>
               <div class='row' style='margin-top: 5ex'>
+<!--                <div class='col-md-4'>-->
+<!--                  <h3><i class="fas fa-box"></i>5</h3>-->
+<!--                  <h5>我的待办</h5>-->
+<!--                </div>-->
                 <div class='col-md-4'>
-                  <h3><i class="fas fa-box"></i>5</h3>
-                  <h5>我的待办</h5>
+                  <h3 class='text-success'><i class="fas fa-box"></i>{{this.pagination.total}}</h3>
+                  <h5 class='text-success'>收到消息数</h5>
                 </div>
                 <div class='col-md-4'>
-                  <h3 class='text-success'><i class="fas fa-box"></i>9</h3>
-                  <h5 class='text-success'>本周累计收到消息</h5>
-                </div>
-                <div class='col-md-4'>
-                  <h3 class='text-warning'><i class="fas fa-box"></i> 7</h3>
-                  <h5 class='text-warning'>本周累计发送消息</h5>
+                  <h3 class='text-warning'><i class="fas fa-box"></i>{{this.unreadNote}}</h3>
+                  <h5 class='text-warning'>未读消息数</h5>
                 </div>
               </div>
               <div id="msg-list">
@@ -90,9 +90,14 @@
                           <a class="delete-action" @click="onDelete(record)">删除</a>
                           <a-divider type="vertical" />
                           <a @click="showModal(record)"  class="ant-dropdown-link">查看详情<a-icon type="down" /> </a>
-                          <a-modal :mask="false" v-model="modalVisible" :title="infoModal.title" @ok="handleOk">
+                          <a-modal :mask="false" v-model="modalVisible" :title="infoModal.title" >
                             <p>{{infoModal.content}}</p>
                             <a @click="onClickInviteLink(infoModal)" class="inviteLink" v-if="infoModal.tag==='REFEREE_INVITE'||infoModal.tag==='UNIT_INVITE'">点击链接同意邀请</a>
+                            <template slot="footer">
+                                  <a-button key="read" type="primary" @click="handleOk(infoModal)">
+                                    已读
+                                  </a-button>
+                            </template>
                           </a-modal>
                         </span>
                       </a-table>
@@ -157,6 +162,7 @@ export default class PersonalInfoTab extends Vue {
   modalVisible=false
   myOrganizedMatches = []
   myParticipatedMatches = []
+  unreadNote=0
 
   noteData=[]
   myNotifications=[]
@@ -168,15 +174,33 @@ export default class PersonalInfoTab extends Vue {
     current:0
   }
 
+  async getUnreadNoteNum(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/notification/unread',
+      })
+      if (response.status === 200) {
+        this.unreadNote=response.data.unread
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
   handleTableChange(pagination){
-    console.log(pagination.current)
-    console.log(pagination)
     this.pagination=pagination
     let page=pagination.current - 1
     this.getMyNotifications(page,pagination.pageSize)
   }
 
   async readNote(record){
+    console.log('readNote')
     let id = this.myNotifications[record.key]['notificationId']
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -284,11 +308,12 @@ export default class PersonalInfoTab extends Vue {
     this.myNotifications[record.key]['readStatus']=['read']
    this.modalVisible=true
     this.infoModal =record
-    this.readNote(record)
   }
 
-  handleOk(){
+  async handleOk(record){
     this.modalVisible=false
+    await this.readNote(record)
+    await this.getUnreadNoteNum()
     window.location.reload()
   }
 
@@ -366,7 +391,8 @@ export default class PersonalInfoTab extends Vue {
         this.user.username = response.data.username
         await this.getMyOrganizeMatch(this.user.userId)
         await this.getMyParticipateMatch(this.user.userId)
-        await this.getMyNotifications(0,10);
+        await this.getMyNotifications(0,10)
+        await this.getUnreadNoteNum()
       }
       else
       {

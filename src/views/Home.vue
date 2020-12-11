@@ -31,7 +31,7 @@
             <Pagination class="pagination" :total="30"></Pagination>
           </a-tab-pane>
           <a-tab-pane key="3" tab="网球">
-            <ResultCardList class="matchLists" :match-lists="this.matchesList"  ></ResultCardList>
+            <ResultCardList :is-center="true" class="matchLists" :match-lists="this.matchesList"  ></ResultCardList>
           </a-tab-pane>
           <a-tab-pane key="4" tab="羽毛球">
             Content of Tab Pane 3
