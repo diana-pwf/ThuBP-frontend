@@ -75,35 +75,22 @@
         </b-card>
         <div id="details">
           <h3><b-badge pill variant="warning">比赛动态</b-badge></h3>
-          <a-timeline>
-            <li v-for="(item,index) in recordList" :key="index">
-              <a-timeline-item :position="getDirection(item.team)">
-                {{item.team}}:{{item.description}}
-              </a-timeline-item>
-            </li>
-            <a-timeline-item :position="'right'">Create a services site 2015-09-01</a-timeline-item>
-<!--            <a-timeline-item>Create a services site 2015-09-01-->
-<!--            <a-icon type="close-circle"/></a-timeline-item>-->
-<!--            <a-timeline-item color="green">-->
-<!--              Solve initial network problems 2015-09-01-->
-<!--            </a-timeline-item>-->
-<!--            <a-timeline-item>-->
-<!--              <a-icon slot="dot" type="clock-circle-o" style="font-size: 16px;" />-->
-<!--              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque-->
-<!--              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto-->
-<!--              beatae vitae dicta sunt explicabo.-->
-<!--            </a-timeline-item>-->
-<!--            <a-timeline-item color="red">-->
-<!--              Network problems being solved 2015-09-01-->
-<!--            </a-timeline-item>-->
-<!--            <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>-->
-<!--            <a-timeline-item>-->
-<!--              <a-icon slot="dot" type="clock-circle-o" style="font-size: 16px;" />-->
-<!--              Technical testing 2015-09-01-->
-<!--            </a-timeline-item>-->
+          <a-timeline mode="alternate">
+            <a-timeline-item :color="getColor(item.team)" :position="getDirection(item.team)" v-for="(item,index) in recordList" :key="index">
+              {{item.team}}:{{item.description}}
+              <a-popover>
+                <template slot="content">
+                  <span>Click to delete it</span>
+                </template>
+                <a-icon id="delete-icon" type="close-circle"
+                        theme="twoTone" two-tone-color="red"
+                        @click="deleteRecord(item.id)"
+                        title="click to delete"/>
+              </a-popover>
+            </a-timeline-item>
           </a-timeline>
           <div>
-            <h3><b-badge pill variant="warning">增加记录</b-badge></h3>
+            <h3><b-badge pill variant="primary">增加记录</b-badge></h3>
             <a-form-model ref="ruleForm"
                           :model="form"
                           :rules="rules"
@@ -165,18 +152,22 @@ export default class GameDetail extends Vue {
 
   recordList = [
     {
+      id: '0',
       team: 'unit0',
       description:'球出界'
     },
     {
+      id: '1',
       team: 'unit1',
       description:'球出界'
     },
     {
+      id: '2',
       team: 'unit0',
       description:'球出界'
     },
     {
+      id: '3',
       team: 'unit0',
       description:'球出界'
     },
@@ -191,6 +182,21 @@ export default class GameDetail extends Vue {
     {
       return 'right'
     }
+  }
+
+  getColor(teamname){
+    if(teamname === 'unit0')
+    {
+      return 'blue'
+    }
+    else
+    {
+      return 'green'
+    }
+  }
+
+  deleteRecord(id) {
+    this.$message.success('delete record success!')
   }
 
 
@@ -347,6 +353,10 @@ li {
 
 #record-content >>> p {
  text-align: left;
+}
+
+>>> #delete-icon {
+  vertical-align: 0.1em;
 }
 
 </style>

@@ -2,7 +2,7 @@
   <div id="personalMenu">
     <Navigation :username="user.username"></Navigation>
     <div id="menu">
-      <div style="width: 100%; height:100%">
+      <div>
         <a-tabs
             :default-active-key = this.$route.params.key
             :activeKey = this.$route.params.key
@@ -38,18 +38,44 @@
               <a-icon type="schedule" />
                 创建的比赛
             </span>
-            <ResultCardList
-                :matchLists="this.myOrganizedMatches">
-            </ResultCardList>
+            <ul class="wrapper">
+              <li class="list" v-for="(item,index) in this.onShowOrganizedMatches">
+                <SearchResultCard class="card" :matchId="item.matchId">
+                  <img
+                      alt="example"
+                      src="background.png"
+                      slot="card-img"
+                  />
+                  <h2 slot="card-title"> {{item.name}}  </h2>
+                  <p slot="card-content"> {{item.description}} </p>
+                </SearchResultCard>
+              </li>
+            </ul>
+            <a-pagination :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
+                          @change="onOrganizedMatchesPageChange"
+            />
           </a-tab-pane>
           <a-tab-pane  key="3">
             <span slot="tab">
               <a-icon type="schedule" />
                 参加的比赛
             </span>
-            <ResultCardList
-                :match-lists="this.myParticipatedMatches">
-            </ResultCardList>
+            <ul class="wrapper">
+              <li class="list" v-for="(item,index) in this.onShowParticipatedMatches">
+                <SearchResultCard class="card" :matchId="item.matchId">
+                  <img
+                      alt="example"
+                      src="background.png"
+                      slot="card-img"
+                  />
+                  <h2 slot="card-title"> {{item.name}}  </h2>
+                  <p slot="card-content"> {{item.description}} </p>
+                </SearchResultCard>
+              </li>
+            </ul>
+            <a-pagination :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
+                          @change="onParticipatedMatchesPageChange"
+            />
           </a-tab-pane>
           <a-tab-pane  key="4">
             <span slot="tab">
@@ -119,9 +145,10 @@ import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
 import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
 import {isTypeSystemDefinitionNode} from "graphql";
+import SearchResultCard from "@/components/SearchResultCard.vue";
 
 @Component({
-  components: {ResultCardList, Navigation},
+  components: {SearchResultCard, ResultCardList, Navigation},
 })
 
 export default class PersonalInfoTab extends Vue {
@@ -149,7 +176,6 @@ export default class PersonalInfoTab extends Vue {
     },
   ];
 
-
   user = {
     gender:'',
     thuId:'',
@@ -162,16 +188,34 @@ export default class PersonalInfoTab extends Vue {
   modalVisible=false
   myOrganizedMatches = []
   myParticipatedMatches = []
+  onShowOrganizedMatches = []
+  onShowParticipatedMatches = []
+
   unreadNote=0
 
   noteData=[]
   myNotifications=[]
 
-
   pagination={
     pageSize:10,
     total:0,
     current:0
+  }
+
+  onOrganizedMatchesPageChange(page, pageSize)
+  {
+    let total = this.myOrganizedMatches.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowOrganizedMatches = this.myOrganizedMatches.slice(left, right)
+  }
+
+  onParticipatedMatchesPageChange(page, pageSize)
+  {
+    let total = this.myParticipatedMatches.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowParticipatedMatches = this.myParticipatedMatches.slice(left, right)
   }
 
   async getUnreadNoteNum(){
@@ -317,8 +361,6 @@ export default class PersonalInfoTab extends Vue {
     window.location.reload()
   }
 
-
-
   async getMyNotifications(page,pageSize){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -356,6 +398,7 @@ export default class PersonalInfoTab extends Vue {
         variables:{userIds:userId}
       });
       this.myOrganizedMatches = res.data.findUserById[0].organizedMatches
+      this.onOrganizedMatchesPageChange(1, 6)
     }
     catch (e) {
       console.log(e);
@@ -369,6 +412,7 @@ export default class PersonalInfoTab extends Vue {
         variables:{userIds:userId}
       });
       this.myParticipatedMatches = res.data.findUserById[0].participatedMatches
+      this.onParticipatedMatchesPageChange(1, 6)
     }
     catch (e) {
       console.log(e);
@@ -418,6 +462,19 @@ export default class PersonalInfoTab extends Vue {
 </script>
 
 <style scoped>
+.wrapper{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0
+}
+
 #personalMenu {
   max-width: 100%;
   margin: 0;

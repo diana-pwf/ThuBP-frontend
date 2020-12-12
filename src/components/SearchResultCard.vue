@@ -44,7 +44,7 @@ export default class SearchResultCard extends Vue {
 <style scoped>
 
 #card {
-  width: 75%;
+  width: 100%;
 }
 
 #card-center {

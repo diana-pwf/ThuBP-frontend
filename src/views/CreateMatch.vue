@@ -71,6 +71,7 @@
           name="file"
           :multiple="false"
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          :before-upload="beforeUpload"
       >
         <p class="ant-upload-drag-icon">
           <a-icon type="inbox" />
@@ -106,6 +107,31 @@ import Navigation from "@/components/Navigation.vue";
 })
 
 export default class CreateMatch extends Vue {
+  async beforeUpload(file) {
+    console.log("qwq")
+    try {
+      console.log(file)
+      let response = await axios({
+        method: 'post',
+        url: '/api/v1/upload',
+        params: {
+          uploadType: "AVATAR"
+        },
+        data: {
+          suffix: "jpg",
+          uploadType: "AVATAR"
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      console.log(response.data)
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   labelCol = { span: 4 }
   wrapperCol = { span: 20 }
 
