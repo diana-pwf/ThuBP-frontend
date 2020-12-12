@@ -5,7 +5,7 @@
       <div id="photo-and-comment">
         <div id="photo">
           <b-container fluid class="p-3">
-            <b-img thumbnail fluid src="background.png" alt="Image 3"></b-img>
+            <b-img thumbnail fluid src="sweet.jpg" alt="Image 3"></b-img>
           </b-container>
         </div>
         <div id="comment-list">
@@ -34,43 +34,96 @@
         <div id="my-comment">
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
           <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" />
-          <a-button id="button" type="primary">发布</a-button>
+          <a-button class="button" type="primary">发布</a-button>
         </div>
       </div>
       <a-divider type="vertical" id="divider"/>
       <div id="records">
-        <h1><b-badge variant="warning">第1轮小组赛</b-badge></h1>
-        <div id="team-info">
-          <span id="unit0-name">可怜程序员队</span>
-          <span>VS</span>
-          <span id="unit1-name">凶残bug队</span>
-        </div>
-        <div id="game-info">
-          <span id="unit0-score" class="gameScore">10</span>
-          <span class="gameScore">:</span>
-          <span id="unit1-score" class="gameScore">12</span>
-        </div>
-        <div id="game-detail">
-          <!--<h6>违规/换人记录</h6>
-          <a-button>添加</a-button>
-          <ul>
-            <li>
-              <a-comment id="record-content">
-                <a slot="author">这是一支队伍名称</a>
-                <a-avatar
-                    slot="avatar"
-                    shape="square"
-                    size="large"
-                    :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                  Record
-                </a-avatar>
-                <p slot="content">
-                  这是一段简短的对比赛队伍的描述。
-                </p>
-              </a-comment>
+        <b-card id="card" no-body class="text-center">
+          <div id="time-and-place">
+          <p id="date">2020/12/12</P>
+          <p>紫荆操场</p>
+          </div>
+          <div id="qwq">
+            <div id="unit-info">
+              <div>
+                <b-badge id="unit0-name" class="unit-name-info unit-name" pill variant="light">
+                可怜程序员队
+                </b-badge>
+                <div class="unit-score-info" id="unit0-score">0</div>
+                <div id="score-change">
+                  <span>本队分数增加（扣分为负）：</span>
+                  <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
+                  <a-button>提交</a-button>
+                </div>
+              </div>
+              <div id="center-symbol">
+                <div class="unit-name-info">VS</div>
+                <div class="unit-score-info">-</div>
+              </div>
+              <div>
+                <b-badge id="unit1-name" class="unit-name-info unit-name" pill variant="light">
+                  凶残bug队
+                </b-badge>
+                <div class="unit-score-info" id="unit1-score">3</div>
+                <span>本队分数增加（扣分为负）：</span>
+                <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
+                <a-button>提交</a-button>
+              </div>
+            </div>
+          </div>
+        </b-card>
+        <div id="details">
+          <h3><b-badge pill variant="warning">比赛动态</b-badge></h3>
+          <a-timeline>
+            <li v-for="(item,index) in recordList" :key="index">
+              <a-timeline-item :position="getDirection(item.team)">
+                {{item.team}}:{{item.description}}
+              </a-timeline-item>
             </li>
-          </ul>-->
+            <a-timeline-item :position="'right'">Create a services site 2015-09-01</a-timeline-item>
+<!--            <a-timeline-item>Create a services site 2015-09-01-->
+<!--            <a-icon type="close-circle"/></a-timeline-item>-->
+<!--            <a-timeline-item color="green">-->
+<!--              Solve initial network problems 2015-09-01-->
+<!--            </a-timeline-item>-->
+<!--            <a-timeline-item>-->
+<!--              <a-icon slot="dot" type="clock-circle-o" style="font-size: 16px;" />-->
+<!--              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque-->
+<!--              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto-->
+<!--              beatae vitae dicta sunt explicabo.-->
+<!--            </a-timeline-item>-->
+<!--            <a-timeline-item color="red">-->
+<!--              Network problems being solved 2015-09-01-->
+<!--            </a-timeline-item>-->
+<!--            <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>-->
+<!--            <a-timeline-item>-->
+<!--              <a-icon slot="dot" type="clock-circle-o" style="font-size: 16px;" />-->
+<!--              Technical testing 2015-09-01-->
+<!--            </a-timeline-item>-->
+          </a-timeline>
+          <div>
+            <h3><b-badge pill variant="warning">增加记录</b-badge></h3>
+            <a-form-model ref="ruleForm"
+                          :model="form"
+                          :rules="rules"
+                          :label-col="{span: 4}"
+                          :wrapper-col="{span: 20}"
+            >
+              <a-form-model-item prop="name" label="选择队伍">
+                <a-radio-group :options="[{ label: 'unit0', value: 0 },{ label: 'unit1', value: 1 },]"
+                               :default-value="0" v-model="form.team" />
+              </a-form-model-item>
+              <a-form-model-item prop="description" label="简要说明">
+                <a-input v-model="form.description" placeholder="队员号码及事件"/>
+              </a-form-model-item>
+              <a-button class="button" type="primary" @click="onSubmit">
+                提交
+              </a-button>
+            </a-form-model>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -107,9 +160,70 @@ export default class GameDetail extends Vue {
       content:
           'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
       datetime: moment().subtract(2, 'days')
-    }
-]
+    },
+  ]
 
+  recordList = [
+    {
+      team: 'unit0',
+      description:'球出界'
+    },
+    {
+      team: 'unit1',
+      description:'球出界'
+    },
+    {
+      team: 'unit0',
+      description:'球出界'
+    },
+    {
+      team: 'unit0',
+      description:'球出界'
+    },
+  ]
+
+  getDirection(teamname){
+    if(teamname === 'unit0')
+    {
+      return 'left'
+    }
+    else
+    {
+      return 'right'
+    }
+  }
+
+
+  form = {
+    name: '',
+    description: ''
+  }
+
+  unit0ScoreDelta = 0
+  unit1ScoreDelta = 0
+
+  rules = {
+    description: [
+      { required: true, message: '请简要描述'},
+    ]
+  }
+
+  onSubmit() {
+    //@ts-ignore
+    this.$refs.ruleForm.validate(valid => {
+      console.log(valid);
+      if (valid) {
+        this.createRecord();
+      } else {
+        console.log('error submit!!');
+        return false;
+      }
+    });
+  }
+
+  createRecord(){
+
+  }
 }
 </script>
 
@@ -120,6 +234,10 @@ export default class GameDetail extends Vue {
   width: 3px;
 }
 
+/*>>> #tag {*/
+/*  font-size: 20px;*/
+/*  line-height: 30px;*/
+/*}*/
 
 #content {
   display: flex;
@@ -128,19 +246,18 @@ export default class GameDetail extends Vue {
 #photo {
   margin: auto;
   margin-bottom: 10px;
-  max-width: 60%;
+  max-width: 75%;
 }
 
 #photo-and-comment {
-  width: 40%;
+  width: 50%;
   height: 100%;
   margin: 0 20px 20px 20px;
 }
 
 #records {
-  width: 60%;
-  max-height: 100%;
-  margin: 1% 20px 20px 20px;
+  width: 50%;
+  margin: 1% 20px 10px 20px;
 }
 
 #comment-list {
@@ -152,47 +269,76 @@ export default class GameDetail extends Vue {
   position: relative;
 }
 
-#button {
+.button {
   float: right;
   margin: 1%;
 }
 
-#team-info {
-  margin: auto;
-  margin-top: 3%;
+#card{
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+#time-and-place {
+  display: flex;
+}
+
+#date {
+  margin-right: 10px;
+}
+
+>>> .unit-name{
+  background-color: gainsboro;
   font-size: 2rem;
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
-  justify-items: center;
+  display: inline-flex;
 }
 
-#game-info {
+.unit-name-info {
+  font-size: 2rem;
+}
+
+.unit-score-info {
+  font-size: 4rem;
+}
+
+#unit-info {
+  display: flex;
+}
+
+#qwq {
   margin: auto;
-  font-size: 6rem;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  justify-items: center;
-}
-
-#unit0-name {
-  color: red;
-}
-
-#unit1-name {
-  color: blue;
 }
 
 #unit0-score {
-  color: red;
-  grid-column-start: 2;
+  text-align: right;
+  color: darkred;
 }
 
 #unit1-score {
-  color: blue;
+  text-align: left;
+  color: darkblue;
 }
 
-#game-detail {
-  margin: 5%;
+#unit0-name {
+  color: darkred;
+}
+
+#unit1-name {
+  color: darkblue;
+}
+
+#center-symbol {
+  margin: 0 20px 0 20px;
+  color: dimgrey;
+}
+
+#score-change {
+  margin-bottom: 20px;
+}
+
+#details {
+  min-height: 50%;
+  max-height: 70%;
 }
 
 li {

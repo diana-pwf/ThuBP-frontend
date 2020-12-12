@@ -18,7 +18,7 @@
               <img src="background.png" alt="比赛照片"/>
               <a-descriptions id="description" >
                 <a-descriptions-item label="比赛名称">
-                  {{this.match.matchName}}
+                  {{this.match.name}}
                 </a-descriptions-item>
                 <a-descriptions-item label="组织者">
                   {{this.match.organizerName}}
