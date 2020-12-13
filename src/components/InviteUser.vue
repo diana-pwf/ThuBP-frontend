@@ -40,12 +40,12 @@ export default class InviteUser extends Vue{
   showUserList = false
   userSearchKey = ""
   userSearchList=[]
-  url=""
-  method=""
+
   selectUserChange(){
     this.showUserList=true
     this.getUserList()
   }
+
   async getUserList(){
     let res = await this.$apollo.query({
       query: findUserByName,
@@ -53,14 +53,17 @@ export default class InviteUser extends Vue{
     });
     this.userSearchList=res.data.findUserByFuzzy
   }
+
   getSelectedUserName(tag){
     let index_left = tag.indexOf('"')
     let index_right = tag.slice(index_left + 1).indexOf('"')
     return tag.substr(index_left + 1, index_right)
   }
+
   chooseUser(item){
     this.selectedUserList.push(JSON.stringify([item.username,item.userId]))
   }
+
   async inviteUser(){
     //this.getRefereeToken()
     let list = []
@@ -71,19 +74,21 @@ export default class InviteUser extends Vue{
       }
     }
     console.log(list)
+    let url = ""
+    let method = ""
     if(this.type==="InviteReferee"){
-      this.url=`/api/v1/match/invite-referees/${this.unit['id']}`
-      this.method="post"
+      url = `/api/v1/match/invite-referees/${this.unit['id']}`
+      method = "post"
     }
     else  if(this.type==="InviteTeamMember"){
-      this.url=`/api/v1/match/assign-unit-token/${this.unit['id']}`
-      this.method="put"
+      url = `/api/v1/match/assign-unit-token/${this.unit['id']}`
+      method = "put"
     }
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
-        method: this.method,
-        url: this.url,
+        method: method,
+        url: url,
         data: {
           userIds:list
         }
@@ -91,6 +96,10 @@ export default class InviteUser extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('invite success!')
+        this.selectedUserList = []
+        this.showUserList = false
+        this.userSearchKey = ""
+        this.userSearchList=[]
       }
       else
       {
