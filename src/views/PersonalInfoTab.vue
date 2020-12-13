@@ -51,7 +51,7 @@
                 </SearchResultCard>
               </li>
             </ul>
-            <a-pagination :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
+            <a-pagination class="pagination" :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
                           @change="onOrganizedMatchesPageChange"
             />
           </a-tab-pane>
@@ -73,7 +73,7 @@
                 </SearchResultCard>
               </li>
             </ul>
-            <a-pagination :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
+            <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
                           @change="onParticipatedMatchesPageChange"
             />
           </a-tab-pane>
@@ -131,6 +131,7 @@
               </div>
           </a-tab-pane>
         </a-tabs>
+
       </div>
     </div>
   </div>
@@ -462,6 +463,12 @@ export default class PersonalInfoTab extends Vue {
 </script>
 
 <style scoped>
+.pagination {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
 .wrapper{
   display: grid;
   grid-template-columns: 1fr 1fr;

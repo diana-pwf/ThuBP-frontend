@@ -240,11 +240,6 @@ export default class GameDetail extends Vue {
   width: 3px;
 }
 
-/*>>> #tag {*/
-/*  font-size: 20px;*/
-/*  line-height: 30px;*/
-/*}*/
-
 #content {
   display: flex;
 }

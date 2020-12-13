@@ -3,8 +3,11 @@
   <Navigation :username="user.username"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
     <div class="list">
-    <ResultCardList  :match-lists="searchList"></ResultCardList>
+      <ResultCardList id="matchesList" :match-lists="onShowSearchList" :is-center="true"></ResultCardList>
     </div>
+    <a-pagination :default-current="1" :total="searchList.length" :page-size="3"
+                  @change="onMatchesPageChange"
+    />
   </div>
 </template>
 
@@ -27,10 +30,20 @@ export default class SearchResults extends Vue {
 
   matchesList=[]
   searchList=[]
+  onShowSearchList=[]
+
   path=""
-   getSearchResult(list){
-     this.searchList=list
-   }
+
+  getSearchResult(list){
+   this.searchList=list
+  }
+
+  onMatchesPageChange(page, pageSize) {
+    let total = this.matchesList.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowSearchList = this.searchList.slice(left, right)
+  }
 
   async init(){
     let res = await this.$apollo.query({
@@ -44,6 +57,8 @@ export default class SearchResults extends Vue {
     else if( this.$route.params.mode === '1'){
       this.searchList = this.matchesList.filter((matches)=>{return matches.organizerUser.username.match(this.$route.params.value)})
     }
+
+    this.onMatchesPageChange(1, 3)
   }
 
   async getUserInfo()
@@ -79,9 +94,14 @@ export default class SearchResults extends Vue {
 
 <style scoped>
 .list{
-  margin: 2% 10%;
-  width:80%;
+  margin: 2% 10% auto 10%;
+  width:60%;
 }
+
+#matchesList {
+  margin: auto;
+}
+
 .search{
   margin-left: 30%;
   margin-right: 20%;

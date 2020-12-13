@@ -10,7 +10,7 @@
           <a-tab-pane key="1" tab="综合">
             <Carousel></Carousel>
             <ul class="wrapper">
-              <li class="list" v-for="(item,index) in this.matchesList ">
+              <li class="list" v-for="(item,index) in this.onShowMatchesList ">
                 <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
                   <img
                           slot="cover"
@@ -25,13 +25,21 @@
                 </a-card>
               </li>
             </ul>
+            <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="8"
+                          @change="onMatchesPageChange"
+            />
           </a-tab-pane>
-          <a-tab-pane  key="2" tab="篮球" force-render>
-            <ResultCardList class="matchLists" :match-lists="this.matchesList" :isCenter="true"></ResultCardList>
-            <Pagination class="pagination" :total="30"></Pagination>
+          <a-tab-pane key="2" tab="篮球" force-render>
+            <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>
+            <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"
+                          @change="onMatchesPageChange"
+            />
           </a-tab-pane>
           <a-tab-pane key="3" tab="网球">
-            <ResultCardList :is-center="true" class="matchLists" :match-lists="this.matchesList"  ></ResultCardList>
+            <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>
+            <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"
+                          @change="onMatchesPageChange"
+            />
           </a-tab-pane>
           <a-tab-pane key="4" tab="羽毛球">
             Content of Tab Pane 3
@@ -44,7 +52,8 @@
           </a-tab-pane>
         </a-tabs>
       </div>
-      </div>
+    </div>
+
   </div>
 </template>
 
@@ -68,6 +77,7 @@ export default class Home extends Vue {
   }
 
   matchesList=[]
+  onShowMatchesList=[]
 
   async getMatchesList(type){
     let res = await this.$apollo.query({
@@ -75,7 +85,23 @@ export default class Home extends Vue {
       variables:{typeIds:type}
     });
     this.matchesList=res.data.findMatchesByType
+    if (!type.length)
+    {
+      this.onMatchesPageChange(1, 8)
+    }
+    else
+    {
+      this.onMatchesPageChange(1, 3)
+    }
     // console.log(this.matchesList)
+  }
+
+  onMatchesPageChange(page, pageSize)
+  {
+    let total = this.matchesList.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowMatchesList = this.matchesList.slice(left, right)
   }
 
   callback(key){
@@ -89,6 +115,7 @@ export default class Home extends Vue {
       this.getMatchesList(['tennis'])
     }
   }
+
   goMatchDetail(item){
     this.$router.push(`/matchDetail/${item.matchId}`)
   }
@@ -138,6 +165,11 @@ export default class Home extends Vue {
   align-items: center;
   padding: 16px;
 }
+.pagination {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
 .container {
   max-width: 1200px;
 }
@@ -159,12 +191,10 @@ export default class Home extends Vue {
 .matchLists{
   margin: auto;
 }
-.pagination{
-  margin-top: 2%;
-  margin-bottom: 2%;
-}
+
 #search{
   margin: auto;
   width: 50%;
 }
+
 </style>
