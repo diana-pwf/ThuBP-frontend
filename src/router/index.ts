@@ -77,7 +77,7 @@ const routes: Array<RouteConfig> = [
     path:'/urlClickResult/:resultType',
     name:'urlClickResult',
     component:UrlClickResult
-  }
+  },
 ]
 
 const router = new VueRouter({

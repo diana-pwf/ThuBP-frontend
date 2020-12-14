@@ -422,7 +422,7 @@ export default class MatchDetail extends Vue{
       }
       let totalMember=0
       for(let x of this.match['teams']){
-        totalMember += x.length
+        totalMember += x.members.length
       }
       this.match['totalMember']=totalMember
       await this.getCurrentUserRole();
@@ -453,7 +453,7 @@ export default class MatchDetail extends Vue{
           return
         }
         //@ts-ignore
-        if (this.match.teams.length === 0)
+        if (this.match['teams'].length === 0)
         {
           this.isParticipant = false
           return
