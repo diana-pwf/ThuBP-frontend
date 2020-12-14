@@ -225,7 +225,7 @@
                 <a-icon type="unordered-list" />
                   比赛列表
               </span>
-              <b-button class="button" block variant="outline-success">
+              <b-button @click="gotoCreateRound" class="button" block variant="outline-success">
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
@@ -578,6 +578,11 @@ export default class MatchDetail extends Vue{
   {
     this.getMatchDetail();
   }
+
+  gotoCreateRound(){
+    this.$router.push(`/CreateRound/${this.$route.params.matchId}`)
+  }
+
 }
 </script>
 

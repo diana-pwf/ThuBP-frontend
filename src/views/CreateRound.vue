@@ -2,7 +2,7 @@
   <div>
     <Navigation :username="user.username"></Navigation>
   <div id="container">
-    <b-form class="form">
+    <b-form  class="form">
       <b-form-group
           id="input-group-1"
           label='轮次名称'
@@ -11,9 +11,20 @@
         <b-form-input
             id="input-1"
             v-model="roundName"
-            type="email"
             required
             placeholder="请输入轮次名称"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+          id="input-group-5"
+          label='轮次简介'
+          label-for="input-5"
+      >
+        <b-form-input
+            id="input-5"
+            v-model="roundDescription"
+            placeholder="请输入轮次简介"
         ></b-form-input>
       </b-form-group>
 
@@ -26,13 +37,22 @@
         ></b-form-select>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="添加参加本轮次比赛的队伍" label-for="input-2">
+      <b-form-group  id="input-group-2" label="添加参加本轮次比赛的队伍" label-for="input-2">
         <b-form-input
             id="input-2"
             v-model="teamSearchKey"
+            @input="onChange"
             required
             placeholder="请输入查找的队伍名"
         ></b-form-input>
+        <b-list-group  id="list" class="wrapper" v-if="showTeamList">
+          <b-list-group-item @click="chooseTeam(item)" class="d-flex align-items-center" v-for="(item,index) in  searchTeamList ">
+            <!--                          <span>{{item.username}}</span>-->
+            <b-avatar variant="success" icon="people-fill" class="mr-3"></b-avatar>
+            <span class="mr-auto">{{item.name}}</span>
+            <b-badge variant="info">{{item.unitId}}</b-badge>
+          </b-list-group-item>
+        </b-list-group>
       </b-form-group>
       <h4><b-badge style="margin-top: 20px" variant="success">选择队伍列表</b-badge></h4>
       <b-table class="table" striped hover :items="teamItems" :fields="teamFields">
@@ -60,7 +80,7 @@
       </b-table>
       <b-button block variant="outline-warning">自定义添加比赛</b-button>
       <div id="submit-button">
-      <b-button variant="success" size="lg" >提交轮次信息</b-button>
+      <b-button  variant="success" size="lg" >提交轮次信息</b-button>
       </div>
     </b-form>
   </div>
@@ -71,22 +91,14 @@
 <script>
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
-import {concat} from "apollo-link";
-import {getRoundStrategyTypes} from "../../myQuery";
+import {getMatchRelatedTeams, getRoundStrategyTypes} from "../../myQuery";
 import Navigation from "@/components/Navigation.vue";
 
 @Component({components:{Navigation}})
 
 export default class CreateRound extends Vue{
-  teamFields = ['name', 'organiser', 'description','action']
-  teamItems=[
-    {
-      name:'yuki_team',organiser:'yuki',description:'qwq'
-    },
-    {
-      name:'yuki_team',organiser:'yuki',description:'qwq'
-    }
-  ]
+  teamFields = ['name', 'creator', 'description','action']
+  teamItems=[]
   gameFields=['unit0','unit1','time','location','edit','remove']
   gameItems=[
     {
@@ -94,18 +106,8 @@ export default class CreateRound extends Vue{
     }
   ]
 
-  onEdit(row){
-    row.item.edit=true
-  }
-
-  onSave(row){
-    row.item.edit=false
-  }
-
-  onCancel(row){
-    row.item.edit=false
-  }
-
+  showTeamList=false
+  roundDescription=''
   user={
     username: ''
   }
@@ -115,17 +117,74 @@ export default class CreateRound extends Vue{
   roundStrategy=''
   strategyOptions=[]
   strategyOptionNames=[]
+  teamsList=[]
+
+  onEdit(row){
+    row.item.edit=true
+  }
+
+  onSave(row){
+    row.item.edit=false
+  }
+
+  chooseTeam(item){
+    let team={}
+    team['name']=item.name
+    team['creator']=item.creator.username
+    team['description']='description to be implemented'
+    this.teamItems.push(team)
+    this.hideList()
+  }
+
+  get searchTeamList(){
+    console.log(this.teamsList)
+    let list = this.teamsList.filter((teams) => {
+      return teams.name.match(this.teamSearchKey)
+    })
+    if(list.length>5){
+      return list.slice(0,5)
+    }
+    return list
+  }
+
+  onCancel(row){
+    row.item.edit=false
+  }
+
+  onChange(){
+    console.log('change')
+    this.showTeamList=true
+  }
+
+  hideList(){
+    this.showTeamList=false
+  }
+
+  async getTeamsList(){
+    try {
+      let res = await this.$apollo.query({
+        query: getMatchRelatedTeams,
+        variables:{matchId:this.$route.params.matchId}
+      })
+      this.teamsList = res.data.findMatchById.units
+    }
+    catch (e){
+        console.log(e.data)
+      }
+  }
+
+
+
   async getRoundStrategyOptions(){
     try {
       let res = await this.$apollo.query({
-        query: getRoundStrategyTypes
+        query: getRoundStrategyTypes,
       });
-      console.log(res)
       this.strategyOptions=res.data.listRoundGameStrategyTypes
       this.strategyOptionNames=this.strategyOptions.map(x=>{return x.strategyName})
   }
   catch (e){
-      console.log(e.errorMessage)
+      console.log(e.data)
   }
   }
   async getUserInfo()
@@ -154,6 +213,7 @@ export default class CreateRound extends Vue{
   mounted(){
     this.getRoundStrategyOptions()
     this.getUserInfo()
+    this.getTeamsList()
   }
 
 
@@ -178,6 +238,7 @@ export default class CreateRound extends Vue{
 
 #submit-button{
   margin-top: 30px;
+  margin-bottom: 30px;
   float: right;
 }
 

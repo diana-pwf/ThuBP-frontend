@@ -69,7 +69,7 @@ const routes: Array<RouteConfig> = [
     component:TeamDetail
   },
   {
-    path:'/createRound',
+    path:'/createRound/:matchId',
     name:'createRound',
     component:CreateRound
   },
