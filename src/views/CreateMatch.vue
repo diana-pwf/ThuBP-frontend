@@ -67,19 +67,21 @@
       <a-input-number :min="form.minTeamMember" :precision="0" v-model="form.maxTeamMember"/>
     </a-form-model-item>
     <a-form-model-item label="上传赛事照片">
-      <a-upload-dragger
-          name="file"
-          :multiple="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          :before-upload="beforeUpload"
-      >
-        <p class="ant-upload-drag-icon">
-          <a-icon type="inbox" />
-        </p>
-        <p class="ant-upload-text">
-          点击或拖拽图片文件到此处上传
-        </p>
-      </a-upload-dragger>
+      <PictureUpload @event="updateFile"></PictureUpload>
+<!--      <a-upload-dragger-->
+<!--          name="file"-->
+<!--          :multiple="false"-->
+<!--          action="https://upload-z1.qiniup.com"-->
+<!--          :before-upload="beforeUpload"-->
+<!--          :data="uploadParamObj"-->
+<!--      >-->
+<!--        <p class="ant-upload-drag-icon">-->
+<!--          <a-icon type="inbox" />-->
+<!--        </p>-->
+<!--        <p class="ant-upload-text">-->
+<!--          点击或拖拽图片文件到此处上传-->
+<!--        </p>-->
+<!--      </a-upload-dragger>-->
     </a-form-model-item>
     <a-form-model-item>
       <a-button style="float:right">
@@ -99,37 +101,19 @@ import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
+import PictureUpload from "@/components/PictureUpload.vue";
 
 @Component({
   components:{
-    Navigation
+    Navigation, PictureUpload
   }
 })
 
 export default class CreateMatch extends Vue {
-  async beforeUpload(file) {
-    console.log("qwq")
-    try {
-      console.log(file)
-      let response = await axios({
-        method: 'post',
-        url: '/api/v1/upload',
-        params: {
-          uploadType: "AVATAR"
-        },
-        data: {
-          suffix: "jpg",
-          uploadType: "AVATAR"
-        }
-      })
-      // 对response做处理
-      if (response.status !== 200) {
-        throw {response}
-      }
-      console.log(response.data)
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
-    }
+  uploadParamObj: {token?: string, key?: string} = {}
+
+  updateFile(item){
+    this.uploadParamObj = item
   }
 
   labelCol = { span: 4 }
@@ -237,16 +221,17 @@ export default class CreateMatch extends Vue {
         method: 'post',
         url: '/api/v1/match',
         data: {
-          "name": this.form.name,
+          name: this.form.name,
           //"startTime":this.form.startDate,
           //"endTime":this.form.endDate,
-          "description": this.form.description,
-          "targetGroup": this.form.targetGroup,
-          "matchTypeId": this.form.matchtypeId,
-          "publicShowUp": this.form.publicShow,
-          "publicSignUp": this.form.publicSignUp,
-          "minUnitMember": this.form.minTeamMember,
-          "maxUnitMember": this.form.maxTeamMember
+          description: this.form.description,
+          targetGroup: this.form.targetGroup,
+          matchTypeId: this.form.matchtypeId,
+          publicShowUp: this.form.publicShow,
+          publicSignUp: this.form.publicSignUp,
+          minUnitMember: this.form.minTeamMember,
+          maxUnitMember: this.form.maxTeamMember,
+          previewLarge: this.uploadParamObj.key,
         }
       })
       // 对response做处理

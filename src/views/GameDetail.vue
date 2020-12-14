@@ -23,10 +23,15 @@
 <!--                <a-tooltip slot="datetime" :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">-->
 <!--                  <span>{{ item.datetime.fromNow() }}</span>-->
 <!--                </a-tooltip>-->
+                <div>
+                <a-button size="small" type="link">编辑</a-button>
+                <a-button size="small" type="link">删除</a-button>
+                </div>
                 <a-collapse>
                   <a-collapse-panel :showArrow="false">
-                    <p>写下我的回复</p>
-                    <a-button id="reply-button" slot="extra" size="small">回复</a-button>
+                    <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" v-model="myComment"/>
+                    <a-button class="button" type="primary" @click="replyComment(item.id)">发送</a-button>
+                    <a-button id="reply-button" slot="extra" size="small" type="link">写下回复</a-button>
                   </a-collapse-panel>
                 </a-collapse>
               </a-comment>
@@ -226,13 +231,12 @@ export default class GameDetail extends Vue {
     try {
       let response = await axios({
         method: 'post',
-        url: '/api/v1/upload',
+        url: '/api/v1/comment/game/',
         params: {
-          uploadType: "AVATAR"
+
         },
         data: {
-          suffix: "jpg",
-          uploadType: "AVATAR"
+          content: this.myComment,
         }
       })
       // 对response做处理
@@ -244,6 +248,10 @@ export default class GameDetail extends Vue {
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
+  }
+
+  replyComment(id){
+
   }
 
   createRecord(){

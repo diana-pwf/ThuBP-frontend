@@ -234,7 +234,7 @@
                 <b-card-text>
                     <div>
                       <div class="matchCard">
-                    <img src="background.png" alt="赛事图片"/>
+                    <img :src="match.previewLarge" alt="赛事图片"/>
                     <div>
                       <h4>第一轮小组赛<b-button  id="edit_button" variant="danger">修改赛事</b-button></h4>
                       <a-descriptions style="margin-top:5%">
@@ -352,8 +352,6 @@ export default class MatchDetail extends Vue{
     }
   ]
 
-
-
   async getRefereeToken(){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -382,8 +380,6 @@ export default class MatchDetail extends Vue{
   isParticipant = false
   myUnitId = -1
 
-
-
   form = {
     name: '',
     description: ''
@@ -393,7 +389,6 @@ export default class MatchDetail extends Vue{
     username: ''
   }
 
-
   async getMatchDetail()
   {
     try {
@@ -401,7 +396,8 @@ export default class MatchDetail extends Vue{
         query: findMatchDetailById,
         variables:{matchId:this.$route.params.matchId}
       });
-
+      // @ts-ignore
+      // console.log(res.data.findMatchById.previewLarge)
       this.match = {
         id:res.data.findMatchById.matchId,
         description: res.data.findMatchById.description,
@@ -413,8 +409,9 @@ export default class MatchDetail extends Vue{
         teams: res.data.findMatchById.units,
         referees:res.data.findMatchById.referees,
         minUnitMember: res.data.findMatchById.minUnitMember,
-        maxUnitMember: res.data.findMatchById.maxUnitMember
+        maxUnitMember: res.data.findMatchById.maxUnitMember,
       }
+
       // @ts-ignore
       if (this.match.minUnitMember === 1 && this.match.maxUnitMember === 1)
       {
@@ -575,7 +572,7 @@ export default class MatchDetail extends Vue{
     this.form.description = ''
   }
 
-  created()
+  mounted()
   {
     this.getMatchDetail();
   }
