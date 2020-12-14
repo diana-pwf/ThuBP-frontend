@@ -15,7 +15,7 @@
                 赛事详情
             </span>
               <div id="detail">
-              <img src="background.png" alt="比赛照片"/>
+              <img :src="this.match.previewLarge" alt="比赛照片"/>
               <a-descriptions id="description" >
                 <a-descriptions-item label="比赛名称">
                   {{this.match.name}}
@@ -396,8 +396,7 @@ export default class MatchDetail extends Vue{
         query: findMatchDetailById,
         variables:{matchId:this.$route.params.matchId}
       });
-      // @ts-ignore
-      // console.log(res.data.findMatchById.previewLarge)
+
       this.match = {
         id:res.data.findMatchById.matchId,
         description: res.data.findMatchById.description,
@@ -410,7 +409,10 @@ export default class MatchDetail extends Vue{
         referees:res.data.findMatchById.referees,
         minUnitMember: res.data.findMatchById.minUnitMember,
         maxUnitMember: res.data.findMatchById.maxUnitMember,
+        previewLarge: res.data.findMatchById.previewLarge,
       }
+      // @ts-ignore
+      console.log(res.data.findMatchById.previewLarge)
 
       // @ts-ignore
       if (this.match.minUnitMember === 1 && this.match.maxUnitMember === 1)

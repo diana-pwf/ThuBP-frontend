@@ -2,12 +2,15 @@
   <div>
   <Navigation :username="user.username"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
-    <div class="list">
+    <div class="list" v-if="onShowSearchList.length">
       <ResultCardList id="matchesList" :match-lists="onShowSearchList" :is-center="true"></ResultCardList>
+      <a-pagination class="pagination" :default-current="1" :total="searchList.length" :page-size="3"
+                    @change="onMatchesPageChange"
+      />
     </div>
-    <a-pagination :default-current="1" :total="searchList.length" :page-size="3"
-                  @change="onMatchesPageChange"
-    />
+    <div v-else class="list">
+      <a-empty :description="'暂无搜索结果'"/>
+    </div>
   </div>
 </template>
 
@@ -107,5 +110,11 @@ export default class SearchResults extends Vue {
   margin-right: 20%;
   width: 60%;
   margin-top: 2%;
+}
+
+.pagination {
+  margin: auto;
+  display: flex;
+  justify-content: center;
 }
 </style>

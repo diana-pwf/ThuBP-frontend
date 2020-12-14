@@ -60,7 +60,7 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
         name
         description
         targetGroup
-        
+        previewLarge
         units {
             unitId
             name
