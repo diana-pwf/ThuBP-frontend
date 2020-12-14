@@ -38,6 +38,7 @@
               <a-icon type="schedule" />
                 创建的比赛
             </span>
+            <div v-if="onShowOrganizedMatches.length">
             <ul class="wrapper">
               <li class="list" v-for="(item,index) in this.onShowOrganizedMatches">
                 <SearchResultCard class="card" :matchId="item.matchId">
@@ -54,28 +55,37 @@
             <a-pagination class="pagination" :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
                           @change="onOrganizedMatchesPageChange"
             />
+            </div>
+            <div v-else>
+              <a-empty :description="'暂无创建的赛事'"/>
+            </div>
           </a-tab-pane>
           <a-tab-pane  key="3">
             <span slot="tab">
               <a-icon type="schedule" />
                 参加的比赛
             </span>
-            <ul class="wrapper">
-              <li class="list" v-for="(item,index) in this.onShowParticipatedMatches">
-                <SearchResultCard class="card" :matchId="item.matchId">
-                  <img
-                      alt="example"
-                      src="background.png"
-                      slot="card-img"
-                  />
-                  <h2 slot="card-title"> {{item.name}}  </h2>
-                  <p slot="card-content"> {{item.description}} </p>
-                </SearchResultCard>
-              </li>
-            </ul>
-            <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
-                          @change="onParticipatedMatchesPageChange"
-            />
+            <div v-if="onShowParticipatedMatches.length">
+              <ul class="wrapper">
+                <li class="list" v-for="(item,index) in this.onShowParticipatedMatches">
+                  <SearchResultCard class="card" :matchId="item.matchId">
+                    <img
+                        alt="example"
+                        src="background.png"
+                        slot="card-img"
+                    />
+                    <h2 slot="card-title"> {{item.name}}  </h2>
+                    <p slot="card-content"> {{item.description}} </p>
+                  </SearchResultCard>
+                </li>
+              </ul>
+              <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
+                            @change="onParticipatedMatchesPageChange"
+              />
+            </div>
+            <div v-else>
+              <a-empty :description="'暂无参与的赛事'"/>
+            </div>
           </a-tab-pane>
           <a-tab-pane  key="4">
             <span slot="tab">

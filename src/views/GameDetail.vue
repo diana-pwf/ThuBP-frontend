@@ -13,28 +13,30 @@
           <a-list
               class="comment-list"
               item-layout="horizontal"
-              :data-source="data"
+              :data-source="comments"
           >
             <a-list-item slot="renderItem" slot-scope="item, index">
               <a-comment :author="item.author" :avatar="item.avatar">
-                <template slot="actions">
-                  <span v-for="action in item.actions">{{ action }}</span>
-                </template>
-                <p slot="content">
+                <p id="comment-content" slot="content">
                   {{ item.content }}
                 </p>
-                <a-tooltip slot="datetime" :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">
-                  <span>{{ item.datetime.fromNow() }}</span>
-                </a-tooltip>
+<!--                <a-tooltip slot="datetime" :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">-->
+<!--                  <span>{{ item.datetime.fromNow() }}</span>-->
+<!--                </a-tooltip>-->
+                <a-collapse>
+                  <a-collapse-panel :showArrow="false">
+                    <p>写下我的回复</p>
+                    <a-button id="reply-button" slot="extra" size="small">回复</a-button>
+                  </a-collapse-panel>
+                </a-collapse>
               </a-comment>
-
             </a-list-item>
           </a-list>
         </div>
         <div id="my-comment">
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
-          <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" />
-          <a-button class="button" type="primary">发布</a-button>
+          <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" v-model="myComment"/>
+          <a-button class="button" type="primary" @click="createComment">发布</a-button>
         </div>
       </div>
       <a-divider type="vertical" id="divider"/>
@@ -110,7 +112,6 @@
             </a-form-model>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -131,22 +132,15 @@ import moment from 'moment';
 
 export default class GameDetail extends Vue {
 
-  data = [
+  comments = [
     {
-      actions: ['Reply to'],
+      id: 0,
       author: 'Han Solo',
       avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       content:
           'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+
       datetime: moment().subtract(1, 'days')
-    },
-    {
-      actions: ['Reply to'],
-      author: 'Han Solo',
-      avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-      content:
-          'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-      datetime: moment().subtract(2, 'days')
     },
   ]
 
@@ -173,6 +167,8 @@ export default class GameDetail extends Vue {
     },
   ]
 
+  myComment = ''
+
   getDirection(teamname){
     if(teamname === 'unit0')
     {
@@ -198,7 +194,6 @@ export default class GameDetail extends Vue {
   deleteRecord(id) {
     this.$message.success('delete record success!')
   }
-
 
   form = {
     name: '',
@@ -227,6 +222,30 @@ export default class GameDetail extends Vue {
     });
   }
 
+  async createComment(){
+    try {
+      let response = await axios({
+        method: 'post',
+        url: '/api/v1/upload',
+        params: {
+          uploadType: "AVATAR"
+        },
+        data: {
+          suffix: "jpg",
+          uploadType: "AVATAR"
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+
+      console.log(response.data)
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   createRecord(){
 
   }
@@ -240,8 +259,18 @@ export default class GameDetail extends Vue {
   width: 3px;
 }
 
+#reply-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
 #content {
   display: flex;
+}
+
+#comment-content {
+  margin-bottom: 0;
 }
 
 #photo {
@@ -308,6 +337,7 @@ export default class GameDetail extends Vue {
 
 #qwq {
   margin: auto;
+  max-width: 100%;
 }
 
 #unit0-score {
