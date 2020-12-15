@@ -68,20 +68,6 @@
     </a-form-model-item>
     <a-form-model-item label="上传赛事照片">
       <PictureUpload @event="updateFile"></PictureUpload>
-<!--      <a-upload-dragger-->
-<!--          name="file"-->
-<!--          :multiple="false"-->
-<!--          action="https://upload-z1.qiniup.com"-->
-<!--          :before-upload="beforeUpload"-->
-<!--          :data="uploadParamObj"-->
-<!--      >-->
-<!--        <p class="ant-upload-drag-icon">-->
-<!--          <a-icon type="inbox" />-->
-<!--        </p>-->
-<!--        <p class="ant-upload-text">-->
-<!--          点击或拖拽图片文件到此处上传-->
-<!--        </p>-->
-<!--      </a-upload-dragger>-->
     </a-form-model-item>
     <a-form-model-item>
       <a-button style="float:right">

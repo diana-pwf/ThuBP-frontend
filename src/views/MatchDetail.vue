@@ -409,10 +409,13 @@ export default class MatchDetail extends Vue{
         referees:res.data.findMatchById.referees,
         minUnitMember: res.data.findMatchById.minUnitMember,
         maxUnitMember: res.data.findMatchById.maxUnitMember,
-        previewLarge: res.data.findMatchById.previewLarge,
+        previewLarge: 'background.png',
       }
-      // @ts-ignore
-      console.log(res.data.findMatchById.previewLarge)
+       if(res.data.findMatchById.previewLarge !== null)
+       {
+         // @ts-ignore
+         this.match.previewLarge = res.data.findMatchById.previewLarge
+       }
 
       // @ts-ignore
       if (this.match.minUnitMember === 1 && this.match.maxUnitMember === 1)

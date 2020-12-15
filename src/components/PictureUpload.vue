@@ -1,9 +1,8 @@
 <template>
   <div class="clearfix">
-    <a-upload-dragger
+    <a-upload
         action="https://upload-z1.qiniup.com"
         list-type="picture-card"
-        :multiple="false"
         :file-list="fileList"
         @preview="handlePreview"
         @change="handleChange"
@@ -13,10 +12,10 @@
       <div v-if="!fileList.length">
         <a-icon type="plus" />
         <div class="ant-upload-text">
-          点击或拖拽上传图片
+          点击上传图片
         </div>
       </div>
-    </a-upload-dragger>
+    </a-upload>
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
       <img alt="example" style="width: 100%" :src="previewImage" />
     </a-modal>
@@ -41,8 +40,21 @@ export default class PictureUpload extends Vue{
 
   async beforeUpload(file) {
     try {
-      console.log("qwq")
-      console.log(file)
+      let index = file.name.lastIndexOf('.')
+      if (index === -1 || index === file.name.length - 1)
+      {
+        // 上传的不是图片 处理报错信息
+        this.$message.error("File type is not picture")
+        return
+      }
+      let suffix = file.name.substr(index + 1)
+      if (suffix !== 'jpg' && suffix !== 'png' && suffix !== 'bmp' && suffix !== 'jpeg'
+        && suffix !== 'gif' && suffix !== 'webp')
+      {
+        // 上传的不是图片 处理报错信息
+        this.$message.error("File type is not picture")
+        return
+      }
       let response = await axios({
         method: 'post',
         url: '/api/v1/upload',
@@ -51,7 +63,7 @@ export default class PictureUpload extends Vue{
         },
         data: {
           // 后缀暂时先写死
-          suffix: "jpg",
+          suffix: suffix,
           uploadType: "MATCH_PREVIEW"
         }
       })
@@ -59,8 +71,6 @@ export default class PictureUpload extends Vue{
       if (response.status !== 200) {
         throw {response}
       }
-      console.log('qwq')
-      console.log(response.data)
       this.uploadParamObj = {
         token: response.data.uploadToken,
         key: response.data.key
