@@ -49,6 +49,7 @@ export const getParticipants = gql`query getParticipants($matchId: String!){
     }
 }`;
 
+
 export const getMatchRelatedTeams = gql`query  getMatchRelatedTeams($matchId: String!){
  findMatchById(matchId: $matchId) {
  units {
@@ -90,6 +91,20 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
         }
         minUnitMember
         maxUnitMember
+        rounds {
+            roundId
+            name
+            description
+            games
+            {
+                gameId
+                status
+                startTime
+                location
+               
+            }
+            
+        }
     }
 }`;
 

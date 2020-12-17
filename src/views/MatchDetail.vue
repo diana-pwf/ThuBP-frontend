@@ -229,7 +229,8 @@
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
-
+            <ul>
+              <li class="list" v-for="(item,index) in this.match.rounds">
               <b-card bg-variant="default">
                 <b-card-text>
                     <div>
@@ -250,12 +251,11 @@
                       </a-descriptions>
                     </div>
                     </div>
-                          <a-table  class="table" :columns="columns" :data-source="data">
-                            <a slot="name" slot-scope="text">{{ text }}</a>
-                            <span slot="customTitle">比赛名称</span>
-                            <span slot="tags" slot-scope="tags">
+                          <a-table  class="table" :columns="columns" :data-source="item.games">
+<!--                            <a slot="name" slot-scope="text">{{ text }}</a>-->
+<!--                            <span slot="customTitle">比赛队伍0</span>-->
+                            <span slot="tags" slot-scope="tag">
                           <a-tag
-                              v-for="tag in tags"
                               :key="tag"
                               :color="tag === 'onprocess' ? '' : tag.length > 5 ? 'geekblue' : 'green'"
                           >
@@ -263,13 +263,15 @@
                           </a-tag>
                             </span>
                             <span slot="action" slot-scope="text, record">
-                          <a class="ant-dropdown-link">查看详情</a>
+                          <a @click="gotoGameDetail(record)" class="ant-dropdown-link">查看详情</a>
                         </span>
                           </a-table>
                   </div>
 
                 </b-card-text>
               </b-card>
+              </li>
+            </ul>
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -294,36 +296,37 @@ import {concat} from "apollo-link";
 export default class MatchDetail extends Vue{
   columns = [
     {
-      dataIndex: 'name',
-      key: 'name',
-      slots: { title: 'customTitle' },
-      scopedSlots: { customRender: 'name' },
+      dataIndex: 'unit0',
+      key: 'unit0',
+      title:'比赛队伍A'
+      // slots: { title: 'customTitle' },
+      // scopedSlots: { customRender: 'unit0' },
     },
     {
-      title: '组织者',
-      dataIndex: 'owner',
-      key: 'owner',
+      title: '比赛队伍B',
+      dataIndex: 'unit1',
+      key: 'unit1',
     },
     {
       title: '开始时间',
-      dataIndex: 'begin_time',
-      key: 'begin_time',
+      dataIndex: 'startTime',
+      key: 'startTime',
     },
-    {
-      title: '结束时间',
-      key: 'end_time',
-      dataIndex: 'end_time',
-    },
+    // {
+    //   title: '结束时间',
+    //   key: 'end_time',
+    //   dataIndex: 'end_time',
+    // },
     {
       title: '地点',
       key: 'location',
       dataIndex: 'location',
     },
     {
-      title: 'tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      scopedSlots: { customRender: 'tags' },
+      title: 'tag',
+      key: 'tag',
+      dataIndex: 'tag',
+      scopedSlots: { customRender: 'tag' },
     },
     {
       title: '...',
@@ -334,20 +337,20 @@ export default class MatchDetail extends Vue{
   data = [
     {
       key: '1',
-      name: '赛事名称',
-      owner: 'npc',
+      unit0: '赛事名称',
+      unit1: 'npc',
       location: '紫荆操场',
       begin_time:'2020/10/22',
-      end_time:'2020/12/04',
+      // end_time:'2020/12/04',
       tags: ['nice', 'on_process'],
     },
     {
       key: '2',
-      name: '赛事名称',
-      owner: 'npc',
+      unit0: '赛事名称',
+      unit1: 'npc',
       location: '紫荆操场',
       begin_time:'2020/10/22',
-      end_time:'2020/12/04',
+      // end_time:'2020/12/04',
       tags: ['nice', 'on_process'],
     }
   ]
@@ -370,6 +373,10 @@ export default class MatchDetail extends Vue{
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
+  }
+
+  gotoGameDetail(record){
+    this.$router.push(`/gameDetail/${record.gameId}`)
   }
 
   match = {}
@@ -410,7 +417,20 @@ export default class MatchDetail extends Vue{
         minUnitMember: res.data.findMatchById.minUnitMember,
         maxUnitMember: res.data.findMatchById.maxUnitMember,
         previewLarge: 'background.png',
+        rounds:res.data.findMatchById.rounds
       }
+      // let rounds=[]
+      // for(let x of res.data.findMatchById.rounds){
+      //   let games=[]
+      //   for(let game of x){
+      //
+      //   }
+      //   rounds.push({
+      //     'roundId':x.roundId,
+      //     'name':x.name,
+      //     'description':x.description,
+      //   })
+      // }
        if(res.data.findMatchById.previewLarge !== null)
        {
          // @ts-ignore
