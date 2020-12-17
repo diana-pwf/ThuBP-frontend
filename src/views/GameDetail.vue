@@ -1,6 +1,6 @@
 <template>
   <div id="personalMenu">
-    <Navigation></Navigation>
+    <Navigation :username="user.username"></Navigation>
     <div id="content">
       <div id="photo-and-comment">
         <div id="photo">
@@ -16,27 +16,34 @@
               :data-source="comments"
           >
             <a-list-item slot="renderItem" slot-scope="item, index">
-              <a-comment :author="item.author" :avatar="item.avatar">
+              <a-comment :author="item.authorName" :avatar="item.avatar">
                 <p id="comment-content" slot="content">
                   {{ item.content }}
                 </p>
-<!--                <a-tooltip slot="datetime" :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">-->
-<!--                  <span>{{ item.datetime.fromNow() }}</span>-->
-<!--                </a-tooltip>-->
                 <div>
-                <a-button size="small" type="link">编辑</a-button>
-                <a-button size="small" type="link">删除</a-button>
+                <a-button size="small" type="link" v-if="item.authorId === user.userId"
+                          @click="editComment(item.id)"
+                          >编辑</a-button>
+                <a-button size="small" type="link" v-if="item.authorId === user.userId"
+                          @click="deleteComment(item.id)"
+                          >删除</a-button>
                 </div>
                 <a-collapse>
                   <a-collapse-panel :showArrow="false">
                     <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" v-model="myComment"/>
                     <a-button class="button" type="primary" @click="replyComment(item.id)">发送</a-button>
-                    <a-button id="reply-button" slot="extra" size="small" type="link">写下回复</a-button>
+                    <a-button id="reply-button" slot="extra"
+                              size="small" type="link"
+                              @click="changeButtonText"
+                              >{{buttonText}}</a-button>
                   </a-collapse-panel>
                 </a-collapse>
               </a-comment>
             </a-list-item>
           </a-list>
+          <a-pagination class="pagination" :default-current="1" :total="comments.length" :page-size="3"
+                        @change="onCommentsPageChange"
+          />
         </div>
         <div id="my-comment">
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
@@ -61,7 +68,7 @@
                 <div id="score-change">
                   <span>本队分数增加（扣分为负）：</span>
                   <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
-                  <a-button>提交</a-button>
+                  <a-button @click="changeScore(0)">提交</a-button>
                 </div>
               </div>
               <div id="center-symbol">
@@ -75,7 +82,7 @@
                 <div class="unit-score-info" id="unit1-score">3</div>
                 <span>本队分数增加（扣分为负）：</span>
                 <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
-                <a-button>提交</a-button>
+                <a-button @click="changeScore(1)">提交</a-button>
               </div>
             </div>
           </div>
@@ -128,6 +135,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import moment from 'moment';
+import {getGameComments} from "../../myQuery";
 
 @Component({
   components:{
@@ -137,17 +145,99 @@ import moment from 'moment';
 
 export default class GameDetail extends Vue {
 
-  comments = [
-    {
-      id: 0,
-      author: 'Han Solo',
-      avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-      content:
-          'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+  comments = []
+  onShowComments = []
 
-      datetime: moment().subtract(1, 'days')
+  async getComments(){
+    let res = await this.$apollo.query({
+      query: getGameComments,
+      variables:{gameId:this.$route.params.gameId}
+    });
+    for(let item of res.data.findGameById.comments){
+      let comment = {
+        id: 0,
+        authorName: item.issuer.username,
+        authorId: item.issuer.userId,
+        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+        content: item.content
+      }
+      this.comments.push(comment)
+    }
+  }
+
+  myComment = ''
+
+  async createComment(){
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/comment/game/${this.$route.params.gameId}`,
+        data: {
+          content: this.myComment,
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      this.getComments()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  buttonText = '写下回复'
+
+  changeButtonText()
+  {
+    if(this.buttonText === '写下回复')
+    {
+      this.buttonText = '收起回复'
+    }
+    else
+    {
+      this.buttonText = '写下回复'
+    }
+  }
+
+  unit = [
+    {
+      name: '',
+      score: 0,
     },
+    {
+      name: '',
+      score: 0,
+    }
   ]
+
+  getDirection(teamname){
+    if(teamname === 'unit0')
+    {
+      return 'left'
+    }
+    else
+    {
+      return 'right'
+    }
+  }
+
+  getColor(teamname){
+    if(teamname === 'unit0')
+    {
+      return 'blue'
+    }
+    else
+    {
+      return 'green'
+    }
+  }
+
+  // 轮询分数 发请求
+  changeScore(id){
+
+  }
 
   recordList = [
     {
@@ -171,30 +261,6 @@ export default class GameDetail extends Vue {
       description:'球出界'
     },
   ]
-
-  myComment = ''
-
-  getDirection(teamname){
-    if(teamname === 'unit0')
-    {
-      return 'left'
-    }
-    else
-    {
-      return 'right'
-    }
-  }
-
-  getColor(teamname){
-    if(teamname === 'unit0')
-    {
-      return 'blue'
-    }
-    else
-    {
-      return 'green'
-    }
-  }
 
   deleteRecord(id) {
     this.$message.success('delete record success!')
@@ -227,27 +293,14 @@ export default class GameDetail extends Vue {
     });
   }
 
-  async createComment(){
-    try {
-      let response = await axios({
-        method: 'post',
-        url: '/api/v1/comment/game/',
-        params: {
 
-        },
-        data: {
-          content: this.myComment,
-        }
-      })
-      // 对response做处理
-      if (response.status !== 200) {
-        throw {response}
-      }
 
-      console.log(response.data)
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
-    }
+  editComment(id){
+
+  }
+
+  deleteComment(id){
+
   }
 
   replyComment(id){
@@ -257,11 +310,60 @@ export default class GameDetail extends Vue {
   createRecord(){
 
   }
+
+  onCommentsPageChange(page, pageSize){
+
+  }
+
+  user = {
+    userId: '',
+    username: ''
+  }
+
+  async getUserInfo()
+  {
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'get',
+        url: '/api/v1/user/info',
+        params: { }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('get userInfo success!')
+        this.user.userId = response.data.userId
+        this.user.username = response.data.username
+      }
+      else
+      {
+        // 输出错误提示
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  mounted() {
+    this.getUserInfo()
+    this.getComments()
+  }
+
 }
 </script>
 
 
 <style scoped>
+.pagination {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
+>>> .ant-comment {
+  width: 100%
+}
+
 >>> #divider {
   height: auto;
   width: 3px;

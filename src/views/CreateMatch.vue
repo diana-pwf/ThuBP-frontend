@@ -61,7 +61,7 @@
                      :default-value="0" v-model="form.matchRuleType" />
     </a-form-model-item>
     <a-form-model-item v-if="form.matchRuleType" prop="minTeamMember" label="队伍最小人数">
-      <a-input-number :min="1" :precision="0" v-model="form.minTeamMember"/>
+      <a-input-number :min="2" :precision="0" v-model="form.minTeamMember"/>
     </a-form-model-item>
     <a-form-model-item v-if="form.matchRuleType" prop="maxTeamMember" label="队伍最大人数">
       <a-input-number :min="form.minTeamMember" :precision="0" v-model="form.maxTeamMember"/>

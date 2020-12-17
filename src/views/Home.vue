@@ -158,10 +158,13 @@ export default class Home extends Vue {
     }
   }
 
-
-  mounted(){
+  preFunc(){
     this.getUserInfo()
     this.getMatchesList([])
+  }
+
+  mounted(){
+    this.preFunc()
     // TODO：增加赛事后重新进入主页面，赛事列表未更新
   }
 }

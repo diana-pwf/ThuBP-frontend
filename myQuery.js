@@ -140,4 +140,28 @@ export const getRoundStrategyTypes = gql`query getRoundStrategyTypes {
     }
   }`;
 
+export const getGameComments = gql`query getGameComments($gameId: String!) {
+    findGameById(gameId:$gameId){
+        comments{
+            issuer {
+                userId
+                username
+            }
+            content
+        }
+    }
+  }`;
+
+export const getGameInfo = gql`query getGameInfo($gameId: String!) {
+    findGameById(gameId:$gameId){
+        comments{
+            issuer {
+                userId
+                username
+            }
+            content
+        }
+    }
+  }`;
+
 

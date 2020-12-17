@@ -510,7 +510,9 @@ export default class MatchDetail extends Vue{
       let response = await axios({
         method: 'post',
         url: `/api/v1/match/register/${this.$route.params.matchId}`,
-        data: { }
+        data: {
+          unitName: this.user.username
+        }
       })
       // 对response做处理
       if (response.status === 200) {

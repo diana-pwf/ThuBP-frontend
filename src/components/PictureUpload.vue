@@ -62,7 +62,6 @@ export default class PictureUpload extends Vue{
           uploadType: "MATCH_PREVIEW"
         },
         data: {
-          // 后缀暂时先写死
           suffix: suffix,
           uploadType: "MATCH_PREVIEW"
         }
@@ -78,6 +77,7 @@ export default class PictureUpload extends Vue{
       this.$emit('event', this.uploadParamObj)
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error('图片上传出现问题，请删除后再试')
     }
   }
 
