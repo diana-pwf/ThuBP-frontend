@@ -185,6 +185,7 @@ export default class Home extends Vue {
 }
 .pagination {
   margin: auto;
+  margin-top:20px;
   display: flex;
   justify-content: center;
 }

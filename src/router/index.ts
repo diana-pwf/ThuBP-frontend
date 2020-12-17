@@ -49,7 +49,7 @@ const routes: Array<RouteConfig> = [
     component:Home
   },
   {
-    path: '/gameDetail/:gameId',
+    path: '/gameDetail/:matchId/:roundId/:gameId',
     name:'gameDetail',
     component:GameDetail
   },

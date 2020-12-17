@@ -91,7 +91,7 @@
                   </b-button>
                   <b-button v-else-if="isParticipant"
                             variant="outline-success" class="add"
-                            @click="gotoTeamDetail">
+                            @click="gotoTeamDetail(this.myUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     查看我的队伍
                   </b-button>
@@ -185,12 +185,12 @@
                               shape="square"
                               size="large"
                               :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                            {{item.name}}
+                            Team
                           </a-avatar>
                           <p slot="content" :style="{verticalAlign:'left'}">
                             队伍简介
                           </p>
-                          <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                          <span @click="gotoTeamDetail(item.unitId)" class="more" style="color: dodgerblue" slot="actions">更多</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -213,7 +213,6 @@
                         <p slot="content" :style="{verticalAlign:'left'}">
                           这是一段简介
                         </p>
-                        <span class="more" style="color: dodgerblue" slot="actions">更多</span>
                       </a-comment>
                     </li>
                   </ul>
@@ -231,39 +230,37 @@
               </b-button>
             <ul>
               <li class="list" v-for="(item,index) in this.match.rounds">
-              <b-card bg-variant="default">
+              <b-card class="roundCard" bg-variant="default">
                 <b-card-text>
                     <div>
                       <div class="matchCard">
                     <img :src="match.previewLarge" alt="赛事图片"/>
                     <div>
-                      <h4>第一轮小组赛<b-button  id="edit_button" variant="danger">修改赛事</b-button></h4>
+                      <h4>{{item.name}}<b-button  id="edit_button" variant="danger">修改轮次</b-button></h4>
                       <a-descriptions style="margin-top:5%">
                         <a-descriptions-item label="比赛场数">
-                          8场
+                          {{item.games.length}}
                         </a-descriptions-item>
-                        <a-descriptions-item label="赛制">
-                          循环赛
-                        </a-descriptions-item>
-                        <a-descriptions-item label="状态">
-                          进行中
+                        <a-descriptions-item label="简介">
+                          {{item.description}}
                         </a-descriptions-item>
                       </a-descriptions>
                     </div>
                     </div>
-                          <a-table  class="table" :columns="columns" :data-source="item.games">
+                          <a-table @change="handleTableChange" :pagination="pagination" class="table" :columns="columns" :data-source="item.games">
 <!--                            <a slot="name" slot-scope="text">{{ text }}</a>-->
 <!--                            <span slot="customTitle">比赛队伍0</span>-->
-                            <span slot="tags" slot-scope="tag">
-                          <a-tag
-                              :key="tag"
-                              :color="tag === 'onprocess' ? '' : tag.length > 5 ? 'geekblue' : 'green'"
-                          >
+                            <span slot="tags" slot-scope="tags">
+                         <a-tag
+                             v-for="tag in tags"
+                             :key="tag"
+                             :color="tag === 'unread' ? 'volcano' : 'read' ? 'geekblue' : 'green'"
+                         >
                             {{ tag.toUpperCase() }}
                           </a-tag>
                             </span>
                             <span slot="action" slot-scope="text, record">
-                          <a @click="gotoGameDetail(record)" class="ant-dropdown-link">查看详情</a>
+                          <a @click="gotoGameDetail(record,item)" class="ant-dropdown-link">查看详情</a>
                         </span>
                           </a-table>
                   </div>
@@ -323,10 +320,10 @@ export default class MatchDetail extends Vue{
       dataIndex: 'location',
     },
     {
-      title: 'tag',
-      key: 'tag',
-      dataIndex: 'tag',
-      scopedSlots: { customRender: 'tag' },
+      title: 'tags',
+      key: 'tags',
+      dataIndex: 'tags',
+      scopedSlots: { customRender: 'tags' },
     },
     {
       title: '...',
@@ -334,27 +331,16 @@ export default class MatchDetail extends Vue{
       scopedSlots: { customRender: 'action' },
     },
   ];
-  data = [
-    {
-      key: '1',
-      unit0: '赛事名称',
-      unit1: 'npc',
-      location: '紫荆操场',
-      begin_time:'2020/10/22',
-      // end_time:'2020/12/04',
-      tags: ['nice', 'on_process'],
-    },
-    {
-      key: '2',
-      unit0: '赛事名称',
-      unit1: 'npc',
-      location: '紫荆操场',
-      begin_time:'2020/10/22',
-      // end_time:'2020/12/04',
-      tags: ['nice', 'on_process'],
-    }
-  ]
-
+ //TODO: 从后端拿到Unit0,unit1,和每次round的strategy
+  pagination={
+    pageSize:3,
+    total:0,
+    current:0
+  }
+  handleTableChange(pagination){
+    this.pagination=pagination
+    let page=pagination.current - 1
+  }
   async getRefereeToken(){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -375,8 +361,8 @@ export default class MatchDetail extends Vue{
     }
   }
 
-  gotoGameDetail(record){
-    this.$router.push(`/gameDetail/${record.gameId}`)
+  gotoGameDetail(record,item){
+    this.$router.push(`/gameDetail/${this.match['id']}/${item.roundId}/${record.gameId}`)
   }
 
 
@@ -435,18 +421,12 @@ export default class MatchDetail extends Vue{
         previewLarge: 'background.png',
         rounds:res.data.findMatchById.rounds
       }
-      // let rounds=[]
-      // for(let x of res.data.findMatchById.rounds){
-      //   let games=[]
-      //   for(let game of x){
-      //
-      //   }
-      //   rounds.push({
-      //     'roundId':x.roundId,
-      //     'name':x.name,
-      //     'description':x.description,
-      //   })
-      // }
+      for (let x of this.match['rounds']){
+        for(let game of x.games){
+          game['key']=game.gameId
+          game['tags']=[game.status]
+        }
+      }
        if(res.data.findMatchById.previewLarge !== null)
        {
          // @ts-ignore
@@ -575,9 +555,9 @@ export default class MatchDetail extends Vue{
     }
   }
 
-  gotoTeamDetail()
+  gotoTeamDetail(id)
   {
-    this.$router.push(`/teamDetail/${this.myUnitId}`)
+    this.$router.push(`/teamDetail/${id}`)
   }
 
   async createNewTeam(evt)
@@ -716,5 +696,11 @@ h4{
 }
 .form-button {
   margin-right: 10px;
+}
+ul{
+  padding-left: 0;
+}
+.roundCard{
+  margin-bottom: 10px;
 }
 </style>
