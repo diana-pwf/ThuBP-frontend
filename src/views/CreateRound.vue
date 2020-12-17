@@ -37,33 +37,7 @@
         ></b-form-select>
       </b-form-group>
 
-      <SearchTeam :team-items="teamItems" :teams-list="teamsList"></SearchTeam>
-<!--      <b-form-group  id="input-group-2" label="添加参加本轮次比赛的队伍" label-for="input-2">-->
-<!--        <b-form-input-->
-<!--            id="input-2"-->
-<!--            v-model="teamSearchKey"-->
-<!--            @input="onChange"-->
-<!--            placeholder="请输入查找的队伍名"-->
-<!--        ></b-form-input>-->
-<!--        <b-list-group  id="list" class="wrapper" v-if="showTeamList">-->
-<!--          <b-list-group-item @click="chooseTeam(item)" class="d-flex align-items-center" v-for="(item,index) in  searchTeamList ">-->
-<!--            &lt;!&ndash;                          <span>{{item.username}}</span>&ndash;&gt;-->
-<!--            <b-avatar variant="success" icon="people-fill" class="mr-3"></b-avatar>-->
-<!--            <span class="mr-auto">{{item.name}}</span>-->
-<!--            <b-badge variant="info">{{item.unitId}}</b-badge>-->
-<!--          </b-list-group-item>-->
-<!--        </b-list-group>-->
-<!--      </b-form-group>-->
-<!--      <h4><b-badge style="margin-top: 20px" variant="success">选择队伍列表</b-badge></h4>-->
-<!--      <b-table  class="table" hover :items="teamItems" :fields="teamFields">-->
-<!--        <template #cell(name)="row">-->
-<!--          &lt;!&ndash; `data.value` is the value after formatted by the Formatter &ndash;&gt;-->
-<!--          <a class="teamDetail" @click="gotoTeamDetail(row)">{{ row.item.name }}</a>-->
-<!--        </template>-->
-<!--        <template #cell(action)="row">-->
-<!--          <b-button @click="removeTeam(row)" variant="danger" size="sm">remove</b-button>-->
-<!--        </template>-->
-<!--      </b-table>-->
+      <SearchTeam @changeSelectedTeams="onChangeSelectedTeams" type="normal"  :teams-list="teamsList"></SearchTeam>
       <b-button  type="submit" :disabled="this.teamItems.length<2" id="arrangeButton" block variant="outline-warning">自动编排</b-button>
       <h4><b-badge style="margin-top: 20px" variant="info">比赛列表</b-badge></h4>
       <b-table class="table" striped hover :items="gameItems" :fields="gameFields">
@@ -86,16 +60,16 @@
           <b-button @click="removeGame(row)" variant="danger" size="sm">remove</b-button>
         </template>
       </b-table>
-      <b-button block v-b-modal.custom-create-game variant="outline-warning">自定义添加比赛</b-button>
+      <b-button block :disabled="this.teamItems.length<2" v-b-modal.custom-create-game variant="outline-warning">自定义添加比赛</b-button>
       <b-modal hide-footer id="custom-create-game">
         <template #modal-title>
           自定义添加比赛
         </template>
-        <SearchTeam :team-items="modalTeamItems" :teams-list="teamsList"></SearchTeam>
+        <SearchTeam @changeSelectedTeams="onModalChangeSelectedTeams" type="modal"  :teams-list="teamItems"></SearchTeam>
         <b-button @click="customCreateGame" variant="outline-info" :disabled="modalTeamItems.length!=2" id="custom-create-game-button">创建比赛</b-button>
       </b-modal>
       <div id="submit-button">
-      <b-button  variant="success" size="lg" >提交轮次信息</b-button>
+      <b-button @click="createRound" v-if="roundStrategy&&roundName&&roundDescription" :disabled="gameItems.length<1" variant="success" size="lg" >提交轮次信息</b-button>
       </div>
     </b-form>
   </div>
@@ -113,20 +87,11 @@ import SearchTeam from "@/components/SearchTeam.vue"
 @Component({components:{SearchTeam, Navigation}})
 
 export default class CreateRound extends Vue{
-  // TODO:剩下最后的提交轮次接口
   teamFields = ['name', 'creator', 'description','action']
   teamItems=[]
   modalTeamItems=[]
   gameFields=['unit0-name','unit1-name','time','location','edit','remove']
   gameItems=[]
-  // gameItems=[
-  //   {
-  //     id:1,unit0:'qwq',unit1:'qwqqq',time:'1888',location:'qwqqqq',edit:false
-  //   },
-  //   {
-  //     id:2,unit0:'qwq',unit1:'qwqqq',time:'1888',location:'qwqqqq',edit:false
-  //   }
-  // ]
 
   selectedTime=""
   selectedLocation=''
@@ -143,11 +108,19 @@ export default class CreateRound extends Vue{
   strategyOptionNames=[]
   teamsList=[]
 
+  onModalChangeSelectedTeams(teamProp){
+    this.modalTeamItems=teamProp
+  }
+
+  onChangeSelectedTeams(teamProp){
+    this.teamItems=teamProp
+  }
+
   customCreateGame(){
     let game={}
     game['id']=this.gameItems.length
-    game['unit0']=this.modalTeamItems[0].unitId
-    game['unit1']=this.modalTeamItems[1].unitId
+    game['unit0']=this.modalTeamItems[0].id
+    game['unit1']=this.modalTeamItems[1].id
     game['unit0-name']=this.modalTeamItems[0].name
     game['unit1-name']=this.modalTeamItems[1].name
     game['time']='null'
@@ -157,11 +130,9 @@ export default class CreateRound extends Vue{
     this.$bvModal.hide("custom-create-game")
   }
 
-  // gotoTeamDetail(row){
-  //   window.open(`/#/teamDetail/${row.item.id}`, '_blank');
-  // }
 
-  async autoArrange(){
+  async autoArrange(event){
+    event.preventDefault()
     let strategy=this.strategyOptions.find(x=>x.strategyName===this.roundStrategy)
     let list=[]
     for(let x of this.teamItems){
@@ -210,54 +181,15 @@ export default class CreateRound extends Vue{
     row.item.location=this.selectedLocation
   }
 
-  // chooseTeam(item){
-  //   let team={}
-  //   for( let x of this.teamItems){
-  //     if(x.id===item.unitId){
-  //       this.$message.warning('这支队伍已在选择列表中。')
-  //       this.hideList()
-  //       return;
-  //     }
-  //   }
-  //   team['id']=item.unitId
-  //   team['name']=item.name
-  //   team['creator']=item.creator.username
-  //   team['description']='description to be implemented'
-  //   this.teamItems.push(team)
-  //   this.hideList()
-  // }
-
-  // removeTeam(row){
-  //   let index = this.teamItems.findIndex(x=>x.id===row.item.id)
-  //   this.teamItems.splice(index,1)
-  // }
-
   removeGame(row){
     let index = this.gameItems.findIndex(x=>x.id===row.item.id)
     this.gameItems.splice(index,1)
   }
 
-  // get searchTeamList(){
-  //   let list = this.teamsList.filter((teams) => {
-  //     return teams.name.match(this.teamSearchKey)
-  //   })
-  //   if(list.length>5){
-  //     return list.slice(0,5)
-  //   }
-  //   return list
-  // }
 
   onCancel(row){
     row.item.edit=false
   }
-  //
-  // onChange(){
-  //   this.showTeamList=true
-  // }
-  //
-  // hideList(){
-  //   this.showTeamList=false
-  // }
 
   async getTeamsList(){
     try {
@@ -308,6 +240,69 @@ export default class CreateRound extends Vue{
       this.$message.error(JSON.stringify(e.response.data.error))
     }
   }
+
+
+  async createRound(){
+    let strategy=this.strategyOptions.find(x=>x.strategyName===this.roundStrategy)
+    let unitList=[]
+    for(let x of this.teamItems){
+      unitList.push(x.id)
+    }
+    let gameList=[]
+    for(let x of this.gameItems){
+      if(x.time==="null")
+      {
+        gameList.push({'unit0':x.unit0,'unit1':x.unit1,'location':x.location})
+      }
+      else {
+        let time = new Date(x.time).toISOString()
+        gameList.push({'unit0':x.unit0,'unit1':x.unit1,'startTime':time,'location':x.location})
+      }
+    }
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.$route.params.matchId}/round`,
+        data: {
+          autoStrategy:strategy.strategyId,
+          description:this.roundDescription,
+          name:this.roundName,
+          units:unitList,
+          games:gameList
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$bvModal.msgBoxOk('创建轮次成功！', {
+          title: 'Confirmation',
+          size: 'sm',
+          buttonSize: 'sm',
+          okVariant: 'success',
+          headerClass: 'p-2 border-bottom-0',
+          footerClass: 'p-2 border-top-0',
+          centered: true
+        })
+            .then(value => {
+              if(value===true){
+                this.$router.push(`/matchDetail/${this.$route.params.matchId}`)
+              }
+            })
+            .catch(err => {
+              // An error occurred
+            })
+
+
+      }
+      else
+      {
+        this.$message.error(JSON.stringify(response))
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data))
+    }
+  }
+
 
   mounted(){
     this.getRoundStrategyOptions()

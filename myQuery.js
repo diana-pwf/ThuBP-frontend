@@ -116,9 +116,13 @@ export const getUnitDetail = gql`query getUnitDetail($unitId: String!){
     }
 }`;
 
+
+
 export const getRoundStrategyTypes = gql`query getRoundStrategyTypes {
     listRoundGameStrategyTypes{
     strategyId
     strategyName
     }
   }`;
+
+

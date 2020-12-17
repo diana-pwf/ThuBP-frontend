@@ -1,8 +1,9 @@
 <template>
 <div>
-  <b-form-group  id="input-group-2" label="添加参加本轮次比赛的队伍" label-for="input-2">
+  <b-alert :show="alertShow" variant="warning">这支队伍已在选择列表中。</b-alert>
+  <b-form-group  id="input-group-2" :label="label[type]" label-for="input-2">
     <b-form-input
-        id="input-2"
+        class="input-2"
         v-model="teamSearchKey"
         @input="onChange"
         placeholder="请输入查找的队伍名"
@@ -35,11 +36,14 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class SearchTeam extends Vue{
+  @Prop({type:String,default:function (){return ''}})type
   @Prop({type:Array, default:function (){return []}})teamsList
   teamFields = ['name', 'creator', 'description','action']
-  @Prop({type:Array, default:function (){return []}})teamItems
+  teamItems = []
   teamSearchKey=''
   showTeamList=false
+  alertShow=false
+  label={'normal':"添加参加本轮次比赛的队伍",'modal':"从已选择的列表中进一步选择两支队伍"}
 
   onChange(){
     this.showTeamList=true
@@ -55,24 +59,43 @@ export default class SearchTeam extends Vue{
 
   chooseTeam(item){
     let team={}
+    let id = ''
+    if(this.type==="normal"){
+      id = item.unitId
+    }
+    else if(this.type==="modal"){
+      id = item.id
+    }
     for( let x of this.teamItems){
       if(x.id===item.unitId){
-        this.$message.warning('这支队伍已在选择列表中。')
+        this.alertShow=true
         this.hideList()
         return;
       }
     }
-    team['id']=item.unitId
-    team['name']=item.name
-    team['creator']=item.creator.username
-    team['description']='description to be implemented'
+    this.alertShow=false
+    if(this.type==="normal")
+    {
+      team['id']=item.unitId
+      team['name']=item.name
+      team['creator']=item.creator.username
+      team['description']='description to be implemented'
+    }
+    else if(this.type==="modal"){
+      team['id']=item.id
+      team['name']=item.name
+      team['creator']=item.creator
+      team['description']='description to be implemented'
+    }
     this.teamItems.push(team)
     this.hideList()
+    this.$emit("changeSelectedTeams",this.teamItems)
   }
 
   removeTeam(row){
     let index = this.teamItems.findIndex(x=>x.id===row.item.id)
     this.teamItems.splice(index,1)
+    this.$emit("changeSelectedTeams",this.teamItems)
   }
 
   get searchTeamList(){
@@ -82,9 +105,12 @@ export default class SearchTeam extends Vue{
     if(list.length>5){
       return list.slice(0,5)
     }
+    console.log(list)
     return list
   }
-
+  mounted(){
+    this.teamItems=[]
+  }
 }
 </script>
 
