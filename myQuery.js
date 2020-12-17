@@ -143,6 +143,7 @@ export const getRoundStrategyTypes = gql`query getRoundStrategyTypes {
 export const getGameComments = gql`query getGameComments($gameId: String!) {
     findGameById(gameId:$gameId){
         comments{
+            commentId
             issuer {
                 userId
                 username

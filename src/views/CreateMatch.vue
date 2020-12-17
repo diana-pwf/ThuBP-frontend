@@ -122,7 +122,7 @@ export default class CreateMatch extends Vue {
     publicSignUp: false,
     publicShow: false,
     maxTeamMember: 1,
-    minTeamMember: 1,
+    minTeamMember: 2,
   }
 
   options = [

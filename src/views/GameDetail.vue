@@ -41,9 +41,9 @@
               </a-comment>
             </a-list-item>
           </a-list>
-          <a-pagination class="pagination" :default-current="1" :total="comments.length" :page-size="3"
-                        @change="onCommentsPageChange"
-          />
+<!--          <a-pagination class="pagination" :default-current="1" :total="comments.length" :page-size="10"-->
+<!--                        @change="onCommentsPageChange"-->
+<!--          />-->
         </div>
         <div id="my-comment">
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
@@ -62,9 +62,9 @@
             <div id="unit-info">
               <div>
                 <b-badge id="unit0-name" class="unit-name-info unit-name" pill variant="light">
-                可怜程序员队
+                {{unit[0].name}}
                 </b-badge>
-                <div class="unit-score-info" id="unit0-score">0</div>
+                <div class="unit-score-info" id="unit0-score">{{unit[0].score}}</div>
                 <div id="score-change">
                   <span>本队分数增加（扣分为负）：</span>
                   <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
@@ -77,9 +77,9 @@
               </div>
               <div>
                 <b-badge id="unit1-name" class="unit-name-info unit-name" pill variant="light">
-                  凶残bug队
+                  {{unit[1].name}}
                 </b-badge>
-                <div class="unit-score-info" id="unit1-score">3</div>
+                <div class="unit-score-info" id="unit1-score">{{unit[1].score}}</div>
                 <span>本队分数增加（扣分为负）：</span>
                 <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
                 <a-button @click="changeScore(1)">提交</a-button>
@@ -155,7 +155,7 @@ export default class GameDetail extends Vue {
     });
     for(let item of res.data.findGameById.comments){
       let comment = {
-        id: 0,
+        id: item.commentId,
         authorName: item.issuer.username,
         authorId: item.issuer.userId,
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
@@ -181,7 +181,25 @@ export default class GameDetail extends Vue {
       if (response.status !== 200) {
         throw {response}
       }
-      this.getComments()
+      await this.getComments()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+  async deleteComment(id){
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/comment/${id}`,
+        data: { }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      await this.getComments()
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
@@ -203,11 +221,11 @@ export default class GameDetail extends Vue {
 
   unit = [
     {
-      name: '',
+      name: '可怜程序员队',
       score: 0,
     },
     {
-      name: '',
+      name: '凶残bug队',
       score: 0,
     }
   ]
@@ -234,8 +252,19 @@ export default class GameDetail extends Vue {
     }
   }
 
+  unit0ScoreDelta = 0
+  unit1ScoreDelta = 0
+
   // 轮询分数 发请求
   changeScore(id){
+    if(!id)
+    {
+      this.unit[id].score += this.unit0ScoreDelta
+    }
+    else if(id === 1)
+    {
+      this.unit[id].score += this.unit1ScoreDelta
+    }
 
   }
 
@@ -271,9 +300,6 @@ export default class GameDetail extends Vue {
     description: ''
   }
 
-  unit0ScoreDelta = 0
-  unit1ScoreDelta = 0
-
   rules = {
     description: [
       { required: true, message: '请简要描述'},
@@ -299,9 +325,7 @@ export default class GameDetail extends Vue {
 
   }
 
-  deleteComment(id){
 
-  }
 
   replyComment(id){
 

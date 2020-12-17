@@ -379,7 +379,7 @@ export default class MatchDetail extends Vue{
     this.$router.push(`/gameDetail/${record.gameId}`)
   }
 
-  match = {}
+
   isSingleMatch = false
 
   currentUserId = ''
@@ -394,6 +394,22 @@ export default class MatchDetail extends Vue{
 
   user = {
     username: ''
+  }
+
+  match = {
+    id:'',
+    description: '',
+    matchType: '',
+    name: '',
+    organizerId: '',
+    organizerName: '',
+    targetGroup: '',
+    teams: [],
+    referees: [],
+    minUnitMember: 1,
+    maxUnitMember: 1,
+    previewLarge: 'background.png',
+    rounds: []
   }
 
   async getMatchDetail()
