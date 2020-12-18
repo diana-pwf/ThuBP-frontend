@@ -193,16 +193,27 @@ export const getRoundInfo = gql `query getRoundInfo($roundId:String!){
 }
 `
 
-export const getGameInfo = gql`query getGameInfo($gameId: String!) {
+export const getGameScoreAndRecord = gql`query getGameInfo($gameId: String!) {
     findGameById(gameId:$gameId){
-        comments{
-            issuer {
-                userId
-                username
+        result {
+            rounds {
+                score0
+                score1
             }
-            content
+            result {
+                winner
+                output0
+                output1
+            }
+            extra
         }
     }
   }`;
 
+export const getGameInfo = gql`query getGameInfo($gameId: String!) {
+    findGameById(gameId:$gameId){
+        unit0
+        unit1
+    }
+}`;
 
