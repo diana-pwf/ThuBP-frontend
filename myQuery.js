@@ -149,6 +149,11 @@ export const getGameComments = gql`query getGameComments($gameId: String!) {
                 username
             }
             content
+            reply {
+                issuer {
+                    username
+                }
+            }
         }
     }
   }`;

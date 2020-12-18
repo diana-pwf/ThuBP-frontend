@@ -121,7 +121,7 @@ export default class CreateMatch extends Vue {
     publicRestriction: 0,
     publicSignUp: false,
     publicShow: false,
-    maxTeamMember: 1,
+    maxTeamMember: 2,
     minTeamMember: 2,
   }
 
@@ -199,6 +199,11 @@ export default class CreateMatch extends Vue {
     {
       this.form.publicSignUp = false
       this.form.publicShow = false
+    }
+
+    if (!this.form.matchRuleType){
+      this.form.minTeamMember = 1
+      this.form.maxTeamMember = 1
     }
 
     try {

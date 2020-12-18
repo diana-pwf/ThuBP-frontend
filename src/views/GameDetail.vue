@@ -13,25 +13,25 @@
           <a-list
               class="comment-list"
               item-layout="horizontal"
-              :data-source="comments"
+              :data-source="onShowComments"
           >
             <a-list-item slot="renderItem" slot-scope="item, index">
               <a-comment :author="item.authorName" :avatar="item.avatar">
-                <p id="comment-content" slot="content">
-                  {{ item.content }}
-                </p>
+                <div slot="content" id="comment">
+                  <p id="comment-content">
+                  <b-badge v-if="item.replyUser" variant="warning">@{{item.replyUser}}</b-badge>
+                    {{ item.content }}
+                  </p>
+                </div>
                 <div>
-                <a-button size="small" type="link" v-if="item.authorId === user.userId"
-                          @click="editComment(item.id)"
-                          >编辑</a-button>
                 <a-button size="small" type="link" v-if="item.authorId === user.userId"
                           @click="deleteComment(item.id)"
                           >删除</a-button>
                 </div>
                 <a-collapse>
                   <a-collapse-panel :showArrow="false">
-                    <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" v-model="myComment"/>
-                    <a-button class="button" type="primary" @click="replyComment(item.id)">发送</a-button>
+                    <a-textarea placeholder="写下我的想法" :autosize="{minRows:4}" v-model="replyComment"/>
+                    <a-button class="button" type="primary" @click="createReply(item.id, item.authorName)">发送</a-button>
                     <a-button id="reply-button" slot="extra"
                               size="small" type="link"
                               @click="changeButtonText"
@@ -41,9 +41,9 @@
               </a-comment>
             </a-list-item>
           </a-list>
-<!--          <a-pagination class="pagination" :default-current="1" :total="comments.length" :page-size="10"-->
-<!--                        @change="onCommentsPageChange"-->
-<!--          />-->
+          <a-pagination class="pagination" :default-current="1" :total="comments.length" :page-size="3"
+                        @change="onCommentsPageChange"
+          />
         </div>
         <div id="my-comment">
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
@@ -149,6 +149,7 @@ export default class GameDetail extends Vue {
   onShowComments = []
 
   async getComments(){
+    this.comments = []
     let res = await this.$apollo.query({
       query: getGameComments,
       variables:{gameId:this.$route.params.gameId}
@@ -159,10 +160,16 @@ export default class GameDetail extends Vue {
         authorName: item.issuer.username,
         authorId: item.issuer.userId,
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        content: item.content
+        content: item.content,
+        replyUser: null
       }
+      if (item.reply !== null) {
+        comment.replyUser = item.reply.issuer.username
+      }
+
       this.comments.push(comment)
     }
+    this.onCommentsPageChange(1, 3)
   }
 
   myComment = ''
@@ -219,6 +226,30 @@ export default class GameDetail extends Vue {
     }
   }
 
+  replyComment = ''
+
+  async createReply(id, username){
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/comment/game/${this.$route.params.gameId}`,
+        data: {
+          replyId: id,
+          content: `${this.replyComment}`
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      await this.getComments()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+
+  }
+
   unit = [
     {
       name: '可怜程序员队',
@@ -256,16 +287,30 @@ export default class GameDetail extends Vue {
   unit1ScoreDelta = 0
 
   // 轮询分数 发请求
-  changeScore(id){
-    if(!id)
-    {
+  async changeScore(id) {
+    if (!id) {
       this.unit[id].score += this.unit0ScoreDelta
-    }
-    else if(id === 1)
-    {
+    } else if (id === 1) {
       this.unit[id].score += this.unit1ScoreDelta
     }
-
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.$route.params.matchId}/round/${this.$route.params.roundId}/game/${this.$route.params.gameId}`,
+        data: {
+          replyId: id,
+          content: `${this.replyComment}`
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      await this.getComments()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
   }
 
   recordList = [
@@ -320,23 +365,15 @@ export default class GameDetail extends Vue {
   }
 
 
-
-  editComment(id){
-
-  }
-
-
-
-  replyComment(id){
-
-  }
-
   createRecord(){
 
   }
 
   onCommentsPageChange(page, pageSize){
-
+    let total = this.comments.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowComments = this.comments.slice(left, right)
   }
 
   user = {
@@ -386,6 +423,10 @@ export default class GameDetail extends Vue {
 
 >>> .ant-comment {
   width: 100%
+}
+
+#comment{
+  display: flex;
 }
 
 >>> #divider {
