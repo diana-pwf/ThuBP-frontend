@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Navigation :username="user.username"></Navigation>
+    <Navigation :nav-keys="['1']" :username="user.username"></Navigation>
     <div id="div">
       <div class="container">
         <div class="make-center">

@@ -23,28 +23,45 @@
                 <a-descriptions-item label="组织者">
                   {{this.match.organizerName}}
                 </a-descriptions-item>
-                <a-descriptions-item label="开始时间">
-                  2020/11/12
-                </a-descriptions-item>
-                <a-descriptions-item label="结束时间">
-                  2020/12/04
-                </a-descriptions-item>
-                <a-descriptions-item label="面向人群">
-                   软件学院本科生
-                </a-descriptions-item>
                 <a-descriptions-item label="球赛类型">
                   {{this.match.matchType}}
                 </a-descriptions-item>
+                <a-descriptions-item label="开始时间">
+                  <p v-if="!this.match.edit">{{ this.match.startTime }}</p>
+                  <a-date-picker
+                      v-else
+                      @change="dateChange"
+                  />
+                </a-descriptions-item>
+<!--                <a-descriptions-item label="结束时间">-->
+<!--                  2020/12/04-->
+<!--                </a-descriptions-item>-->
+                <a-descriptions-item label="面向人群">
+                  <p v-if="!this.match.edit">{{this.match.targetGroup}}</p>
+                  <a-input v-else v-modal="this.matchEditAim"></a-input>
+                </a-descriptions-item>
+
               </a-descriptions>
               </div>
               <div id="intro">
                 <a-card>
-                  <p>{{this.match.description}}</p>
+                  <a-textarea
+                      v-if="this.match.edit"
+                      v-model="matchEditDescription"
+                      :auto-size="{ minRows: 3, maxRows: 5 }"
+                  />
+                  <p v-else>{{this.match.description}}</p>
                 </a-card>
               </div>
-              <a-button id="detail_edit" type="link">
+              <div>
+              <a-button @click="onDetailEdit" v-if="this.isOrganizer&&!this.match.edit" id="detail_edit" type="link">
                 编辑
               </a-button>
+                <template v-if="this.isOrganizer&&this.match.edit">
+                  <a-button @click="submitDetailEdit" class="detail_button" type="link">确认</a-button>
+                  <a-button @click="cancelDetailEdit" class="detail_button" type="link">取消</a-button>
+                </template>
+              </div>
             </a-tab-pane>
             <a-tab-pane  key="2">
             <span slot="tab">
@@ -224,7 +241,7 @@
                 <a-icon type="unordered-list" />
                   比赛列表
               </span>
-              <b-button @click="gotoCreateRound" class="button" block variant="outline-success">
+              <b-button v-if="this.isOrganizer" @click="gotoCreateRound" class="button" block variant="outline-success">
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
@@ -236,7 +253,8 @@
                       <div class="matchCard">
                     <img :src="match.previewLarge" alt="赛事图片"/>
                     <div>
-                      <h4>{{item.name}}<b-button  id="edit_button" variant="danger">修改轮次</b-button></h4>
+                      <h4>{{item.name}}
+                      </h4>
                       <a-descriptions style="margin-top:5%">
                         <a-descriptions-item label="比赛场数">
                           {{item.games.length}}
@@ -263,6 +281,10 @@
                           <a @click="gotoGameDetail(record,item)" class="ant-dropdown-link">查看详情</a>
                         </span>
                           </a-table>
+                      <div class="roundButton">
+                      <b-button v-if="isOrganizer" @click="onEditRound(item)" id="edit_button" variant="warning">修改轮次</b-button>
+                      <b-button v-if="isOrganizer" @click="onDeleteRound(item)" id="delete_button" variant="danger">删除轮次</b-button>
+                      </div>
                   </div>
 
                 </b-card-text>
@@ -287,6 +309,7 @@ import InviteUser from "@/components/InviteUser.vue";
 import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
 import {isStringElement} from "ant-design-vue/es/_util/props-util";
 import {concat} from "apollo-link";
+import moment from 'moment'
 
 @Component({components:{InviteUser, Navigation}})
 
@@ -331,11 +354,68 @@ export default class MatchDetail extends Vue{
       scopedSlots: { customRender: 'action' },
     },
   ];
- //TODO: 从后端拿到Unit0,unit1,和每次round的strategy
+ //TODO: 从后端拿到Unit0,unit1
   pagination={
     pageSize:3,
     total:0,
     current:0
+  }
+
+  isSingleMatch = false
+
+  //TODO:比赛信息的编辑
+  matchEditAim=''
+  matchEditDescription=''
+  matchEditStartTime=''
+  currentUserId = ''
+  isOrganizer = false
+  isParticipant = false
+  myUnitId = -1
+
+  form = {
+    name: '',
+    description: ''
+  }
+
+  user = {
+    username: ''
+  }
+
+  match = {
+    id:'',
+    description: '',
+    matchType: '',
+    name: '',
+    organizerId: '',
+    organizerName: '',
+    targetGroup: '',
+    teams: [],
+    referees: [],
+    minUnitMember: 1,
+    maxUnitMember: 1,
+    previewLarge: 'background.png',
+    rounds: [],
+    edit:false,
+    startTime:''
+  }
+
+  dateChange(date,dateString){
+    this.matchEditStartTime=dateString
+  }
+
+  onEditRound(item){
+    this.$router.push(`/editRound/${this.match.id}/${item.roundId}`)
+  }
+
+  onDetailEdit(){
+    this.match.edit=true
+    this.matchEditDescription=this.match.description
+  }
+  cancelDetailEdit(){
+    this.match.edit=false
+  }
+  submitDetailEdit(){
+    this.match.edit=false
   }
   handleTableChange(pagination){
     this.pagination=pagination
@@ -365,37 +445,46 @@ export default class MatchDetail extends Vue{
     this.$router.push(`/gameDetail/${this.match['id']}/${item.roundId}/${record.gameId}`)
   }
 
-
-  isSingleMatch = false
-
-  currentUserId = ''
-  isOrganizer = false
-  isParticipant = false
-  myUnitId = -1
-
-  form = {
-    name: '',
-    description: ''
+  onDeleteRound(item){
+    this.$bvModal.msgBoxConfirm('确定要删除轮次吗？', {
+      title: '删除轮次',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.deleteRound(item)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
   }
 
-  user = {
-    username: ''
-  }
-
-  match = {
-    id:'',
-    description: '',
-    matchType: '',
-    name: '',
-    organizerId: '',
-    organizerName: '',
-    targetGroup: '',
-    teams: [],
-    referees: [],
-    minUnitMember: 1,
-    maxUnitMember: 1,
-    previewLarge: 'background.png',
-    rounds: []
+  async deleteRound(item){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match['id']}/round/${item.roundId}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success("删除轮次成功！")
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
   }
 
   async getMatchDetail()
@@ -419,7 +508,9 @@ export default class MatchDetail extends Vue{
         minUnitMember: res.data.findMatchById.minUnitMember,
         maxUnitMember: res.data.findMatchById.maxUnitMember,
         previewLarge: 'background.png',
-        rounds:res.data.findMatchById.rounds
+        rounds:res.data.findMatchById.rounds,
+        edit:false,
+        startTime:res.data.findMatchById.startTime
       }
       for (let x of this.match['rounds']){
         for(let game of x.games){
@@ -641,6 +732,10 @@ img{
   margin-top: 2%;
   margin-left: 80%;
 }
+.detail_button{
+  margin-top: 2%;
+  float: right;
+}
 
 #person_list{
   margin-top: 10%;
@@ -684,8 +779,7 @@ h4{
   margin-bottom: 2%;
 }
 #edit_button{
-  margin-top:-6%;
-  margin-left: 85%;
+  margin-right: 10px;
 }
 .row{
   margin-left: 10%;
@@ -703,4 +797,9 @@ ul{
 .roundCard{
   margin-bottom: 10px;
 }
+
+.roundButton{
+  float: right;
+}
+
 </style>

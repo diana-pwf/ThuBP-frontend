@@ -73,6 +73,7 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
             username
         }
         name
+        startTime
         description
         targetGroup
         previewLarge
@@ -157,6 +158,40 @@ export const getGameComments = gql`query getGameComments($gameId: String!) {
         }
     }
   }`;
+
+export const getRoundInfo = gql `query getRoundInfo($roundId:String!){
+    findRoundById(roundId: $roundId){
+    roundId
+    name
+    description
+    units{
+        unitId
+        name
+        creator{
+            username
+        }
+    }
+    games{
+        unit0{
+            unitId
+            name
+            creator{
+                username
+            }
+        }
+        unit1{
+            unitId
+            name
+            creator{
+                username
+            }
+        }
+        startTime
+        location
+    }
+    }
+}
+`
 
 export const getGameInfo = gql`query getGameInfo($gameId: String!) {
     findGameById(gameId:$gameId){

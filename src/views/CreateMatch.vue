@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navigation :username="user.username"></Navigation>
+  <Navigation :nav-keys="['2']" :username="user.username"></Navigation>
   <div id="container">
   <a-form-model id="entire-form"
                 ref="ruleForm"

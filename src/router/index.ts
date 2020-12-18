@@ -74,6 +74,11 @@ const routes: Array<RouteConfig> = [
     component:CreateRound
   },
   {
+    path:'/editRound/:matchId/:roundId',
+    name:'editRound',
+    component:CreateRound
+  },
+  {
     path:'/urlClickResult/:resultType',
     name:'urlClickResult',
     component:UrlClickResult

@@ -28,7 +28,7 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-3" label="赛制" label-for="input-3">
+      <b-form-group v-if="mode==='Create'" id="input-group-3" label="赛制" label-for="input-3">
         <b-form-select
             id="input-3"
             v-model="roundStrategy"
@@ -37,8 +37,9 @@
         ></b-form-select>
       </b-form-group>
 
-      <SearchTeam @changeSelectedTeams="onChangeSelectedTeams" type="normal"  :teams-list="teamsList"></SearchTeam>
-      <b-button  type="submit" :disabled="this.teamItems.length<2" id="arrangeButton" block variant="outline-warning">自动编排</b-button>
+      <SearchTeam type="normal"  :team-items="teamItems" :teams-list="teamsList"></SearchTeam>
+      <b-button v-if="mode==='Create'" type="submit" :disabled="this.teamItems.length<2" id="arrangeButton" block variant="outline-warning">自动编排</b-button>
+      <div>
       <h4><b-badge style="margin-top: 20px" variant="info">比赛列表</b-badge></h4>
       <b-table class="table" striped hover :items="gameItems" :fields="gameFields">
         <template #cell(time)="row">
@@ -60,16 +61,17 @@
           <b-button @click="removeGame(row)" variant="danger" size="sm">remove</b-button>
         </template>
       </b-table>
+      </div>
       <b-button block :disabled="this.teamItems.length<2" v-b-modal.custom-create-game variant="outline-warning">自定义添加比赛</b-button>
       <b-modal hide-footer id="custom-create-game">
         <template #modal-title>
           自定义添加比赛
         </template>
-        <SearchTeam @changeSelectedTeams="onModalChangeSelectedTeams" type="modal"  :teams-list="teamItems"></SearchTeam>
+        <SearchTeam   type="modal" :team-items="modalTeamItems" :teams-list="teamItems"></SearchTeam>
         <b-button @click="customCreateGame" variant="outline-info" :disabled="modalTeamItems.length!=2" id="custom-create-game-button">创建比赛</b-button>
       </b-modal>
       <div id="submit-button">
-      <b-button @click="createRound" v-if="roundStrategy&&roundName&&roundDescription" :disabled="gameItems.length<1" variant="success" size="lg" >提交轮次信息</b-button>
+      <b-button @click="createRound" v-if="roundName" :disabled="gameItems.length<1" variant="success" size="lg" >提交轮次信息</b-button>
       </div>
     </b-form>
   </div>
@@ -80,9 +82,10 @@
 <script>
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
-import {getMatchRelatedTeams, getRoundStrategyTypes} from "../../myQuery";
+import {findUserByName, getMatchRelatedTeams, getRoundStrategyTypes,getRoundInfo} from "../../myQuery";
 import Navigation from "@/components/Navigation.vue";
 import SearchTeam from "@/components/SearchTeam.vue"
+
 
 @Component({components:{SearchTeam, Navigation}})
 
@@ -107,14 +110,17 @@ export default class CreateRound extends Vue{
   strategyOptions=[]
   strategyOptionNames=[]
   teamsList=[]
+  initTeamItems=[]
 
-  onModalChangeSelectedTeams(teamProp){
-    this.modalTeamItems=teamProp
-  }
+  mode=''
 
-  onChangeSelectedTeams(teamProp){
-    this.teamItems=teamProp
-  }
+  // onModalChangeSelectedTeams(teamProp){
+  //   this.modalTeamItems=teamProp
+  // }
+  //
+  // onChangeSelectedTeams(teamProp){
+  //   this.teamItems=teamProp
+  // }
 
   customCreateGame(){
     let game={}
@@ -193,11 +199,17 @@ export default class CreateRound extends Vue{
 
   async getTeamsList(){
     try {
+      console.log('getTeamsList')
       let res = await this.$apollo.query({
         query: getMatchRelatedTeams,
         variables:{matchId:this.$route.params.matchId}
       })
-      this.teamsList = res.data.findMatchById.units
+      let list = res.data.findMatchById.units
+      for(let x of list){
+        x['creator']=x['creator'].username
+        x['id']=x.unitId
+      }
+      this.teamsList=list
     }
     catch (e){
         console.log(e.data)
@@ -218,6 +230,7 @@ export default class CreateRound extends Vue{
       console.log(e.data)
   }
   }
+
   async getUserInfo()
   {
     try {
@@ -241,9 +254,39 @@ export default class CreateRound extends Vue{
     }
   }
 
+  async getRoundInfo(){
+    let res = await this.$apollo.query({
+      query: getRoundInfo,
+      variables:{roundId:this.$route.params.roundId}
+    });
+    this.roundName=res.data.findRoundById.name
+    this.roundDescription=res.data.findRoundById.description
+    for(let unit of res.data.findRoundById.units){
+      let team={}
+      team['id']=unit.unitId
+      team['name']=unit.name
+      team['creator']=unit.creator.username
+      team['description']='description to be implemented'
+      this.teamItems.push(team)
+    }
+    console.log('teamItems')
+    console.log(this.teamItems)
+    this.initTeamItems=this.teamItems
+    for(let game of res.data.findRoundById.games){
+      let temp={}
+      temp['unit0']=game.unit0.unitId
+      temp['unit1']=game.unit1.unitId
+      temp['unit0-name']=game.unit0.name
+      temp['unit1-name']=game.unit1.name
+      temp['edit']=false
+      temp['time']=game.startTime
+      temp['location']=game.location
+      this.gameItems.push(temp)
+    }
+  }
 
   async createRound(){
-    let strategy=this.strategyOptions.find(x=>x.strategyName===this.roundStrategy)
+    // let strategy=this.strategyOptions.find(x=>x.strategyName===this.roundStrategy)
     let unitList=[]
     for(let x of this.teamItems){
       unitList.push(x.id)
@@ -265,7 +308,7 @@ export default class CreateRound extends Vue{
         method: 'post',
         url: `/api/v1/match/${this.$route.params.matchId}/round`,
         data: {
-          autoStrategy:strategy.strategyId,
+          // autoStrategy:strategy.strategyId,
           description:this.roundDescription,
           name:this.roundName,
           units:unitList,
@@ -304,10 +347,21 @@ export default class CreateRound extends Vue{
   }
 
 
-  mounted(){
-    this.getRoundStrategyOptions()
-    this.getUserInfo()
-    this.getTeamsList()
+
+
+  async mounted(){
+    if('roundId' in this.$route.params){
+      this.mode='Edit'
+    }
+    else{
+      this.mode='Create'
+    }
+    await this.getRoundStrategyOptions()
+    await this.getUserInfo()
+    await this.getTeamsList()
+    if(this.mode==='Edit'){
+      await this.getRoundInfo()
+    }
   }
 
 

@@ -32,14 +32,15 @@
 
 <script>
 import axios from "axios";
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue,Watch} from 'vue-property-decorator';
 
 @Component
 export default class SearchTeam extends Vue{
   @Prop({type:String,default:function (){return ''}})type
   @Prop({type:Array, default:function (){return []}})teamsList
+  @Prop({type:Array,default:function (){return []}})teamItems
   teamFields = ['name', 'creator', 'description','action']
-  teamItems = []
+  // teamItems = []
   teamSearchKey=''
   showTeamList=false
   alertShow=false
@@ -74,22 +75,23 @@ export default class SearchTeam extends Vue{
       }
     }
     this.alertShow=false
-    if(this.type==="normal")
-    {
-      team['id']=item.unitId
-      team['name']=item.name
-      team['creator']=item.creator.username
-      team['description']='description to be implemented'
-    }
-    else if(this.type==="modal"){
+    // if(this.type==="normal")
+    // {
+    //   team['id']=item.unitId
+    //   team['name']=item.name
+    //   // team['creator']=item.creator.username
+    //
+    //   team['description']='description to be implemented'
+    // }
+    // else if(this.type==="modal"){
       team['id']=item.id
       team['name']=item.name
       team['creator']=item.creator
       team['description']='description to be implemented'
-    }
+    // }
     this.teamItems.push(team)
     this.hideList()
-    this.$emit("changeSelectedTeams",this.teamItems)
+    // this.$emit("changeSelectedTeams",this.teamItems)
   }
 
   removeTeam(row){
@@ -105,12 +107,21 @@ export default class SearchTeam extends Vue{
     if(list.length>5){
       return list.slice(0,5)
     }
-    console.log(list)
     return list
   }
-  mounted(){
-    this.teamItems=[]
-  }
+  // @Watch(this.initTeamsItems)func1(){
+  //   if(this.initTeamsItems) {
+  //     this.teamItems = this.initTeamsItems
+  //   }
+  // }
+
+
+
+  // mounted(){
+  //   this.teamItems=this.initTeamsItems
+  //   console.log('searchTeam')
+  //   console.log(this.teamItems)
+  // }
 }
 </script>
 
