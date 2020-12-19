@@ -110,7 +110,6 @@ export default class CreateRound extends Vue{
   strategyOptions=[]
   strategyOptionNames=[]
   teamsList=[]
-  initTeamItems=[]
 
   mode=''
 
@@ -199,7 +198,6 @@ export default class CreateRound extends Vue{
 
   async getTeamsList(){
     try {
-      console.log('getTeamsList')
       let res = await this.$apollo.query({
         query: getMatchRelatedTeams,
         variables:{matchId:this.$route.params.matchId}
@@ -269,9 +267,6 @@ export default class CreateRound extends Vue{
       team['description']='description to be implemented'
       this.teamItems.push(team)
     }
-    console.log('teamItems')
-    console.log(this.teamItems)
-    this.initTeamItems=this.teamItems
     for(let game of res.data.findRoundById.games){
       let temp={}
       temp['unit0']=game.unit0.unitId

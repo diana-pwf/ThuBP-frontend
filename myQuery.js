@@ -66,6 +66,8 @@ export const getMatchRelatedTeams = gql`query  getMatchRelatedTeams($matchId: St
 
 export const findMatchDetailById = gql`query findMatchDetailById($matchId: String!){
     findMatchById(matchId: $matchId) {
+        publicShowUp
+        publicSignUp
         matchId
         matchTypeId
         organizerUser {
@@ -102,7 +104,12 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
                 status
                 startTime
                 location
-               
+                unit0{
+                name
+                }
+                unit1{
+                name
+                }
             }
             
         }
