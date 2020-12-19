@@ -329,9 +329,10 @@ export default class GameDetail extends Vue {
       query: getGameScoreAndRecord,
       variables:{gameId:this.$route.params.gameId}
     })
-    if (res.data.findGameById.result && res.data.findGameById.result.result)
+    console.log(res.data.findGameById)
+    if (res.data.findGameById.result)
     {
-      if(res.data.findGameById.result.rounds.length)
+      if (res.data.findGameById.result.rounds)
       {
         this.roundScoreList = []
         for (let item of res.data.findGameById.result.rounds)
@@ -343,14 +344,16 @@ export default class GameDetail extends Vue {
           this.roundScoreList.push(roundScoreItem)
         }
       }
-      this.unit[0].score = res.data.findGameById.result.result.output0
-      this.unit[1].score = res.data.findGameById.result.result.output1
+      if (res.data.findGameById.result.result)
+      {
+        this.unit[0].score = res.data.findGameById.result.result.output0
+        this.unit[1].score = res.data.findGameById.result.result.output1
+      }
+      if (res.data.findGameById.result.extra)
+      {
+        this.recordList = JSON.parse(res.data.findGameById.result.extra).records
+      }
     }
-    if (res.data.findGameById.extra)
-    {
-      this.recordList = res.data.findGameById.extra
-    }
-    console.log(this.recordList)
   }
 
   async changeScore(id) {
@@ -384,6 +387,7 @@ export default class GameDetail extends Vue {
       }
       this.unit0ScoreDelta = 0
       this.unit1ScoreDelta = 0
+      this.getGameScore()
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
@@ -417,11 +421,9 @@ export default class GameDetail extends Vue {
   onSubmit() {
     //@ts-ignore
     this.$refs.ruleForm.validate(valid => {
-      console.log(valid);
       if (valid) {
         this.createRecord();
       } else {
-        console.log('error submit!!');
         return false;
       }
     });
@@ -442,7 +444,9 @@ export default class GameDetail extends Vue {
         url: `/api/v1/match/${this.$route.params.matchId}/round/${this.$route.params.roundId}/game/${this.$route.params.gameId}`,
         data: {
           result: {
-            extra: this.recordList
+            extra: {
+              records: this.recordList
+            }
           }
         }
       })
@@ -450,8 +454,7 @@ export default class GameDetail extends Vue {
       if (response.status !== 200) {
         throw {response}
       }
-      this.unit0ScoreDelta = 0
-      this.unit1ScoreDelta = 0
+      this.getGameScore()
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
@@ -493,10 +496,8 @@ export default class GameDetail extends Vue {
 
   mounted() {
     this.getUserInfo()
-
     this.getComments()
     this.getGameScore()
-
   }
 
 }

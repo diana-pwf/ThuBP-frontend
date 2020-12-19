@@ -21,15 +21,6 @@
           style="width: 100%;"
       />
     </a-form-model-item>
-    <a-form-model-item prop="endDate" label="赛事结束时间">
-      <a-date-picker
-          v-model="form.endDate"
-          show-time
-          type="date"
-          placeholder="选择赛事结束时间"
-          style="width: 100%;"
-      />
-    </a-form-model-item>
     <a-form-model-item prop="targetGroup" label="面向人群">
       <a-input v-model="form.targetGroup"
       />
@@ -39,9 +30,6 @@
         <a-select-option value="basketball">
           篮球
         </a-select-option>
-        <!--<a-select-option value="soccerball">
-          足球
-        </a-select-option>-->
         <a-select-option value="tennis">
           网球
         </a-select-option>
@@ -67,7 +55,7 @@
       <a-input-number :min="form.minTeamMember" :precision="0" v-model="form.maxTeamMember"/>
     </a-form-model-item>
     <a-form-model-item label="上传赛事照片">
-      <PictureUpload @event="updateFile"></PictureUpload>
+      <PictureUpload :picture-type="'MATCH_PREVIEW'" @event="updateFile"></PictureUpload>
     </a-form-model-item>
     <a-form-model-item>
       <a-button style="float:right">
@@ -113,7 +101,6 @@ export default class CreateMatch extends Vue {
     name: '',
     // region: '',
     startDate: undefined,
-    endDate: undefined,
     targetGroup: '',
     matchtypeId: '',
     matchRuleType: 0,
@@ -213,8 +200,7 @@ export default class CreateMatch extends Vue {
         url: '/api/v1/match',
         data: {
           name: this.form.name,
-          //"startTime":this.form.startDate,
-          //"endTime":this.form.endDate,
+          startTime:this.form.startDate,
           description: this.form.description,
           targetGroup: this.form.targetGroup,
           matchTypeId: this.form.matchtypeId,

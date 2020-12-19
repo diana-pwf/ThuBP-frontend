@@ -15,23 +15,40 @@
               <a-icon type="apple" />
                 个人信息
             </span>
-            <a-descriptions title="User Info">
-              <a-descriptions-item label="username">
-                pwf18
+            <PictureUpload :picture-type="'AVATAR'" :image-url="user.avatar"></PictureUpload>
+            <small>(推荐上传1:1的80px左右的图作为头像)</small>
+
+            <a-descriptions id="descriptions" title="个人资料">
+              <a-descriptions-item class="description-item" label="账号ID">
+                {{user.userId}}
               </a-descriptions-item>
-              <a-descriptions-item label="thuId">
-                2018013405
+              <a-descriptions-item class="description-item" label="学工号">
+                {{user.thuId}}
               </a-descriptions-item>
-              <a-descriptions-item label="gender">
-                Female
+              <a-descriptions-item class="description-item" label="注册时间">
+                {{user.createdAt}}
               </a-descriptions-item>
-              <a-descriptions-item label="mobile">
-                18108654542
+              <a-descriptions-item class="description-item" label="用户名">
+                <span v-if="!isEditAccount">{{user.username}}</span>
+                <a-input v-else v-model="user.username"></a-input>
               </a-descriptions-item>
-              <a-descriptions-item label="email">
-                diana_pwf@163.com
+              <a-descriptions-item class="description-item" label="手机号">
+                <span v-if="!isEditAccount">{{user.mobile}}</span>
+                <a-input v-else v-model="user.mobile"></a-input>
+              </a-descriptions-item>
+              <a-descriptions-item class="description-item" label="邮箱">
+                <span v-if="!isEditAccount">{{user.email}}</span>
+                <a-input v-else v-model="user.email"></a-input>
+              </a-descriptions-item>
+              <a-descriptions-item class="description-item" label="个人陈述">
+                <span v-if="!isEditAccount">{{user.description}}</span>
+                <a-input v-else v-model="user.description"></a-input>
               </a-descriptions-item>
             </a-descriptions>
+
+            <a-button class="edit-button" type="primary" v-if="!isEditAccount" @click="editAccount">修改账号资料</a-button>
+            <a-button class="edit-button" type="primary" v-else @click="submitEditAccount">提交修改</a-button>
+            <a-button>修改密码</a-button>
           </a-tab-pane>
           <a-tab-pane  key="2">
             <span slot="tab">
@@ -157,9 +174,10 @@ import Navigation from "../components/Navigation.vue";
 import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
 import {isTypeSystemDefinitionNode} from "graphql";
 import SearchResultCard from "@/components/SearchResultCard.vue";
+import PictureUpload from "@/components/PictureUpload.vue";
 
 @Component({
-  components: {SearchResultCard, ResultCardList, Navigation},
+  components: {PictureUpload, SearchResultCard, ResultCardList, Navigation},
 })
 
 export default class PersonalInfoTab extends Vue {
@@ -188,11 +206,44 @@ export default class PersonalInfoTab extends Vue {
   ];
 
   user = {
-    gender:'',
+    avatar:'',
+    email:'',
+    mobile:'',
+    newPassword:'',
+    oldPassword:'',
     thuId:'',
     userId:'',
     username:'',
-    role:''
+    description:'',
+    createdAt:''
+  }
+
+  isEditAccount = false
+  editAccount(){
+    this.isEditAccount = true
+  }
+  async submitEditAccount(){
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/user/info`,
+        data: {
+          username: this.user.username,
+          mobile: this.user.mobile,
+          email: this.user.email,
+          description: this.user.description
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+    this.isEditAccount = false
   }
 
   infoModal={}
@@ -444,6 +495,13 @@ export default class PersonalInfoTab extends Vue {
         this.$message.success('get userInfo success!')
         this.user.userId = response.data.userId
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
+        this.user.mobile = response.data.mobile
+        this.user.email = response.data.email
+        this.user.createdAt = response.data.createdAt
+        this.user.thuId = response.data.thuId
+        this.user.description = response.data.description
+        // 更多修改信息
         await this.getMyOrganizeMatch(this.user.userId)
         await this.getMyParticipateMatch(this.user.userId)
         await this.getMyNotifications(0,10)
@@ -457,6 +515,8 @@ export default class PersonalInfoTab extends Vue {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
   }
+
+
 
   callback(key)
   {
@@ -525,5 +585,13 @@ ul,li {
 }
 .delete-action{
   color: dodgerblue;
+}
+
+#descriptions {
+  margin: 20px;
+}
+
+.edit-button {
+  margin-right: 20px;
 }
 </style>

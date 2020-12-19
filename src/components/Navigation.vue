@@ -72,7 +72,7 @@ export default class Navigation extends Vue{
     }
   }
   mounted(){
-    console.log(this.navKeys)
+    // console.log(this.navKeys)
   }
 }
 </script>

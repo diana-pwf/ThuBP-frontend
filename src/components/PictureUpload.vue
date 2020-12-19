@@ -10,11 +10,23 @@
         :data="uploadParamObj"
     >
       <div v-if="!fileList.length">
-        <a-icon type="plus" />
-        <div class="ant-upload-text">
-          点击上传图片
+        <div v-if="pictureType === 'MATCH_PREVIEW'">
+          <a-icon type="plus" />
+          <div class="ant-upload-text">
+            点击上传图片
+          </div>
+        </div>
+        <div v-if="pictureType === 'AVATAR'">
+          <img id="avatar" v-if="imageUrl" :src="imageUrl" alt="qwq">
+          <div v-else>
+            <a-icon type="plus" />
+            <div class="ant-upload-text">
+              点击上传图片
+            </div>
+          </div>
         </div>
       </div>
+
     </a-upload>
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
       <img alt="example" style="width: 100%" :src="previewImage" />
@@ -24,20 +36,25 @@
 
 <script lang="ts">
 import axios from "axios";
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component({
   components:{
   }
 })
 
+
+
 export default class PictureUpload extends Vue{
+  @Prop({type:String, default:function (){return ""}})pictureType
+  @Prop({type:String, default:function (){return ""}})imageUrl
+
   fileList = []
   previewVisible = false
   previewImage = ''
 
-  uploadParamObj: {token?: string, key?: string} = {}
 
+  uploadParamObj: {token?: string, key?: string} = {}
   async beforeUpload(file) {
     try {
       let index = file.name.lastIndexOf('.')
@@ -59,11 +76,11 @@ export default class PictureUpload extends Vue{
         method: 'post',
         url: '/api/v1/upload',
         params: {
-          uploadType: "MATCH_PREVIEW"
+          uploadType: this.pictureType
         },
         data: {
           suffix: suffix,
-          uploadType: "MATCH_PREVIEW"
+          uploadType: this.pictureType
         }
       })
       // 对response做处理
@@ -74,7 +91,15 @@ export default class PictureUpload extends Vue{
         token: response.data.uploadToken,
         key: response.data.key
       }
-      this.$emit('event', this.uploadParamObj)
+      console.log(this.getBase64(file))
+      if(this.pictureType === 'MATCH_PREVIEW')
+      {
+        this.$emit('event', this.uploadParamObj)
+      }
+      else if(this.pictureType === 'AVATAR')
+      {
+        await this.uploadAvatar()
+      }
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
       this.$message.error('图片上传出现问题，请删除后再试')
@@ -106,9 +131,33 @@ export default class PictureUpload extends Vue{
     this.previewVisible = false;
   }
 
+  async uploadAvatar(){
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/user/info`,
+        data: {
+          avatar: this.uploadParamObj.key
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
+
+
 }
 </script>
 
 <style scoped>
-
+#avatar {
+  width: 86px;
+  height: 86px;
+}
 </style>
