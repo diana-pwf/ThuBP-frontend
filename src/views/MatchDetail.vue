@@ -569,6 +569,7 @@ export default class MatchDetail extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success("删除轮次成功！")
+        window.location.reload()
       }
       else
       {
