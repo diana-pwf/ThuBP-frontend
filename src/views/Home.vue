@@ -7,9 +7,9 @@
           <search-input id="search"></search-input>
         </div>
         <a-tabs class="tab" default-active-key="1" :tabBarStyle="{'text-align': 'center'}"  @change="callback">
-          <a-tab-pane key="1" tab="综合">
-            <div v-if="onShowMatchesList.length">
-            <Carousel></Carousel>
+          <a-tab-pane  key="1" tab="综合">
+            <div id="all" v-if="onShowMatchesList.length">
+            <Carousel id="carousel"></Carousel>
             <ul class="wrapper">
               <li class="list" v-for="(item,index) in this.onShowMatchesList ">
                 <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
@@ -216,4 +216,12 @@ export default class Home extends Vue {
   width: 50%;
 }
 
+#carousel{
+  width: 80%;
+  margin:auto;
+}
+
+#all{
+
+}
 </style>

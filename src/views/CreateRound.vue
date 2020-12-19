@@ -110,7 +110,6 @@ export default class CreateRound extends Vue{
   strategyOptions=[]
   strategyOptionNames=[]
   teamsList=[]
-  initTeamItems=[]
 
   mode=''
 
@@ -199,7 +198,6 @@ export default class CreateRound extends Vue{
 
   async getTeamsList(){
     try {
-      console.log('getTeamsList')
       let res = await this.$apollo.query({
         query: getMatchRelatedTeams,
         variables:{matchId:this.$route.params.matchId}
@@ -269,9 +267,6 @@ export default class CreateRound extends Vue{
       team['description']='description to be implemented'
       this.teamItems.push(team)
     }
-    console.log('teamItems')
-    console.log(this.teamItems)
-    this.initTeamItems=this.teamItems
     for(let game of res.data.findRoundById.games){
       let temp={}
       temp['unit0']=game.unit0.unitId
@@ -317,6 +312,9 @@ export default class CreateRound extends Vue{
       })
       // 对response做处理
       if (response.status === 200) {
+        if(this.mode==='Edit'){
+          await this.deleteRound()
+        }
         this.$bvModal.msgBoxOk('创建轮次成功！', {
           title: 'Confirmation',
           size: 'sm',
@@ -346,7 +344,25 @@ export default class CreateRound extends Vue{
     }
   }
 
+  async deleteRound(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.$route.params.matchId}/round/${(this.$route.params.roundId)}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
 
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
 
 
   async mounted(){

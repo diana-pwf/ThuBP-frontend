@@ -16,6 +16,13 @@
             </span>
               <div id="detail">
               <img :src="this.match.previewLarge" alt="比赛照片"/>
+<!--                <b-container id="description" class="bv-example-row">-->
+<!--                  <b-row>-->
+<!--                    <b-col><p>比赛名称：{{this.match.name}}</p></b-col>-->
+<!--                    <b-col>2 of 3</b-col>-->
+<!--                    <b-col>3 of 3</b-col>-->
+<!--                  </b-row>-->
+<!--                </b-container>-->
               <a-descriptions id="description" >
                 <a-descriptions-item label="比赛名称">
                   {{this.match.name}}
@@ -30,6 +37,7 @@
                   <p v-if="!this.match.edit">{{ this.match.startTime }}</p>
                   <a-date-picker
                       v-else
+                       v-model="matchEditStartTime"
                       @change="dateChange"
                   />
                 </a-descriptions-item>
@@ -38,8 +46,31 @@
 <!--                </a-descriptions-item>-->
                 <a-descriptions-item label="面向人群">
                   <p v-if="!this.match.edit">{{this.match.targetGroup}}</p>
-                  <a-input v-else v-modal="this.matchEditAim"></a-input>
+                  <a-input v-else v-model="matchEditAim"></a-input>
                 </a-descriptions-item>
+                <a-descriptions-item label="访问方式">
+                  <p v-if="!this.match.edit">{{this.match.publicShowUp===true?"公开":"非公开"}}</p>
+                  <a-radio-group v-else v-model="matchEditShowUp">
+                    <a-radio :value="1">
+                      公开
+                    </a-radio>
+                    <a-radio :value="2">
+                      非公开
+                    </a-radio>
+                  </a-radio-group>
+                </a-descriptions-item>
+                <a-descriptions-item label="报名方式">
+                  <p v-if="!this.match.edit">{{this.match.publicSignUp===true?"公开":"非公开"}}</p>
+                  <a-radio-group v-else v-model="matchEditSignUp">
+                    <a-radio :value="1">
+                      公开
+                    </a-radio>
+                    <a-radio :value="2">
+                      非公开
+                    </a-radio>
+                  </a-radio-group>
+                </a-descriptions-item>
+
 
               </a-descriptions>
               </div>
@@ -316,16 +347,16 @@ import moment from 'moment'
 export default class MatchDetail extends Vue{
   columns = [
     {
-      dataIndex: 'unit0',
-      key: 'unit0',
+      dataIndex: 'unit0_name',
+      key: 'unit0_name',
       title:'比赛队伍A'
       // slots: { title: 'customTitle' },
       // scopedSlots: { customRender: 'unit0' },
     },
     {
       title: '比赛队伍B',
-      dataIndex: 'unit1',
-      key: 'unit1',
+      dataIndex: 'unit1_name',
+      key: 'unit1_name',
     },
     {
       title: '开始时间',
@@ -354,7 +385,6 @@ export default class MatchDetail extends Vue{
       scopedSlots: { customRender: 'action' },
     },
   ];
- //TODO: 从后端拿到Unit0,unit1
   pagination={
     pageSize:3,
     total:0,
@@ -363,10 +393,11 @@ export default class MatchDetail extends Vue{
 
   isSingleMatch = false
 
-  //TODO:比赛信息的编辑
-  matchEditAim=''
-  matchEditDescription=''
+  matchEditAim=""
+  matchEditDescription=""
   matchEditStartTime=''
+  matchEditShowUp=1
+  matchEditSignUp=1
   currentUserId = ''
   isOrganizer = false
   isParticipant = false
@@ -396,7 +427,9 @@ export default class MatchDetail extends Vue{
     previewLarge: 'background.png',
     rounds: [],
     edit:false,
-    startTime:''
+    startTime:'',
+    publicShowUp: true,
+    publicSignUp:true
   }
 
   dateChange(date,dateString){
@@ -410,13 +443,72 @@ export default class MatchDetail extends Vue{
   onDetailEdit(){
     this.match.edit=true
     this.matchEditDescription=this.match.description
+    this.matchEditAim=this.match.targetGroup
+    if(this.match.publicShowUp){
+      this.matchEditShowUp=1
+    }
+    else{
+      this.matchEditShowUp=2
+    }
+    if(this.match.publicSignUp){
+      this.matchEditSignUp=1
+    }
+    else{
+      this.matchEditSignUp=2
+    }
+
   }
   cancelDetailEdit(){
     this.match.edit=false
   }
   submitDetailEdit(){
     this.match.edit=false
+    this.match.targetGroup=this.matchEditAim
+    this.match.description=this.matchEditDescription
+    this.match.startTime=this.matchEditStartTime
+    if(this.matchEditShowUp===1){
+      this.match.publicShowUp=true
+    }
+    else{
+      this.match.publicShowUp=false
+    }
+    if(this.matchEditSignUp===1){
+      this.match.publicSignUp=true
+    }
+    else{
+      this.match.publicSignUp=false
+    }
+    this.modifyMatchDetail()
   }
+
+  async modifyMatchDetail(){
+    let time=new Date(this.match.startTime).toISOString()
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.match['id']}`,
+        data:{
+          description:this.match.description,
+          targetGroup:this.match.targetGroup,
+          startTime:time,
+          publicShowUp:this.match.publicShowUp,
+          publicSignUp:this.match.publicSignUp
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('修改赛事信息成功！')
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
+
   handleTableChange(pagination){
     this.pagination=pagination
     let page=pagination.current - 1
@@ -426,7 +518,7 @@ export default class MatchDetail extends Vue{
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
         method: 'post',
-        url: `/api/v1/match/assign-referee-token/${this.match['matchId']}`
+        url: `/api/v1/match/assign-referee-token/${this.match['id']}`
       })
       // 对response做处理
       if (response.status === 200) {
@@ -477,6 +569,7 @@ export default class MatchDetail extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success("删除轮次成功！")
+        window.location.reload()
       }
       else
       {
@@ -510,10 +603,14 @@ export default class MatchDetail extends Vue{
         previewLarge: 'background.png',
         rounds:res.data.findMatchById.rounds,
         edit:false,
-        startTime:res.data.findMatchById.startTime
+        startTime:res.data.findMatchById.startTime,
+        publicShowUp: res.data.findMatchById.publicShowUp,
+        publicSignUp: res.data.findMatchById.publicSignUp
       }
       for (let x of this.match['rounds']){
         for(let game of x.games){
+          game['unit0_name']=game.unit0.name
+          game['unit1_name']=game.unit1.name
           game['key']=game.gameId
           game['tags']=[game.status]
         }

@@ -1,5 +1,5 @@
 <template>
-  <a-carousel autoplay arrows>
+  <a-carousel id="cantainer" autoplay arrows>
     <div
         slot="prevArrow"
         slot-scope="props"
@@ -29,8 +29,7 @@ export default class Carousel extends Vue{
 <style scoped>
 .ant-carousel >>> .slick-slide {
   text-align: center;
-  height: 160px;
-  line-height: 160px;
+  line-height: 250px;
   background: #364d79;
   overflow: hidden;
 }
@@ -53,4 +52,5 @@ export default class Carousel extends Vue{
 .ant-carousel >>> .slick-slide h3 {
   color: #fff;
 }
+
 </style>
