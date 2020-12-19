@@ -44,19 +44,12 @@ export default class Logon extends Vue {
   }
   async logon () {
     try {
-      let response = await axios({
-        method:"post",
-        url:'/api/v1/auth/register',
-        data:{
-        username: this.username,
-        password: this.password,
-        ticket:this.ticket
-      }})
-      if (response.status === 200) {
-        this.$message.success('log on success!')
-        this.$router.push('/')
-        // 在此处弹出提示 注册成功
-      }
+      const { username, password } = this;
+      const timestamp = new Date().getTime();
+      window.location.href = "https://alumni-test.iterator-traits.com/fake-id-tsinghua/do/off/ui/auth/login/form/032771ca2d05561cefc5ca65dcff39f9/0?/local-login";
+      localStorage.setItem("logon", JSON.stringify({
+        username, password, timestamp
+      }));
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }

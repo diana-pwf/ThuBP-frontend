@@ -11,6 +11,7 @@ import CreateMatch from "@/views/CreateMatch.vue";
 import TeamDetail from "@/views/TeamDetail.vue";
 import CreateRound from "@/views/CreateRound.vue";
 import UrlClickResult from "@/views/UrlClickResult.vue";
+import ThuRegister from "@/views/ThuRegister.vue";
 
 Vue.use(VueRouter)
 
@@ -83,9 +84,20 @@ const routes: Array<RouteConfig> = [
     name:'urlClickResult',
     component:UrlClickResult
   },
+  {
+    path:'/local-login',
+    name:'localLogin',
+    component:ThuRegister
+  },
+  {
+    path:'/thuLogin',
+    name:'thuLogin',
+    component:ThuRegister
+  }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 
