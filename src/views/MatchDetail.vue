@@ -393,7 +393,6 @@ export default class MatchDetail extends Vue{
 
   isSingleMatch = false
 
-  //TODO:后端实现删除轮次接口
   matchEditAim=""
   matchEditDescription=""
   matchEditStartTime=''

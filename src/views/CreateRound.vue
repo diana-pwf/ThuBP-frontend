@@ -312,6 +312,9 @@ export default class CreateRound extends Vue{
       })
       // 对response做处理
       if (response.status === 200) {
+        if(this.mode==='Edit'){
+          await this.deleteRound()
+        }
         this.$bvModal.msgBoxOk('创建轮次成功！', {
           title: 'Confirmation',
           size: 'sm',
@@ -341,7 +344,25 @@ export default class CreateRound extends Vue{
     }
   }
 
+  async deleteRound(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.$route.params.matchId}/round/${(this.$route.params.roundId)}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
 
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
 
 
   async mounted(){
