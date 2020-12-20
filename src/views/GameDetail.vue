@@ -53,8 +53,8 @@
       <div id="records">
         <b-card id="card" no-body class="text-center">
           <div class="flex-box">
-            <p id="date">2020/12/12</P>
-            <p>紫荆操场</p>
+            <p id="date">{{startTime}}</P>
+            <p>{{location}}</p>
           </div>
           <div id="qwq">
             <div class="flex-box">
@@ -484,7 +484,10 @@ export default class GameDetail extends Vue {
   }
 
   refereeId = ''
-  isReferee = false
+  // 可修改
+  isReferee = true
+  startTime = ''
+  location = ''
 
   async getUserInfo()
   {
@@ -518,19 +521,21 @@ export default class GameDetail extends Vue {
       variables:{gameId:this.$route.params.gameId}
     })
     this.unit[0].id = res.data.findGameById.unit0.unitId
-    this.unit[1].id = res.data.findGameById.unit0.unitId
+    this.unit[1].id = res.data.findGameById.unit1.unitId
     this.unit[0].name = res.data.findGameById.unit0.name
-    this.unit[1].name = res.data.findGameById.unit0.name
+    this.unit[1].name = res.data.findGameById.unit1.name
     this.refereeId = res.data.findGameById.referee.userId
     if (this.refereeId === this.user.userId)
     {
       this.isReferee = true
     }
+    this.startTime = res.data.findGameById.startTime
+    this.location = res.data.findGameById.location
   }
 
-  // created(){
-  //   setInterval(this.getGameScore, 1000)
-  // }
+  created(){
+    setInterval(this.getGameScore, 1000)
+  }
 
   mounted() {
     this.getUserInfo()
@@ -660,7 +665,6 @@ export default class GameDetail extends Vue {
 }
 
 #timeline {
-
 }
 
 li {
@@ -678,6 +682,8 @@ li {
 #logs {
   display: grid;
   grid-template-columns: 2fr 3fr;
+  max-height: 30%;
+  overflow-y: scroll;
 }
 
 .score-change-form {
