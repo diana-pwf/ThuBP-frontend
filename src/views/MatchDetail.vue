@@ -139,7 +139,7 @@
                   </b-button>
                   <b-button v-else-if="isParticipant"
                             variant="outline-success" class="add"
-                            @click="gotoTeamDetail(this.myUnitId)">
+                            @click="gotoTeamDetail(myUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     查看我的队伍
                   </b-button>
@@ -759,8 +759,8 @@ export default class MatchDetail extends Vue{
         method: 'post',
         url: `/api/v1/match/register/${this.$route.params.matchId}`,
         data: {
-          unitName: this.form.name
-          // TODO:description
+          unitName: this.form.name,
+          description: this.form.description
         }
       })
       // 对response做处理

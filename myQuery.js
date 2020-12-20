@@ -131,13 +131,18 @@ export const getUnitDetail = gql`query getUnitDetail($unitId: String!){
     findUnitById(unitId:$unitId){
         unitId
         name
+        description
         creator {
             userId
             username
+            description
+            avatar
         }
         members {
             userId
             username
+            description
+            avatar
         }
     }
 }`;

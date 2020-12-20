@@ -9,12 +9,17 @@
         <h1>清球汇</h1>
       </div>
       <div id="form-body">
+        <a-form>
         <a-input class="user" placeholder="input thuID" name="username" v-model="thuID">
           <a-icon slot="prefix" type="user"></a-icon>
         </a-input>
         <a-input-password class="password" placeholder="input password" name="password" v-model="password">
           <a-icon slot="prefix" type="lock"></a-icon>
         </a-input-password>
+        <a-checkbox @change="statusChange">
+          Remember Me
+        </a-checkbox>
+        </a-form>
         <a-button id="button-login" type="primary" v-on:click="login()">login</a-button>
         <a-button id="button-logon" v-on:click="logon()">logon</a-button>
       </div>
@@ -32,26 +37,38 @@ export default class Login extends Vue {
   thuID = ""
   password = ""
   rememberMe = false
-    async login () {
-      try {
-        let response = await axios({
-          method:"post",
-          url:'/api/v1/auth/login',
-          data:{
-            thuId: this.thuID,
-            password: this.password,
-            rememberMe:this.rememberMe
-          }})
-        if (response.status === 200) {
-          this.$message.success('log in success!')
-          localStorage.setItem('jwt',response.headers.authorization)
-          this.$router.push('/home')
-          // 在此处弹出提示 注册成功
-        }
-      } catch (e) {
-        this.$message.error(JSON.stringify(e.response.data.error))
-      }
+
+  statusChange() {
+    if (this.rememberMe)
+    {
+      this.rememberMe = false
     }
+    else
+    {
+      this.rememberMe = true
+    }
+  }
+
+  async login () {
+    try {
+      let response = await axios({
+        method:"post",
+        url:'/api/v1/auth/login',
+        data:{
+          thuId: this.thuID,
+          password: this.password,
+          rememberMe:this.rememberMe
+        }})
+      if (response.status === 200) {
+        this.$message.success('log in success!')
+        localStorage.setItem('jwt',response.headers.authorization)
+        this.$router.push('/home')
+        // 在此处弹出提示 注册成功
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+  }
 
   logon(){
     this.$router.push('/logon')

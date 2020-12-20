@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Navigation></Navigation>
+    <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div id="main">
       <b-card border-variant="light" class="card" img-src="https://placekitten.com/300/300" img-alt="Card image" img-right>
         <b-card-body :title="team.name">
           <b-card-text>
-            make the best of the best effort , welcome to us
+            {{team.description}}
           </b-card-text>
         </b-card-body>
       </b-card>
@@ -21,11 +21,17 @@
           id="table"
       >
         <template #cell(avatar)="row">
-          <b-avatar badge-variant="info" src="https://placekitten.com/300/300">
+          <b-avatar v-if="row.value" badge-variant="info" :src="row.value">
+            <template #badge><b-icon icon="star-fill"></b-icon></template>
+          </b-avatar>
+          <b-avatar v-else badge-variant="info">
             <template #badge><b-icon icon="star-fill"></b-icon></template>
           </b-avatar>
         </template>
         <template #cell(name)="row">
+          {{ row.value }}
+        </template>
+        <template #cell(description)="row">
           {{ row.value }}
         </template>
         <template #cell(actions)="row">
@@ -47,8 +53,9 @@
                 v-b-modal.addUser
                 >添加队员
       </b-button>
-      <b-button class="button" v-if="isCreator" variant="outline-success">转让队长</b-button>
+<!--      <b-button class="button" v-if="isCreator" variant="outline-success">转让队长</b-button>-->
       <b-button class="button" v-if="isCreator" variant="outline-danger">解散队伍</b-button>
+
       <InviteUser type="InviteTeamMember" :unit="team"></InviteUser>
 
     </div>
@@ -73,6 +80,11 @@ import index from "@/store";
 export default class TeamDetail extends Vue{
   team = {}
   items = []
+  user = {
+    userId: '',
+    username: '',
+    avatar: ''
+  }
   currentUserId = ""
   isCreator = false
 
@@ -84,12 +96,16 @@ export default class TeamDetail extends Vue{
         variables:{unitId:this.$route.params.unitId}
       });
       this.team = res.data.findUnitById
-      this.team['id']=res.data.findUnitById.unitId
+      this.team['id'] = res.data.findUnitById.unitId
       this.items.push({
             // @ts-ignore
             name: this.team.creator.username,
             // @ts-ignore
             id: this.team.creator.userId,
+            // @ts-ignore
+            description: this.team.creator.description,
+            // @ts-ignore
+            avatar: this.team.creator.avatar,
             _rowVariant: 'success',
             actions: true
           })
@@ -104,6 +120,10 @@ export default class TeamDetail extends Vue{
                 name: person.username,
                 // @ts-ignore
                 id: person.userId,
+                // @ts-ignore
+                description: person.description,
+                // @ts-ignore
+                avatar: person.avatar,
               }
           )
         }
@@ -127,9 +147,11 @@ export default class TeamDetail extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
-        this.currentUserId = response.data.userId
+        this.user.userId = response.data.userId
+        this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
         //@ts-ignore
-        if (this.currentUserId === this.team.creator.userId)
+        if (this.user.userId === this.team.creator.userId)
         {
           this.isCreator = true
         }
