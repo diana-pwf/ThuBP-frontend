@@ -1,6 +1,6 @@
 <template>
   <div id="personalMenu">
-    <Navigation :username="user.username"></Navigation>
+    <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div class="flex-box">
       <div id="photo-and-comment">
         <div id="photo">
@@ -480,7 +480,8 @@ export default class GameDetail extends Vue {
 
   user = {
     userId: '',
-    username: ''
+    username: '',
+    avatar: ''
   }
 
   refereeId = ''
@@ -503,6 +504,7 @@ export default class GameDetail extends Vue {
         this.$message.success('get userInfo success!')
         this.user.userId = response.data.userId
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
         await this.getGameInfo()
       }
       else

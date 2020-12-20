@@ -1,6 +1,6 @@
 <template>
   <div id="personalMenu">
-    <Navigation :username="user.username"></Navigation>
+    <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div id="menu">
       <div>
         <a-tabs
@@ -61,7 +61,7 @@
                 <SearchResultCard class="card" :matchId="item.matchId">
                   <img
                       alt="example"
-                      src="background.png"
+                      :src="item.previewLarge"
                       slot="card-img"
                   />
                   <h2 slot="card-title"> {{item.name}}  </h2>
@@ -88,7 +88,7 @@
                   <SearchResultCard class="card" :matchId="item.matchId">
                     <img
                         alt="example"
-                        src="background.png"
+                        :src="item.previewLarge"
                         slot="card-img"
                     />
                     <h2 slot="card-title"> {{item.name}}  </h2>

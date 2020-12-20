@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navigation :nav-keys="['2']" :username="user.username"></Navigation>
+  <Navigation :nav-keys="['2']" :username="user.username" :avatar-key="user.avatar"></Navigation>
   <div id="container">
   <a-form-model id="entire-form"
                 ref="ruleForm"
@@ -94,7 +94,8 @@ export default class CreateMatch extends Vue {
   wrapperCol = { span: 20 }
 
   user = {
-    username: ''
+    username: '',
+    avatar: ''
   }
 
   form = {
@@ -238,6 +239,7 @@ export default class CreateMatch extends Vue {
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
+        this.user.avatar = response.data.avatar
         this.user.username = response.data.username
       }
       else

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navigation :username="user.username"></Navigation>
+    <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
   <div id="container">
     <b-form @submit="autoArrange" class="form">
       <b-form-group
@@ -101,7 +101,8 @@ export default class CreateRound extends Vue{
   showTeamList=false
   roundDescription=''
   user={
-    username: ''
+    username: '',
+    avatar: ''
   }
   roundName=''
   teamSearchKey=''
@@ -242,6 +243,7 @@ export default class CreateRound extends Vue{
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
       }
       else
       {

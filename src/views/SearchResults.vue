@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navigation :username="user.username"></Navigation>
+  <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
     <div class="list" v-if="onShowSearchList.length">
       <ResultCardList id="matchesList" :match-lists="onShowSearchList" :is-center="true"></ResultCardList>
@@ -28,7 +28,8 @@ import {getMatchesList} from "../../myQuery";
 })
 export default class SearchResults extends Vue {
   user = {
-    username: ''
+    username: '',
+    avatar: ''
   }
 
   matchesList=[]
@@ -77,6 +78,7 @@ export default class SearchResults extends Vue {
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
       }
       else
       {

@@ -15,7 +15,8 @@
     <a-menu-item id="user" key="3">
       <a-dropdown :trigger="['click']">
         <a class="ant-dropdown-link user-dropdown-link" @click="e => e.preventDefault()">
-          <a-avatar class="avatar" icon="user" :style="{}" />
+          <a-avatar v-if="avatarKey" class="avatar" :src="avatarKey" :style="{}" />
+          <a-avatar v-else class="avatar" icon="user" :style="{}" />
           <span class="delimiter"></span>
           <span class="text-middle">{{username}}</span><a-icon class="down-icon" type="down" />
         </a>
@@ -53,6 +54,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 export default class Navigation extends Vue{
   @Prop({type:Array,default:function (){return []}})navKeys
   @Prop({type:String, default:function (){return ""}})username
+  @Prop({type:String, default:function (){return ""}})avatarKey
 
   goPersonInfo(key){
     if (this.$router.currentRoute.path !== `/personal/${key}`) {

@@ -4,7 +4,7 @@
       <SearchResultCard class="card" :matchId="item.matchId" :isCenter="isCenter">
         <img
             alt="example"
-            src="background.png"
+            :src="item.previewLarge"
             slot="card-img"
         />
         <h2 slot="card-title"> {{item.name}}  </h2>

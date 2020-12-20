@@ -6,6 +6,7 @@ export const findMatchesByOrganizerId = gql`query findMatchesByOrganizerId($user
             name
             description
             matchId
+            previewLarge
         }
     }
 }`;
@@ -16,6 +17,7 @@ export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($
             name
             description
             matchId
+            previewLarge
         }
     }
 }`;
@@ -26,6 +28,7 @@ export const getMatchesList = gql`query getMatchesList($typeIds:[String!]){
     matchTypeId
     name
     description
+    previewLarge
     organizerUser
         {
         username

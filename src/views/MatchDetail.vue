@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="personalMenu">
-      <Navigation :username="user.username"></Navigation>
+      <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
       <div id="menu">
         <div style="width: 100%; height:100%">
           <a-tabs
@@ -409,7 +409,8 @@ export default class MatchDetail extends Vue{
   }
 
   user = {
-    username: ''
+    username: '',
+    avatar: ''
   }
 
   match = {
@@ -652,6 +653,7 @@ export default class MatchDetail extends Vue{
         this.$message.success('get userInfo success!')
         this.currentUserId = response.data.userId
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
         //@ts-ignore
         if(this.currentUserId === this.match.organizerId)
         {

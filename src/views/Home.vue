@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Navigation :nav-keys="['1']" :username="user.username"></Navigation>
+    <Navigation :nav-keys="['1']" :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div id="div">
       <div class="container">
         <div class="make-center">
@@ -16,7 +16,7 @@
                   <img
                           slot="cover"
                           alt="example"
-                          src="background.png"
+                          :src="item.previewLarge"
                   />
                   <a-card-meta :title="item.name">
                     <template slot="description">
@@ -88,7 +88,8 @@ import axios from "axios";
 })
 export default class Home extends Vue {
   user = {
-    username: ''
+    username: '',
+    avatar: ''
   }
 
   matchesList=[]
@@ -148,6 +149,7 @@ export default class Home extends Vue {
       if (response.status === 200) {
         this.$message.success('get userInfo success!')
         this.user.username = response.data.username
+        this.user.avatar = response.data.avatar
       }
       else
       {
