@@ -219,8 +219,20 @@ export const getGameScoreAndRecord = gql`query getGameInfo($gameId: String!) {
 
 export const getGameInfo = gql`query getGameInfo($gameId: String!) {
     findGameById(gameId:$gameId){
-        unit0
-        unit1
+        status
+        unit0 {
+            unitId
+            name
+        }
+        unit1 {
+            unitId
+            name
+        }
+        referee {
+            userId
+        }
+        startTime
+        location
     }
 }`;
 

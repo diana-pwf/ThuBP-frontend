@@ -68,9 +68,11 @@
                 <div class="unit-score-info unit-round-score-info">
                   {{roundScoreList[roundScoreList.length - 1].score0}}
                 </div>
-                <div class="score-change-form">{{unit[0].name}}分数增加（扣分为负）：</div>
-                <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
-                <a-button @click="changeScore(0)">提交</a-button>
+                <div v-if="isReferee">
+                  <div class="score-change-form">{{unit[0].name}}分数增加（扣分为负）：</div>
+                  <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
+                  <a-button @click="changeScore(0)">提交</a-button>
+                </div>
               </div>
               <div id="center-symbol">
                 <div class="unit-name-info">VS</div>
@@ -89,13 +91,17 @@
                 <div class="unit-round-score-info">
                   {{roundScoreList[roundScoreList.length - 1].score1}}
                 </div>
-                <div class="score-change-form">{{unit[1].name}}分数增加（扣分为负）：</div>
-                <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
-                <a-button @click="changeScore(1)">提交</a-button>
+                <div v-if="isReferee">
+                  <div class="score-change-form">{{unit[1].name}}分数增加（扣分为负）：</div>
+                  <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
+                  <a-button @click="changeScore(1)">提交</a-button>
+                </div>
               </div>
             </div>
           </div>
-          <b-button id="end-button" variant="outline-info" @click="startNewRound">结束当前轮次</b-button>
+          <b-button v-if="isReferee" id="end-button"
+                    variant="outline-info" @click="startNewRound"
+                    >结束当前轮次</b-button>
         </b-card>
         <h3><b-badge pill variant="warning">比赛动态</b-badge></h3>
         <div id="logs">
@@ -114,7 +120,7 @@
             <a-timeline-item :color="getColor(item.id)" :position="getDirection(item.id)"
                              v-for="(item,index) in recordList" :key="index">
             {{item.name}}:{{item.description}}
-            <a-popover>
+            <a-popover v-if="isReferee">
               <template slot="content">
                 <span>Click to delete it</span>
               </template>
@@ -126,6 +132,7 @@
           </a-timeline-item>
           </a-timeline>
         </div>
+        <div v-if="isReferee">
         <h3><b-badge pill variant="primary">增加记录</b-badge></h3>
         <a-form-model ref="ruleForm"
                       :model="form"
@@ -144,6 +151,7 @@
             提交
           </a-button>
         </a-form-model>
+        </div>
       </div>
     </div>
   </div>
@@ -155,7 +163,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import moment from 'moment';
-import {getGameComments, getGameScoreAndRecord} from "../../myQuery";
+import {getGameComments, getGameScoreAndRecord, getGameInfo} from "../../myQuery";
 
 @Component({
   components:{
@@ -166,14 +174,6 @@ import {getGameComments, getGameScoreAndRecord} from "../../myQuery";
 export default class GameDetail extends Vue {
   comments = []
   onShowComments = []
-
-  onCommentsPageChange(page, pageSize){
-    let total = this.comments.length
-    let left = (page - 1) * pageSize
-    let right = (page * pageSize > total) ? total : page * pageSize
-    this.onShowComments = this.comments.slice(left, right)
-  }
-
   async getComments(){
     this.comments = []
     let res = await this.$apollo.query({
@@ -196,9 +196,14 @@ export default class GameDetail extends Vue {
     }
     this.onCommentsPageChange(1, 3)
   }
+  onCommentsPageChange(page, pageSize){
+    let total = this.comments.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowComments = this.comments.slice(left, right)
+  }
 
   myComment = ''
-
   async createComment(){
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
@@ -218,7 +223,6 @@ export default class GameDetail extends Vue {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
   }
-
   async deleteComment(id){
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
@@ -238,9 +242,7 @@ export default class GameDetail extends Vue {
   }
 
   buttonText = '写下回复'
-
-  changeButtonText()
-  {
+  changeButtonText() {
     if(this.buttonText === '写下回复')
     {
       this.buttonText = '收起回复'
@@ -250,9 +252,7 @@ export default class GameDetail extends Vue {
       this.buttonText = '写下回复'
     }
   }
-
   replyComment = ''
-
   async createReply(id){
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
@@ -277,17 +277,16 @@ export default class GameDetail extends Vue {
 
   unit = [
     {
-      id: 0,
-      name: '可怜程序员队',
+      id: '',
+      name: '',
       score: 0,
     },
     {
-      id: 1,
-      name: '凶残bug队',
+      id: '',
+      name: '',
       score: 0,
     }
   ]
-
   getDirection(id){
     if(id === this.unit[0].id)
     {
@@ -298,7 +297,6 @@ export default class GameDetail extends Vue {
       return 'right'
     }
   }
-
   getColor(id){
     if(id === this.unit[0].id)
     {
@@ -319,6 +317,7 @@ export default class GameDetail extends Vue {
       score1: 0
     }
   ]
+
   fields = [
     { key: 'score0', label: `${this.unit[0].name}得分`},
     { key: 'score1', label: `${this.unit[1].name}得分`}
@@ -387,26 +386,41 @@ export default class GameDetail extends Vue {
       }
       this.unit0ScoreDelta = 0
       this.unit1ScoreDelta = 0
-      this.getGameScore()
+      await this.getGameScore()
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
   }
 
-  startNewRound(){
+  async startNewRound(){
     this.roundScoreList.push(
       {
         score0: 0,
         score1: 0
       }
     )
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.$route.params.matchId}/round/${this.$route.params.roundId}/game/${this.$route.params.gameId}`,
+        data: {
+          result: {
+            rounds: this.roundScoreList,
+          }
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      await this.getGameScore()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
   }
 
   recordList = []
-
-  deleteRecord(id) {
-    this.$message.success('delete record success!')
-  }
 
   form = {
     team: 0,
@@ -454,16 +468,23 @@ export default class GameDetail extends Vue {
       if (response.status !== 200) {
         throw {response}
       }
-      this.getGameScore()
+      await this.getGameScore()
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
+  }
+
+  deleteRecord(id) {
+    this.$message.success('delete record success!')
   }
 
   user = {
     userId: '',
     username: ''
   }
+
+  refereeId = ''
+  isReferee = false
 
   async getUserInfo()
   {
@@ -479,6 +500,7 @@ export default class GameDetail extends Vue {
         this.$message.success('get userInfo success!')
         this.user.userId = response.data.userId
         this.user.username = response.data.username
+        await this.getGameInfo()
       }
       else
       {
@@ -489,9 +511,25 @@ export default class GameDetail extends Vue {
     }
   }
 
-  // 轮询
+  async getGameInfo()
+  {
+    let res = await this.$apollo.query({
+      query: getGameInfo,
+      variables:{gameId:this.$route.params.gameId}
+    })
+    this.unit[0].id = res.data.findGameById.unit0.unitId
+    this.unit[1].id = res.data.findGameById.unit0.unitId
+    this.unit[0].name = res.data.findGameById.unit0.name
+    this.unit[1].name = res.data.findGameById.unit0.name
+    this.refereeId = res.data.findGameById.referee.userId
+    if (this.refereeId === this.user.userId)
+    {
+      this.isReferee = true
+    }
+  }
+
   // created(){
-  //   window.setInterval(() => {setTimeout(this.getGameScore.bind(), 0);}, 3000);
+  //   setInterval(this.getGameScore, 1000)
   // }
 
   mounted() {
