@@ -126,7 +126,7 @@
               </template>
               <a-icon id="delete-icon" type="close-circle"
                       theme="twoTone" two-tone-color="red"
-                      @click="deleteRecord(item.id)"
+                      @click="deleteRecord(index)"
                       title="click to delete"/>
             </a-popover>
           </a-timeline-item>
@@ -474,8 +474,29 @@ export default class GameDetail extends Vue {
     }
   }
 
-  deleteRecord(id) {
-    this.$message.success('delete record success!')
+  async deleteRecord(index) {
+    this.recordList.splice(index, 1)
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.$route.params.matchId}/round/${this.$route.params.roundId}/game/${this.$route.params.gameId}`,
+        data: {
+          result: {
+            extra: {
+              records: this.recordList
+            }
+          }
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+      await this.getGameScore()
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
   }
 
   user = {
