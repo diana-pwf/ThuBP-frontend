@@ -48,7 +48,7 @@
 
             <a-button class="edit-button" type="primary" v-if="!isEditAccount" @click="editAccount">修改账号资料</a-button>
             <a-button class="edit-button" type="primary" v-else @click="submitEditAccount">提交修改</a-button>
-            <b-button v-b-modal.modal-password-changing>修改密码</b-button>
+            <b-button size="sm" variant="success" v-b-modal.modal-password-changing>修改密码</b-button>
             <b-modal
                 id="modal-password-changing"
                 title="密码修改"
@@ -65,8 +65,14 @@
                       id="old-password-input"
                       v-model="oldPassword"
                       type="password"
+                      :state="this.oldPassword.length > 0"
                       required
                   ></b-form-input>
+                  <b-form-invalid-feedback :state="this.oldPassword.length > 0">
+                    旧密码不能为空
+                  </b-form-invalid-feedback>
+                  <b-form-valid-feedback :state="this.oldPassword.length > 0">
+                  </b-form-valid-feedback>
                 </b-form-group>
                 <b-form-group
                     label="请输入新密码"
@@ -76,8 +82,14 @@
                       id="new-password-input"
                       v-model="newPassword"
                       type="password"
+                      :state="this.newPassword.length > 0"
                       required
                   ></b-form-input>
+                  <b-form-invalid-feedback :state="this.newPassword.length > 0">
+                    新密码不能为空
+                  </b-form-invalid-feedback>
+                  <b-form-valid-feedback :state="this.newPassword.length > 0">
+                  </b-form-valid-feedback>
                 </b-form-group>
               </b-form>
             </b-modal>
@@ -200,7 +212,6 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import axios from "axios";
-import {Modal} from "ant-design-vue";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
 import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
@@ -292,7 +303,6 @@ export default class PersonalInfoTab extends Vue {
     // Trigger submit handler
     this.handleSubmit()
   }
-
 
   async handleSubmit() {
     if (this.newPassword === '' || this.oldPassword === '') {
