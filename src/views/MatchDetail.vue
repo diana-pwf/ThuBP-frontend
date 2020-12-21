@@ -811,16 +811,16 @@ a-tab-pane {
 }
 
 #description{
-  margin-top:5%;
-  margin-left: 5%;
+
 }
 img{
-  width: 100px;
-  height: 100px;
+  width: 100%;
 }
 #detail{
   display: grid;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 20% 80%;
+  grid-column-gap: 3%;
+  margin: 20px;
 }
 #intro{
   margin-top: 5%;

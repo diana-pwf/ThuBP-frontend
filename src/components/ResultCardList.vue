@@ -3,6 +3,7 @@
     <li v-for="(item,index) in matchLists" :key="index">
       <SearchResultCard class="card" :matchId="item.matchId" :isCenter="isCenter">
         <img
+            id="card-img"
             alt="example"
             :src="item.previewLarge"
             slot="card-img"
@@ -39,6 +40,11 @@ img {
   max-height: 100%;
   margin: 0
 }
+
+#card-img {
+  height: 160px;
+}
+
 .card{
   margin-bottom: 1%;
 }

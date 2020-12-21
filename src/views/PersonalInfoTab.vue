@@ -104,6 +104,7 @@
               <li class="list" v-for="(item,index) in this.onShowOrganizedMatches">
                 <SearchResultCard class="card" :matchId="item.matchId">
                   <img
+                      class="card-img"
                       alt="example"
                       :src="item.previewLarge"
                       slot="card-img"
@@ -131,6 +132,7 @@
                 <li class="list" v-for="(item,index) in this.onShowParticipatedMatches">
                   <SearchResultCard class="card" :matchId="item.matchId">
                     <img
+                        class="card-img"
                         alt="example"
                         :src="item.previewLarge"
                         slot="card-img"
@@ -641,6 +643,10 @@ img {
 #personalMenu {
   max-width: 100%;
   margin: 0;
+}
+
+.card-img {
+  height: 100px;
 }
 
 #menu {
