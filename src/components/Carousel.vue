@@ -11,17 +11,37 @@
     <div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 10px">
       <a-icon type="right-circle" />
     </div>
-    <div><h3>1</h3></div>
-    <div><h3>2</h3></div>
-    <div><h3>3</h3></div>
-    <div><h3>4</h3></div>
+    <div id="img" v-for="(item,index) in this.matches">
+      <img :src="item.previewLarge"/>
+    </div>
   </a-carousel>
 </template>
 
 <script>
 import { Component, Vue } from 'vue-property-decorator';
+import {getCarouselMatches} from "../../myQuery";
+
 @Component
 export default class Carousel extends Vue{
+  matches = []
+
+  async getCarouselContent(){
+    try {
+      let res = await this.$apollo.query({
+        query: getCarouselMatches,
+      })
+      console.log(res.data)
+      this.matches = res.data.getBulletin
+
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  mounted(){
+    this.getCarouselContent()
+  }
 
 }
 </script>
@@ -51,6 +71,12 @@ export default class Carousel extends Vue{
 
 .ant-carousel >>> .slick-slide h3 {
   color: #fff;
+}
+
+#img {
+  background-size: cover;
+  width: 200px;
+  height: 50px;
 }
 
 </style>

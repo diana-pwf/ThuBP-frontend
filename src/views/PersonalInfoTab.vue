@@ -48,7 +48,39 @@
 
             <a-button class="edit-button" type="primary" v-if="!isEditAccount" @click="editAccount">修改账号资料</a-button>
             <a-button class="edit-button" type="primary" v-else @click="submitEditAccount">提交修改</a-button>
-            <a-button>修改密码</a-button>
+            <b-button v-b-modal.modal-password-changing>修改密码</b-button>
+            <b-modal
+                id="modal-password-changing"
+                title="密码修改"
+                @show="resetModal"
+                @hidden="resetModal"
+                @ok="handleOkButton"
+            >
+              <b-form @submit.stop.prevent="handleSubmit">
+                <b-form-group
+                    label="请输入原密码"
+                    label-for="old-password-input"
+                >
+                  <b-form-input
+                      id="old-password-input"
+                      v-model="oldPassword"
+                      type="password"
+                      required
+                  ></b-form-input>
+                </b-form-group>
+                <b-form-group
+                    label="请输入新密码"
+                    label-for="new-password-input"
+                >
+                  <b-form-input
+                      id="new-password-input"
+                      v-model="newPassword"
+                      type="password"
+                      required
+                  ></b-form-input>
+                </b-form-group>
+              </b-form>
+            </b-modal>
           </a-tab-pane>
           <a-tab-pane  key="2">
             <span slot="tab">
@@ -244,6 +276,50 @@ export default class PersonalInfoTab extends Vue {
       this.$message.error(JSON.stringify(e.response.data.error))
     }
     this.isEditAccount = false
+  }
+
+  oldPassword = ''
+  newPassword = ''
+
+  resetModal() {
+    this.oldPassword = ''
+    this.newPassword = ''
+  }
+
+  handleOkButton(bvModalEvt) {
+    // Prevent modal from closing
+    bvModalEvt.preventDefault()
+    // Trigger submit handler
+    this.handleSubmit()
+  }
+
+
+  async handleSubmit() {
+    if (this.newPassword === '' || this.oldPassword === '') {
+      return
+    }
+    axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+    try {
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/user/info`,
+        data: {
+          oldPassword: this.oldPassword,
+          newPassword: this.newPassword
+        }
+      })
+      // 对response做处理
+      if (response.status !== 200) {
+        throw {response}
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.error))
+    }
+
+    // Hide the modal manually
+    this.$nextTick(() => {
+      this.$bvModal.hide('modal-password-changing')
+    })
   }
 
   infoModal={}

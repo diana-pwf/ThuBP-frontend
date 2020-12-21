@@ -244,3 +244,9 @@ export const getGameInfo = gql`query getGameInfo($gameId: String!) {
     }
 }`;
 
+export const getCarouselMatches = gql`query getCarouselMatches {
+    getBulletin {
+        matchId
+        previewLarge
+    }
+}`;

@@ -11,7 +11,7 @@
             <div id="all" v-if="onShowMatchesList.length">
             <Carousel id="carousel"></Carousel>
             <ul class="wrapper">
-              <li class="list" v-for="(item,index) in this.onShowMatchesList ">
+              <li class="list" v-for="(item,index) in this.onShowMatchesList">
                 <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
                   <img
                           slot="cover"
