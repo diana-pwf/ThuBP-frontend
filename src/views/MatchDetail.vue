@@ -363,6 +363,11 @@ export default class MatchDetail extends Vue{
       dataIndex: 'startTime',
       key: 'startTime',
     },
+    {
+      title:'裁判名称',
+      dataIndex:'referee_name',
+      key:'referee_name'
+    },
     // {
     //   title: '结束时间',
     //   key: 'end_time',
@@ -614,6 +619,9 @@ export default class MatchDetail extends Vue{
           game['unit1_name']=game.unit1.name
           game['key']=game.gameId
           game['tags']=[game.status]
+          if(game.referee){
+            game['referee_name']=game.referee.username
+          }
         }
       }
        if(res.data.findMatchById.previewLarge !== null)

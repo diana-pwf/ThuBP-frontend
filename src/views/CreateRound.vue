@@ -42,20 +42,8 @@
       <div>
       <h4><b-badge style="margin-top: 20px" variant="info">比赛列表</b-badge></h4>
       <b-table class="table" striped hover :items="gameItems" :fields="gameFields">
-        <template #cell(time)="row">
-          <b-form-datepicker v-if="row.item.edit" v-model="selectedTime" class="mb-2"></b-form-datepicker>
-          <template v-else>{{row.item.time}}</template>
-        </template>
-        <template #cell(location)="row">
-          <b-form-input  v-if="row.item.edit" v-model="selectedLocation" ></b-form-input>
-          <template v-else>{{row.item.location}}</template>
-        </template>
         <template #cell(edit)="row">
-          <template v-if="row.item.edit">
-          <b-button style="margin-right: 5px" variant="success" @click="onSave(row)"  size="sm">save</b-button>
-          <b-button  @click="onCancel(row)" size="sm">cancel</b-button>
-          </template>
-          <b-button variant="info" v-else @click="onEdit(row)" size="sm">edit</b-button>
+          <b-button @click="onEdit(row)" variant="info"  size="sm">edit</b-button>
         </template>
         <template #cell(remove)="row">
           <b-button @click="removeGame(row)" variant="danger" size="sm">remove</b-button>
@@ -70,6 +58,63 @@
         <SearchTeam   type="modal" :team-items="modalTeamItems" :teams-list="teamItems"></SearchTeam>
         <b-button @click="customCreateGame" variant="outline-info" :disabled="modalTeamItems.length!=2" id="custom-create-game-button">创建比赛</b-button>
       </b-modal>
+      <b-modal  id="editGameDetail" hide-footer >
+        <div class="d-block text-center">
+          <p class="h2 mb-2"><b-icon icon="pencil-square"></b-icon></p>
+          <!--              <span style="font-size: large">修改比赛信息</span>-->
+
+          <b-form @submit="editGameSubmit">
+            <b-form-group
+                id="input-group-time"
+                label="比赛开始时间"
+                label-for="edit-time"
+                description="请选择比赛开始时间"
+
+            >
+              <b-form-datepicker
+                  id="edit-time"
+                  v-model="selectedTime"
+                  required
+                  class="mb-2">
+              </b-form-datepicker>
+            </b-form-group>
+            <b-form-group id="input-group-edit-location" label="比赛地点" label-for="edit-location">
+              <b-form-input
+                  id="edit-location"
+                  v-model="selectedLocation"
+                  required
+              ></b-form-input>
+            </b-form-group>
+
+            <b-form-group id="input-group-edit-referee" label="添加裁判（仅一人）" label-for="input-3">
+              <b-form-tags id="edit-referee"  no-outer-focus v-model="selectedUserList">
+                <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
+                  <a-input-search class="search" @change="selectUserChange"   v-model="userSearchKey"  placeholder="Search by username"   />
+                  <b-form-tag
+                      v-for="tag in tags"
+                      @remove="removeTag(tag)"
+                      :key="tag"
+                      :variant="tagVariant"
+                      class="mr-1"
+                  >{{getSelectedUserName(tag)}}</b-form-tag>
+                </template>
+              </b-form-tags>
+              <b-list-group  id="list" class="wrapper" v-if="showUserList">
+                <b-list-group-item @click="chooseUser(item)" class="d-flex align-items-center" v-for="(item,index) in  searchList ">
+                  <!--                          <span>{{item.username}}</span>-->
+                  <b-avatar variant="info" class="mr-3"></b-avatar>
+                  <span class="mr-auto">{{item.username}}</span>
+                </b-list-group-item>
+              </b-list-group>
+            </b-form-group>
+
+            <b-button block type="submit" v-if="selectedUserList.length==1" variant="success">确认修改</b-button>
+
+          </b-form>
+
+
+        </div>
+      </b-modal>
       <div id="submit-button">
       <b-button @click="createRound" v-if="roundName" :disabled="gameItems.length<1" variant="success" size="lg" >提交轮次信息</b-button>
       </div>
@@ -82,7 +127,7 @@
 <script>
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
-import {findUserByName, getMatchRelatedTeams, getRoundStrategyTypes,getRoundInfo} from "../../myQuery";
+import {findUserByName,getMatchRelatedUsers , getRoundStrategyTypes,getRoundInfo} from "../../myQuery";
 import Navigation from "@/components/Navigation.vue";
 import SearchTeam from "@/components/SearchTeam.vue"
 
@@ -93,8 +138,9 @@ export default class CreateRound extends Vue{
   teamFields = ['name', 'creator', 'description','action']
   teamItems=[]
   modalTeamItems=[]
-  gameFields=['unit0-name','unit1-name','time','location','edit','remove']
+  gameFields=['unit0-name','unit1-name','referee-name','time','location','edit','remove']
   gameItems=[]
+
 
   selectedTime=""
   selectedLocation=''
@@ -114,13 +160,39 @@ export default class CreateRound extends Vue{
 
   mode=''
 
-  // onModalChangeSelectedTeams(teamProp){
-  //   this.modalTeamItems=teamProp
-  // }
-  //
-  // onChangeSelectedTeams(teamProp){
-  //   this.teamItems=teamProp
-  // }
+  selectedUserList=[]
+  showUserList = false
+  userSearchKey = ""
+  matchRefereeList=[]
+  currentEditRow={}
+  selectUserChange(){
+    this.showUserList=true
+  }
+
+  getSelectedUserName(tag){
+    let index_left = tag.indexOf('"')
+    let index_right = tag.slice(index_left + 1).indexOf('"')
+    return tag.substr(index_left + 1, index_right)
+  }
+
+  chooseUser(item){
+    this.selectedUserList=[]
+    this.selectedUserList.push(JSON.stringify([item.username,item.userId]))
+
+    this.showUserList=false
+  }
+
+  get searchList(){
+    let list = this.matchRefereeList.filter((referee) => {
+      return referee.username.match(this.teamSearchKey)
+    })
+    if(list.length>5){
+      return list.slice(0,5)
+    }
+    return list
+  }
+
+
 
   customCreateGame(){
     let game={}
@@ -131,7 +203,8 @@ export default class CreateRound extends Vue{
     game['unit1-name']=this.modalTeamItems[1].name
     game['time']='null'
     game['location']='null'
-    game['edit']=false
+    // game['edit']=false
+    game['referee-name']='null'
     this.gameItems.push(game)
     this.$bvModal.hide("custom-create-game")
   }
@@ -158,11 +231,12 @@ export default class CreateRound extends Vue{
       if (response.status === 200) {
         let list=response.data.arrangement
         for(let x of list){
-          x['edit']=false
+          // x['edit']=false
           x['time']='null'
           x['location']='null'
           x['unit0-name']=this.teamsList.find(team=>team['unitId']===x['unit0']).name
           x['unit1-name']=this.teamsList.find(team=>team['unitId']===x['unit1']).name
+          x['referee-name']='null'
         }
         this.gameItems = list
       }
@@ -176,13 +250,32 @@ export default class CreateRound extends Vue{
   }
 
   onEdit(row){
-    row.item.edit=true
+    // row.item.edit=true
     this.selectedTime=row.item.time
     this.selectedLocation=row.item.location
+
+    if(row.item.referee!==undefined){
+      this.selectedUserList[0]=[row.item['referee-name'],row.item.referee]
+    }
+    else{
+      this.selectedUserList=[]
+    }
+    this.currentEditRow=row
+    this.$bvModal.show('editGameDetail')
+  }
+
+  editGameSubmit(event){
+    event.preventDefault()
+    this.currentEditRow.item.time=this.selectedTime
+    this.currentEditRow.item.location=this.selectedLocation
+    this.selectedUserList[0]=JSON.parse(this.selectedUserList[0])
+    this.currentEditRow.item['referee-name']=this.selectedUserList[0][0]
+    this.currentEditRow.item['referee']=this.selectedUserList[0][1]
+    this.$bvModal.hide('editGameDetail')
   }
 
   onSave(row){
-    row.item.edit=false
+    // row.item.edit=false
     row.item.time=this.selectedTime
     row.item.location=this.selectedLocation
   }
@@ -192,22 +285,19 @@ export default class CreateRound extends Vue{
     this.gameItems.splice(index,1)
   }
 
-
-  onCancel(row){
-    row.item.edit=false
-  }
-
   async getTeamsList(){
     try {
       let res = await this.$apollo.query({
-        query: getMatchRelatedTeams,
+        query: getMatchRelatedUsers,
         variables:{matchId:this.$route.params.matchId}
       })
       let list = res.data.findMatchById.units
+      this.matchRefereeList=res.data.findMatchById.referees
       for(let x of list){
         x['creator']=x['creator'].username
         x['id']=x.unitId
       }
+
       this.teamsList=list
     }
     catch (e){
@@ -275,9 +365,20 @@ export default class CreateRound extends Vue{
       temp['unit1']=game.unit1.unitId
       temp['unit0-name']=game.unit0.name
       temp['unit1-name']=game.unit1.name
-      temp['edit']=false
-      temp['time']=game.startTime
+      // temp['edit']=false
+      if(game.startTime)
+      {
+        temp['time']=game.startTime
+      }
       temp['location']=game.location
+      if(game.referee)
+      {
+        temp['referee-name']=game.referee.username
+        temp['referee']=game.referee.userId
+      }
+      else{
+        temp['referee-name']='null'
+      }
       this.gameItems.push(temp)
     }
   }
@@ -290,14 +391,26 @@ export default class CreateRound extends Vue{
     }
     let gameList=[]
     for(let x of this.gameItems){
-      if(x.time==="null")
+      let game=[]
+      if(x.time==="null"||!x.time)
       {
-        gameList.push({'unit0':x.unit0,'unit1':x.unit1,'location':x.location})
+        if(x.referee){
+          game={'unit0':x.unit0,'unit1':x.unit1,'location':x.location,'referee':x.referee}
+        }
+        else{
+          game={'unit0':x.unit0,'unit1':x.unit1,'location':x.location}
+        }
       }
       else {
         let time = new Date(x.time).toISOString()
-        gameList.push({'unit0':x.unit0,'unit1':x.unit1,'startTime':time,'location':x.location})
+        if(x.referee){
+          game={'unit0':x.unit0,'unit1':x.unit1,'location':x.location,'startTime':time,'referee':x.referee}
+        }
+        else{
+          game={'unit0':x.unit0,'unit1':x.unit1,'startTime':time,'location':x.location}
+        }
       }
+      gameList.push(game)
     }
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -395,7 +508,7 @@ export default class CreateRound extends Vue{
   align-items: center;
 }
 .form{
-   width: 60%;
+   width: 80%;
   margin-top: 20px;
 }
 .table{

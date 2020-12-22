@@ -53,16 +53,20 @@ export const getParticipants = gql`query getParticipants($matchId: String!){
 }`;
 
 
-export const getMatchRelatedTeams = gql`query  getMatchRelatedTeams($matchId: String!){
+export const getMatchRelatedUsers = gql`query  getMatchRelatedUsers($matchId: String!){
  findMatchById(matchId: $matchId) {
- units {
-            unitId
-            name
-            creator {
-                username   
+     units {
+                unitId
+                name
+                creator {
+                    username   
+                }
             }
-        }
- }
+     referees{
+                userId
+                username
+     }
+     }
 }
 `
 
@@ -112,6 +116,11 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
                 }
                 unit1{
                 name
+                }
+                referee
+                {
+                    userId
+                    username
                 }
             }
             
@@ -200,6 +209,11 @@ export const getRoundInfo = gql `query getRoundInfo($roundId:String!){
             creator{
                 username
             }
+        }
+        referee
+            {
+            userId
+            username
         }
         startTime
         location

@@ -226,4 +226,10 @@ export default class Home extends Vue {
 #all{
 
 }
+
+img{
+  width: 200px;
+  height: 200px;
+  margin:auto
+}
 </style>
