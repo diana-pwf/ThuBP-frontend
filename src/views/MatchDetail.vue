@@ -268,7 +268,7 @@
                         <p slot="content" :style="{verticalAlign:'left'}">
                           这是一段简介
                         </p>
-                        <span class="more" style="color: dodgerblue" slot="actions">删除</span>
+                        <span @click="onDeleteReferee(item.userId)" class="more" style="color: dodgerblue" slot="actions">删除</span>
                       </a-comment>
                     </li>
                   </ul>
@@ -473,6 +473,52 @@ export default class MatchDetail extends Vue{
         .catch(err => {
           this.$message.error(err)
         })
+  }
+
+  onDeleteReferee(userId){
+    this.$bvModal.msgBoxConfirm('确认要删除这位裁判吗？', {
+      title: '删除裁判',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.deleteReferee(userId)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
+  async deleteReferee(userId){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match.id}/referee`,
+        data:{
+          referees:[userId]
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('删除裁判成功！')
+        setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
   }
 
   async deleteTeam(unitId){
