@@ -138,9 +138,15 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
 
 export const findUserByName = gql`query findUserByName($username: String!){
     findUserByFuzzy(username:$username){
-        username
-        userId
-        createdAt
+        page
+        pageSize
+        totalSize
+        list
+        {
+            username
+            userId
+            createdAt
+        }
     }
 }`;
 

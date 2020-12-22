@@ -51,7 +51,7 @@ export default class InviteUser extends Vue{
       query: findUserByName,
       variables:{username:this.userSearchKey}
     });
-    this.userSearchList=res.data.findUserByFuzzy
+    this.userSearchList=res.data.findUserByFuzzy.list
   }
 
   getSelectedUserName(tag){

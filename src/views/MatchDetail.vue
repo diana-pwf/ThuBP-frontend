@@ -224,6 +224,9 @@
                   </div>
                   <div v-else>
                     <span class="list_title">队伍列表</span>
+                    <template v-if="this.match.teams.length===0">
+                      <a-empty />
+                    </template>
                     <ul id="team">
                       <li v-for="(item,index) in this.match.teams" :key="index">
                         <a-comment>
@@ -247,6 +250,9 @@
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
+                  <template v-if="this.match.referees.length===0">
+                    <a-empty />
+                  </template>
                   <InviteUser type="InviteReferee" :unit="match"></InviteUser>
                   <ul id="referee">
                     <li v-for="(item,index) in this.match.referees" :key="index">
