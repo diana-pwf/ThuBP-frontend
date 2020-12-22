@@ -1,7 +1,17 @@
 <template>
   <div id="center">
-    <div v-if="logonSuccess">注册成功</div>
-    <div v-else>正在注册</div>
+    <div>
+      <a-result title="正在注册...">
+        <template #icon>
+          <a-spin size="large" />
+        </template>
+        <template #extra>
+          <a-button @click="gotoLogon" type="primary">
+            Back
+          </a-button>
+        </template>
+      </a-result>
+    </div>
   </div>
 </template>
 <script>
@@ -10,7 +20,7 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 export default class ThuRegister extends Vue {
-  logonSuccess = false;
+
 
   async logon() {
     try {
@@ -39,13 +49,22 @@ export default class ThuRegister extends Vue {
       });
       if (response.status === 200) {
         this.$message.success('注册成功');
-        this.logonSuccess = true;
+        setTimeout(() => this.$router.push("/urlClickResult/logon-success"), 1000);
       }
+      // else{
+      //   console.log(response)
+      //   this.$message.error(JSON.stringify(response.message))
+      // }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error));
+      console.log(e)
+      this.$message.error(JSON.stringify(e.message))
+      setTimeout(() => this.$router.push("/urlClickResult/logon-fail"), 1000);
     }
   }
 
+  gotoLogon(){
+    setTimeout(() => this.$router.push("/logon"), 2000);
+  }
   mounted() {
     this.logon();
   }
