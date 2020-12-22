@@ -5,7 +5,7 @@
       <div id="photo-and-comment">
         <div id="photo">
           <b-container fluid class="p-3">
-            <b-img thumbnail fluid src="sweet.jpg" alt="Image 3"></b-img>
+            <b-img thumbnail fluid src="/sweet.jpg" alt="Image 3"></b-img>
           </b-container>
         </div>
         <div id="comment-list">
@@ -109,12 +109,20 @@
               show-empty
               small
               stacked="md"
-              :items="roundScoreList"
+              :items="roundScoreItemList"
               :fields="fields"
               :hover="true"
               :fixed="true"
-              id="table"
           >
+            <template #cell(index)="row">
+              第{{ row.value }}局
+            </template>
+            <template #cell(score0)="row">
+              {{ row.value }}
+            </template>
+            <template #cell(score1)="row">
+              {{ row.value}}
+            </template>
           </b-table>
           <a-timeline id="timeline" mode="alternate">
             <a-timeline-item :color="getColor(item.id)" :position="getDirection(item.id)"
@@ -194,6 +202,7 @@ export default class GameDetail extends Vue {
       }
       this.comments.push(comment)
     }
+    this.comments.reverse()
     this.onCommentsPageChange(1, 3)
   }
   onCommentsPageChange(page, pageSize){
@@ -318,6 +327,15 @@ export default class GameDetail extends Vue {
     }
   ]
 
+  roundScoreItemList = [
+    {
+      index: 1,
+      score0: 0,
+      score1: 0,
+      _rowVariant: 'success'
+    }
+  ]
+
   fields = [
     { key: 'score0', label: `${this.unit[0].name}得分`},
     { key: 'score1', label: `${this.unit[1].name}得分`}
@@ -334,6 +352,8 @@ export default class GameDetail extends Vue {
       if (res.data.findGameById.result.rounds)
       {
         this.roundScoreList = []
+        this.roundScoreItemList = []
+        let index = 1
         for (let item of res.data.findGameById.result.rounds)
         {
           let roundScoreItem = {
@@ -341,7 +361,15 @@ export default class GameDetail extends Vue {
             score1: item.score1
           }
           this.roundScoreList.push(roundScoreItem)
+          this.roundScoreItemList.push({
+            index: index,
+            score0: item.score0,
+            score1: item.score1,
+            _rowVariant: ''
+          })
+          index += 1
         }
+        this.roundScoreItemList[index - 2]['_rowVariant'] = 'success'
       }
       if (res.data.findGameById.result.result)
       {
@@ -359,9 +387,11 @@ export default class GameDetail extends Vue {
     let len = this.roundScoreList.length
     if (!id) {
       this.roundScoreList[len - 1].score0 += this.unit0ScoreDelta
+      this.roundScoreItemList[len - 1].score0 += this.unit0ScoreDelta
       this.unit[0].score += this.unit0ScoreDelta
     } else if (id === 1) {
       this.roundScoreList[len - 1].score1 += this.unit1ScoreDelta
+      this.roundScoreItemList[len - 1].score1 += this.unit1ScoreDelta
       this.unit[1].score += this.unit1ScoreDelta
     }
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -399,6 +429,15 @@ export default class GameDetail extends Vue {
         score1: 0
       }
     )
+
+    let len = this.roundScoreItemList.length + 1
+    this.roundScoreItemList[len - 2]['_rowVariant'] = undefined
+    this.roundScoreItemList.push({
+      index: len,
+      score0: 0,
+      score1: 0,
+      _rowVariant: 'success'
+    })
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
       let response = await axios({
@@ -547,6 +586,13 @@ export default class GameDetail extends Vue {
     this.unit[1].id = res.data.findGameById.unit1.unitId
     this.unit[0].name = res.data.findGameById.unit0.name
     this.unit[1].name = res.data.findGameById.unit1.name
+
+    this.fields = [
+      { key: 'index', label: "局数"},
+      { key: 'score0', label: `${this.unit[0].name}得分`},
+      { key: 'score1', label: `${this.unit[1].name}得分`}
+    ]
+
     this.refereeId = res.data.findGameById.referee.userId
     if (this.refereeId === this.user.userId)
     {
@@ -557,7 +603,10 @@ export default class GameDetail extends Vue {
   }
 
   created(){
-    setInterval(this.getGameScore, 1000)
+    if (this.$router.currentRoute.path === `/gameDetail/${this.$route.params.matchId}/${this.$route.params.roundId}/${this.$route.params.gameId}`)
+    {
+      setInterval(this.getGameScore, 1000)
+    }
   }
 
   mounted() {
@@ -703,6 +752,7 @@ li {
 }
 
 #logs {
+  padding-top: 20px;
   display: grid;
   grid-template-columns: 2fr 3fr;
   max-height: 30%;

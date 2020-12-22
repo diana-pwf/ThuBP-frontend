@@ -7,7 +7,7 @@
           <search-input id="search"></search-input>
         </div>
         <a-tabs class="tab" default-active-key="1" :tabBarStyle="{'text-align': 'center'}"  @change="callback">
-          <a-tab-pane  key="1" tab="综合">
+          <a-tab-pane key="1" tab="综合">
             <div id="all" v-if="onShowMatchesList.length">
             <Carousel id="carousel"></Carousel>
             <ul class="wrapper">
@@ -34,37 +34,49 @@
               <a-empty :description="'暂无任何球类赛事'"/>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="篮球" force-render>
-            <div v-if="onShowMatchesList.length">
-              <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>
+          <a-tab-pane v-for="(item, index) in matchTypeList"
+                      :key="item.matchTypeId" :tab="item.matchTypeName" force-render>
+            <div v-if="onShowMatchesList.length">-->
+              <ResultCardList class="matchLists" :match-lists="onShowMatchesList" :isCenter="true"></ResultCardList>
               <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"
                             @change="onMatchesPageChange"
               />
             </div>
             <div v-else>
-              <a-empty :description="'暂无篮球赛事'"/>
+              <a-empty :description="'暂无相关赛事'"/>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="网球">
-            <div v-if="onShowMatchesList.length">
-              <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>
-              <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"
-                            @change="onMatchesPageChange"
-              />
-            </div>
-            <div v-else>
-              <a-empty :description="'暂无网球赛事'"/>
-            </div>
-          </a-tab-pane>
-          <a-tab-pane key="4" tab="羽毛球">
-            <a-empty :description="'暂无羽毛球赛事'"/>
-          </a-tab-pane>
-          <a-tab-pane key="5" tab="足球">
-            <a-empty :description="'暂无足球赛事'"/>
-          </a-tab-pane>
-          <a-tab-pane key="6" tab="乒乓球">
-            <a-empty :description="'暂无乒乓球赛事'"/>
-          </a-tab-pane>
+<!--          <a-tab-pane key="2" tab="篮球" force-render>-->
+<!--            <div v-if="onShowMatchesList.length">-->
+<!--              <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>-->
+<!--              <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"-->
+<!--                            @change="onMatchesPageChange"-->
+<!--              />-->
+<!--            </div>-->
+<!--            <div v-else>-->
+<!--              <a-empty :description="'暂无篮球赛事'"/>-->
+<!--            </div>-->
+<!--          </a-tab-pane>-->
+<!--          <a-tab-pane key="3" tab="网球">-->
+<!--            <div v-if="onShowMatchesList.length">-->
+<!--              <ResultCardList class="matchLists" :match-lists="this.onShowMatchesList" :isCenter="true"></ResultCardList>-->
+<!--              <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"-->
+<!--                            @change="onMatchesPageChange"-->
+<!--              />-->
+<!--            </div>-->
+<!--            <div v-else>-->
+<!--              <a-empty :description="'暂无网球赛事'"/>-->
+<!--            </div>-->
+<!--          </a-tab-pane>-->
+<!--          <a-tab-pane key="4" tab="羽毛球">-->
+<!--            <a-empty :description="'暂无羽毛球赛事'"/>-->
+<!--          </a-tab-pane>-->
+<!--          <a-tab-pane key="5" tab="足球">-->
+<!--            <a-empty :description="'暂无足球赛事'"/>-->
+<!--          </a-tab-pane>-->
+<!--          <a-tab-pane key="6" tab="乒乓球">-->
+<!--            <a-empty :description="'暂无乒乓球赛事'"/>-->
+<!--          </a-tab-pane>-->
         </a-tabs>
       </div>
     </div>
@@ -79,7 +91,7 @@ import SearchInput from "@/components/SearchInput.vue";
 import Carousel from "@/components/Carousel.vue";
 import ResultCardList from "@/components/ResultCardList.vue" ;
 import Pagination from '@/components/Pagination.vue'
-import {getMatchesList} from "../../myQuery";
+import {getMatchesList, getMatchTypeList} from "../../myQuery";
 import axios from "axios";
 
 @Component({
@@ -121,14 +133,12 @@ export default class Home extends Vue {
   }
 
   callback(key){
-    if(key==1){
+    console.log(key)
+    if(key === '1'){
       this.getMatchesList([])
     }
-    else if(key==2){
-      this.getMatchesList(['basketball'])
-    }
-    else if(key==3){
-      this.getMatchesList(['tennis'])
+    else {
+      this.getMatchesList([key])
     }
   }
 
@@ -160,7 +170,22 @@ export default class Home extends Vue {
     }
   }
 
+  matchTypeList = []
+  async getMatchTypes(){
+    try {
+      let res = await this.$apollo.query({
+        query: getMatchTypeList,
+      });
+      console.log(res.data.listMatchTypes)
+      this.matchTypeList = res.data.listMatchTypes
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
   preFunc(){
+    this.getMatchTypes()
     this.getUserInfo()
     this.getMatchesList([])
   }

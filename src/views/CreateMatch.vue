@@ -27,11 +27,8 @@
     </a-form-model-item>
     <a-form-model-item default-value="basketball" prop="matchtypeId" label="赛事类型">
       <a-select v-model="form.matchtypeId" placeholder="请选择赛事类型">
-        <a-select-option value="basketball">
-          篮球
-        </a-select-option>
-        <a-select-option value="tennis">
-          网球
+        <a-select-option v-for="(item, index) in matchTypeList" :value="item.matchTypeId">
+          {{item.matchTypeName}}
         </a-select-option>
       </a-select>
     </a-form-model-item>
@@ -76,6 +73,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import PictureUpload from "@/components/PictureUpload.vue";
+import {findMatchesByParticipantId, getCarouselMatches, getMatchTypeList} from "../../myQuery";
 
 @Component({
   components:{
@@ -251,8 +249,24 @@ export default class CreateMatch extends Vue {
     }
   }
 
+  matchTypeList = []
+
+  async getMatchTypes(){
+    try {
+      let res = await this.$apollo.query({
+        query: getMatchTypeList,
+      });
+      console.log(res.data.listMatchTypes)
+      this.matchTypeList = res.data.listMatchTypes
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
   mounted(){
     this.getUserInfo()
+    this.getMatchTypes()
   }
 
 }

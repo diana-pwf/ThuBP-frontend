@@ -264,3 +264,10 @@ export const getCarouselMatches = gql`query getCarouselMatches {
         previewLarge
     }
 }`;
+
+export const getMatchTypeList = gql`query getMatchTypeList {
+    listMatchTypes {
+        matchTypeId
+        matchTypeName
+    }
+}`;

@@ -36,7 +36,6 @@ export default class Logon extends Vue {
   password = '123456'
   ticket = '2018013405'
 
-
   querystring = require('querystring')
 
   login(){

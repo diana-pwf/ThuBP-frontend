@@ -282,20 +282,20 @@
                 <b-card-text>
                     <div>
                       <div class="matchCard">
-                    <img :src="match.previewLarge" alt="赛事图片"/>
-                    <div>
-                      <h4>{{item.name}}
-                      </h4>
-                      <a-descriptions style="margin-top:5%">
-                        <a-descriptions-item label="比赛场数">
-                          {{item.games.length}}
-                        </a-descriptions-item>
-                        <a-descriptions-item label="简介">
-                          {{item.description}}
-                        </a-descriptions-item>
-                      </a-descriptions>
-                    </div>
-                    </div>
+                        <img :src="match.previewLarge" alt="赛事图片"/>
+                        <div>
+                          <h4>{{item.name}}
+                          </h4>
+                          <a-descriptions style="margin-top:5%">
+                            <a-descriptions-item label="比赛场数">
+                              {{item.games.length}}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="简介">
+                              {{item.description}}
+                            </a-descriptions-item>
+                          </a-descriptions>
+                        </div>
+                      </div>
                           <a-table @change="handleTableChange" :pagination="pagination" class="table" :columns="columns" :data-source="item.games">
 <!--                            <a slot="name" slot-scope="text">{{ text }}</a>-->
 <!--                            <span slot="customTitle">比赛队伍0</span>-->
@@ -868,7 +868,7 @@ h4{
 .matchCard{
   display: grid;
   grid-template-columns: 20% 80%;
-
+  grid-column-gap: 3%;
 }
 
 .table{

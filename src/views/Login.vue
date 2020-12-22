@@ -1,7 +1,7 @@
 <template>
   <div id="center">
     <div id="left">
-      <img src="background.png" alt="">
+      <img src="/background.png" alt="">
     </div>
     <div id="right">
       <div id="title">
@@ -85,6 +85,10 @@ export default class Login extends Vue {
   display: flex;
   align-items: center;
   justify-content: center;
+  /*width: 100%;*/
+  /*height: 1000px;*/
+  /*background-image: url("../../public/background.png");*/
+  /*background-size: cover;*/
 }
 
 #form-body {
