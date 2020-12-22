@@ -56,8 +56,7 @@ export default class ThuRegister extends Vue {
       //   this.$message.error(JSON.stringify(response.message))
       // }
     } catch (e) {
-      console.log(e)
-      this.$message.error(JSON.stringify(e.message))
+      this.$message.error(JSON.stringify(e.response.data.message))
       setTimeout(() => this.$router.push("/urlClickResult/logon-fail"), 1000);
     }
   }

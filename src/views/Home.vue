@@ -106,13 +106,20 @@ export default class Home extends Vue {
 
   matchesList=[]
   onShowMatchesList=[]
+  totalMatches=0
 
+  //TODO：获取总数进行分页
   async getMatchesList(type){
     let res = await this.$apollo.query({
       query: getMatchesList,
-      variables:{typeIds:type}
+      variables:{
+        typeIds:type,
+        page:0,
+        pageSize:9999
+      }
     });
-    this.matchesList=res.data.findMatchesByType
+    this.matchesList=res.data.findMatchesByType.list
+    this.totalMatches=res.data.findMatchesByType.totalSize
     if (!type.length)
     {
       this.onMatchesPageChange(1, 8)
@@ -192,7 +199,6 @@ export default class Home extends Vue {
 
   mounted(){
     this.preFunc()
-    // TODO：增加赛事后重新进入主页面，赛事列表未更新
   }
 }
 </script>

@@ -22,19 +22,26 @@ export const findMatchesByParticipantId = gql`query findMatchesByParticipantId($
     }
 }`;
 
-export const getMatchesList = gql`query getMatchesList($typeIds:[String!]){
-    findMatchesByType(typeIds:$typeIds){
-    matchId
-    matchTypeId
-    name
-    description
-    previewLarge
-    organizerUser
-        {
-        username
-        userId
+export const getMatchesList = gql`query getMatchesList($typeIds:[String!],$page:Int = 0 ,$pageSize:Int = 10){
+    findMatchesByType(typeIds:$typeIds,page:$page,pageSize:$pageSize){
+    page
+    pageSize
+    totalSize
+    list
+         {
+             matchId
+            matchTypeId
+            name
+            description
+            previewLarge
+            organizerUser
+            {
+                username
+                userId
+            }
         }
-    }
+     }
+    
 }`;
 
 export const findOrganizerById = gql`query  findOrganizerById($userIds: [String!]!){
@@ -82,6 +89,7 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
             username
         }
         name
+        status
         startTime
         description
         targetGroup

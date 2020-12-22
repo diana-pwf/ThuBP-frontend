@@ -115,11 +115,11 @@
               </div>
               <div id="selective-buttons">
                 <div v-if="isSingleMatch">
-                  <b-button v-if="isOrganizer" variant="outline-success" class="add">
-                    <b-icon icon="person-plus-fill"/>
-                    添加选手
-                  </b-button>
-                  <b-button v-else-if="isParticipant"
+<!--                  <b-button v-if="isOrganizer" variant="outline-success" class="add">-->
+<!--                    <b-icon icon="person-plus-fill"/>-->
+<!--                    添加选手-->
+<!--                  </b-button>-->
+                  <b-button v-if="isParticipant"
                             variant="outline-success" class="add"
                             @click="cancelSignUp">
                     <b-icon icon="person-plus-fill"/>
@@ -134,10 +134,10 @@
                   </b-button>
                 </div>
                 <div v-else>
-                  <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>
-                    添加队伍
-                  </b-button>
-                  <b-button v-else-if="isParticipant"
+<!--                  <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>-->
+<!--                    添加队伍-->
+<!--                  </b-button>-->
+                  <b-button v-if="isParticipant"
                             variant="outline-success" class="add"
                             @click="gotoTeamDetail(myUnitId)">
                     <b-icon icon="person-plus-fill"/>
@@ -217,7 +217,7 @@
                           <p slot="content" :style="{verticalAlign:'left'}">
                             选手简介
                           </p>
-                          <span class="more" style="color: dodgerblue" slot="actions">更多</span>
+                          <span class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -239,6 +239,7 @@
                             队伍简介
                           </p>
                           <span @click="gotoTeamDetail(item.unitId)" class="more" style="color: dodgerblue" slot="actions">更多</span>
+                          <span @click="onDeleteTeam(item.unitId)" class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -261,21 +262,28 @@
                         <p slot="content" :style="{verticalAlign:'left'}">
                           这是一段简介
                         </p>
+                        <span class="more" style="color: dodgerblue" slot="actions">删除</span>
                       </a-comment>
                     </li>
                   </ul>
                 </div>
               </div>
+              <b-button @click="onClickEndSignUp" v-if="this.match.status==='PREPARE'" id="endSignUp" variant="danger">结束报名</b-button>
             </a-tab-pane>
             <a-tab-pane  key="3">
               <span slot="tab">
                 <a-icon type="unordered-list" />
                   比赛列表
               </span>
-              <b-button v-if="this.isOrganizer" @click="gotoCreateRound" class="button" block variant="outline-success">
+              <b-button v-if="this.isOrganizer" :disabled="this.match.status!=='RUNNING'" @click="gotoCreateRound" class="button" block variant="outline-success">
                 <b-icon icon="journal-plus"></b-icon>
                 添加轮次
               </b-button>
+              <template v-if="this.match.status==='PREPARE'">
+                <a-empty>
+                  <span slot="description">需要确认报名结束，才能添加轮次，开始比赛。</span>
+                </a-empty>
+              </template>
             <ul>
               <li class="list" v-for="(item,index) in this.match.rounds">
               <b-card class="roundCard" bg-variant="default">
@@ -435,7 +443,97 @@ export default class MatchDetail extends Vue{
     edit:false,
     startTime:'',
     publicShowUp: true,
-    publicSignUp:true
+    publicSignUp:true,
+    status:""
+  }
+
+  onDeleteTeam(unitId){
+    this.$bvModal.msgBoxConfirm('确认要删除这支队伍吗？', {
+      title: '删除队伍',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+             this.deleteTeam(unitId)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
+  async deleteTeam(unitId){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match.id}/unit/${unitId}`,
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('删除队伍成功！')
+        setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  onClickEndSignUp(){
+    this.$bvModal.msgBoxConfirm('确认要结束报名吗？', {
+      title: '结束报名',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.changeGameStatus('RUNNING')
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
+  async changeGameStatus(status){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.match.id}`,
+        data:{
+            status:status
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+          this.$message.success('结束报名成功！')
+          setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
   }
 
   dateChange(date,dateString){
@@ -472,18 +570,8 @@ export default class MatchDetail extends Vue{
     this.match.targetGroup=this.matchEditAim
     this.match.description=this.matchEditDescription
     this.match.startTime=this.matchEditStartTime
-    if(this.matchEditShowUp===1){
-      this.match.publicShowUp=true
-    }
-    else{
-      this.match.publicShowUp=false
-    }
-    if(this.matchEditSignUp===1){
-      this.match.publicSignUp=true
-    }
-    else{
-      this.match.publicSignUp=false
-    }
+    this.match.publicShowUp = this.matchEditShowUp === 1;
+    this.match.publicSignUp = this.matchEditSignUp === 1;
     this.modifyMatchDetail()
   }
 
@@ -611,7 +699,8 @@ export default class MatchDetail extends Vue{
         edit:false,
         startTime:res.data.findMatchById.startTime,
         publicShowUp: res.data.findMatchById.publicShowUp,
-        publicSignUp: res.data.findMatchById.publicSignUp
+        publicSignUp: res.data.findMatchById.publicSignUp,
+        status:res.data.findMatchById.status
       }
       for (let x of this.match['rounds']){
         for(let game of x.games){
@@ -908,5 +997,11 @@ ul{
 .roundButton{
   float: right;
 }
+
+#endSignUp{
+  float: right;
+  margin-bottom: 20px;
+}
+
 
 </style>
