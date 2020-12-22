@@ -73,7 +73,10 @@
 
 
               </a-descriptions>
+
               </div>
+              <b-button block v-b-modal.addUser  variant="outline-warning">添加可查看比赛的用户</b-button>
+              <invite-user  type="addWatch" :unit="this.match" ></invite-user>
               <div id="intro">
                 <a-card>
                   <a-textarea
@@ -93,6 +96,7 @@
                   <a-button @click="cancelDetailEdit" class="detail_button" type="link">取消</a-button>
                 </template>
               </div>
+
             </a-tab-pane>
             <a-tab-pane  key="2">
             <span slot="tab">
@@ -726,14 +730,27 @@ export default class MatchDetail extends Vue{
     }
   }
 
+  //TODO：私有比赛报名有问题
   async getMatchDetail()
   {
+    let res=undefined
     try {
-      let res = await this.$apollo.query({
-        query: findMatchDetailById,
-        variables:{matchId:this.$route.params.matchId}
-      });
-
+      if(this.$route.params.token){
+         res = await this.$apollo.query({
+          query: findMatchDetailById,
+          variables: {
+            matchId: this.$route.params.matchId,
+            matchToken:this.$route.params.token
+          }
+        });
+      }
+      else
+      {
+         res = await this.$apollo.query({
+          query: findMatchDetailById,
+          variables: {matchId: this.$route.params.matchId}
+        });
+      }
       this.match = {
         id:res.data.findMatchById.matchId,
         description: res.data.findMatchById.description,

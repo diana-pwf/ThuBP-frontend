@@ -191,7 +191,7 @@
                           <a @click="showModal(record)"  class="ant-dropdown-link">查看详情<a-icon type="down" /> </a>
                           <a-modal :mask="false" v-model="modalVisible" :title="infoModal.title" >
                             <p>{{infoModal.content}}</p>
-                            <a @click="onClickInviteLink(infoModal)" class="inviteLink" v-if="infoModal.tag==='REFEREE_INVITE'||infoModal.tag==='UNIT_INVITE'">点击链接同意邀请</a>
+                            <a @click="onClickInviteLink(infoModal)" class="inviteLink" v-if="infoModal.tag==='REFEREE_INVITE'||infoModal.tag==='UNIT_INVITE'||infoModal.tag==='MATCH_INVITE'">点击链接同意邀请</a>
                             <template slot="footer">
                                   <a-button key="read" type="primary" @click="handleOk(infoModal)">
                                     已读
@@ -450,6 +450,7 @@ export default class PersonalInfoTab extends Vue {
       })
       if (response.status === 200) {
         this.$message.success('删除成功！')
+        window.location.reload()
       }
       else
       {
@@ -465,17 +466,28 @@ export default class PersonalInfoTab extends Vue {
     let token=''
     let id=''
     let url=''
+    console.log(record['extra'])
     token = record['extra'].token
     if(record['tag']==='REFEREE_INVITE'){
       // id=inviteToken['matchId']
       id = record['extra'].matchId
       url=`/api/v1/match/become-referee/${id}`
+      this.acceptInvitation(token,url)
     }
     else if(record['tag']==='UNIT_INVITE'){
       // id=inviteToken['unitId']
       id = record['extra'].unitId
       url=`/api/v1/match/participate/${id}`
+      this.acceptInvitation(token,url)
     }
+    else if(record['tag']==='MATCH_INVITE'){
+      id=record['extra'].matchId
+      this.$router.push(`/matchDetail/${id}/${token}`)
+    }
+
+  }
+
+  async acceptInvitation(token,url){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({

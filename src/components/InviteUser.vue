@@ -2,7 +2,7 @@
   <b-modal  id="addUser" hide-footer >
     <div class="d-block text-center">
       <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
-      <span style="font-size: large">邀请用户成为<strong>{{unit.name}}</strong>{{type==="InviteReferee"?"裁判":"队员"}}</span>
+      <span style="font-size: large">邀请用户成为<strong>{{unit.name}}</strong>{{type==="InviteReferee"?"裁判":type==='addWatch'?'参与者':'队员'}}</span>
       <b-form-tags   no-outer-focus v-model="selectedUserList">
         <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
           <a-input-search class="search" @change="selectUserChange"   v-model="userSearchKey"  placeholder="Search by username"   />
@@ -84,6 +84,10 @@ export default class InviteUser extends Vue{
       url = `/api/v1/match/assign-unit-token/${this.unit['id']}`
       method = "put"
     }
+    else if(this.type==='addWatch'){
+      url=`/api/v1/match/invite-match/${this.unit['id']}`
+      method='post'
+    }
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
@@ -106,7 +110,7 @@ export default class InviteUser extends Vue{
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
     this.$bvModal.hide("addUser")
   }

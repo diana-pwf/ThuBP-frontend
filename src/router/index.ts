@@ -60,6 +60,11 @@ const routes: Array<RouteConfig> = [
     component:MatchDetail
   },
   {
+    path:'/matchDetail/:matchId/:token',
+    name:'matchDetail',
+    component:MatchDetail
+  },
+  {
     path:'/createMatch',
     name:'createMatch',
     component:CreateMatch

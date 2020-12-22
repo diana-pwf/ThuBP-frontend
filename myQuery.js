@@ -78,8 +78,8 @@ export const getMatchRelatedUsers = gql`query  getMatchRelatedUsers($matchId: St
 `
 
 
-export const findMatchDetailById = gql`query findMatchDetailById($matchId: String!){
-    findMatchById(matchId: $matchId) {
+export const findMatchDetailById = gql`query findMatchDetailById($matchId: String!,$matchToken:String){
+    findMatchById(matchId: $matchId,matchToken:$matchToken) {
         publicShowUp
         publicSignUp
         matchId
