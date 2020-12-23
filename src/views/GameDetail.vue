@@ -663,7 +663,7 @@ export default class GameDetail extends Vue {
     {
       this.getComments()
       this.getGameScore()
-      // setTimeout(this.createFunc, 1000)
+      setTimeout(this.createFunc, 1000)
     }
   }
 

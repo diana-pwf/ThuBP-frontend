@@ -9,13 +9,7 @@
         <h1>清球汇</h1>
       </div>
       <div id="form-body">
-<!--        <a-input class="user" placeholder="input TsinghuaID" v-model="ticket">-->
-<!--          <a-icon slot="prefix" type="user"></a-icon>-->
-<!--        </a-input>-->
-<!--        <a-input class="user" placeholder="input nickname" v-model="username">-->
-<!--          <a-icon slot="prefix" type="user"></a-icon>-->
-<!--        </a-input>-->
-        <b-form-input @input="isUsernameRepeat" v-model="username" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" id="feedback-user">
+        <b-form-input @input="isUsernameRepeat" v-model="username" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" class="feedback-user">
         </b-form-input>
 
         <b-form-valid-feedback class="feedback" :state="validation&&containValidation">

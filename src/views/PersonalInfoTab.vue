@@ -30,24 +30,68 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="用户名">
                 <span v-if="!isEditAccount">{{user.username}}</span>
-                <a-input v-else v-model="user.username"></a-input>
+<!--                <a-input v-else v-model="user.username"></a-input>-->
+                <div v-else>
+                <b-form-input @input="isUsernameRepeat" v-model="editUsername" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" class="feedback-user">
+                </b-form-input>
+
+                <b-form-valid-feedback class="feedback" :state="validation&&containValidation">
+                  Looks good
+                </b-form-valid-feedback>
+                <div>
+                  <b-form-invalid-feedback class="feedback" :state="validation">
+                    the username has been occupied!
+                  </b-form-invalid-feedback>
+                  <b-form-invalid-feedback class="feedback" :state="containValidation">
+                    the username must contain number or letter!
+                  </b-form-invalid-feedback>
+                </div>
+                </div>
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="手机号">
                 <span v-if="!isEditAccount">{{user.mobile}}</span>
-                <a-input v-else v-model="user.mobile"></a-input>
+<!--                <a-input v-else v-model="user.mobile"></a-input>-->
+                <div v-else>
+                <b-form-input v-model="user.mobile" :state="mobileValidation" class="feedback-user"></b-form-input>
+                <b-form-invalid-feedback :state="mobileValidation">
+                  Your mobile phone should be 11 number long
+                </b-form-invalid-feedback>
+                <b-form-valid-feedback :state="mobileValidation">
+                  Looks Good.
+                </b-form-valid-feedback>
+                </div>
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="邮箱">
                 <span v-if="!isEditAccount">{{user.email}}</span>
-                <a-input v-else v-model="user.email"></a-input>
+<!--                <a-input v-else v-model="user.email"></a-input>-->
+                <div v-else>
+                  <b-form-input v-model="user.email" :state="emailValidation" class="feedback-user"></b-form-input>
+                  <b-form-invalid-feedback :state="emailValidation">
+                    not email format!
+                  </b-form-invalid-feedback>
+                  <b-form-valid-feedback :state="emailValidation">
+                    Looks Good.
+                  </b-form-valid-feedback>
+                </div>
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="个人陈述">
                 <span v-if="!isEditAccount">{{user.description}}</span>
-                <a-input v-else v-model="user.description"></a-input>
+<!--                <a-input v-else v-model="user.description"></a-input>-->
+                <div v-else>
+                  <b-form-input v-model="user.description" :state="descriptionValidation" class="feedback-user"></b-form-input>
+                  <b-form-invalid-feedback :state="descriptionValidation">
+                    description length > 1000!
+                  </b-form-invalid-feedback>
+                  <b-form-valid-feedback :state="descriptionValidation">
+                    Looks Good.
+                  </b-form-valid-feedback>
+                </div>
               </a-descriptions-item>
             </a-descriptions>
 
             <a-button class="edit-button" type="primary" v-if="!isEditAccount" @click="editAccount">修改账号资料</a-button>
-            <a-button class="edit-button" type="primary" v-else @click="submitEditAccount">提交修改</a-button>
+            <a-button class="edit-button" type="primary"
+                      :disabled="!(mobileValidation&&descriptionValidation&&emailValidation&&validation&&containValidation)" v-else @click="submitEditAccount">提交修改</a-button>
             <b-button size="sm" variant="success" v-b-modal.modal-password-changing>修改密码</b-button>
             <b-modal
                 id="modal-password-changing"
@@ -216,7 +260,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import axios from "axios";
 import ResultCardList from "../components/ResultCardList.vue";
 import Navigation from "../components/Navigation.vue";
-import {findMatchesByOrganizerId, findMatchesByParticipantId} from '../../myQuery.js';
+import {findMatchesByOrganizerId, findMatchesByParticipantId,findUserExactByName} from '../../myQuery.js';
 import {isTypeSystemDefinitionNode} from "graphql";
 import SearchResultCard from "@/components/SearchResultCard.vue";
 import PictureUpload from "@/components/PictureUpload.vue";
@@ -224,6 +268,8 @@ import PictureUpload from "@/components/PictureUpload.vue";
 @Component({
   components: {PictureUpload, SearchResultCard, ResultCardList, Navigation},
 })
+
+
 
 //TODO:对修改个人信息进行检验
 export default class PersonalInfoTab extends Vue {
@@ -264,13 +310,65 @@ export default class PersonalInfoTab extends Vue {
     createdAt:''
   }
 
+  editUsername=''
   isEditAccount = false
+
+  validation=false
+  containValidation=false
+  querystring = require('querystring')
+
+  get descriptionValidation(){
+    return this.user.description.length<1000
+  }
+  async isUsernameRepeat(){
+    try {
+      if(this.user.username!==this.editUsername) {
+        let res = await this.$apollo.query({
+          query: findUserExactByName,
+          variables: {
+            username: this.editUsername
+          }
+        })
+        if (res.data.findUserByUsername === null) {
+          this.validation = true
+        } else {
+          this.validation = false
+        }
+      }
+      else{
+        this.validation=true
+      }
+      let regNumber = /\d+/;
+      let regString = /[a-zA-Z]+/;
+      if(!regNumber.test(this.editUsername) && !regString.test(this.editUsername)){
+        this.containValidation=false
+      }
+      else{
+        this.containValidation=true
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+  get mobileValidation(){
+    let  re = /^1\d{10}$/
+    return re.test(this.user.mobile)
+  }
+  get emailValidation(){
+     let re=/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+     return re.test(this.user.email)
+  }
   editAccount(){
     this.isEditAccount = true
+    this.editUsername=this.user.username
+    this.isUsernameRepeat()
   }
   async submitEditAccount(){
+    this.user.username=this.editUsername
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
+      console.log(this.user.mobile)
       let response = await axios({
         method: 'post',
         url: `/api/v1/user/info`,
@@ -604,6 +702,15 @@ export default class PersonalInfoTab extends Vue {
         this.user.createdAt = response.data.createdAt
         this.user.thuId = response.data.thuId
         this.user.description = response.data.description
+        if(!this.user.description){
+          this.user.description=''
+        }
+        if(!this.user.mobile){
+          this.user.mobile=''
+        }
+        if(!this.user.email){
+          this.user.email=''
+        }
         // 更多修改信息
         await this.getMyOrganizeMatch(this.user.userId)
         await this.getMyParticipateMatch(this.user.userId)
