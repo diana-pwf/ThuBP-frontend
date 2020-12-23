@@ -323,17 +323,11 @@ export default class PersonalInfoTab extends Vue {
   async isUsernameRepeat(){
     try {
       if(this.user.username!==this.editUsername) {
-        let res = await this.$apollo.query({
-          query: findUserExactByName,
-          variables: {
-            username: this.editUsername
-          }
+        let response = await axios({
+          method: 'get',
+          url: `/api/v1/user/check?username=${encodeURIComponent(this.editUsername)}`,
         })
-        if (res.data.findUserByUsername === null) {
-          this.validation = true
-        } else {
-          this.validation = false
-        }
+        this.validation = (response.data.userId === null)
       }
       else{
         this.validation=true
