@@ -241,7 +241,7 @@
                             Athlete
                           </a-avatar>
                           <p slot="content" :style="{verticalAlign:'left'}">
-                            选手简介
+                            {{item.creator.description}}
                           </p>
                           <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer"  class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
@@ -265,7 +265,7 @@
                             Team
                           </a-avatar>
                           <p slot="content" :style="{verticalAlign:'left'}">
-                            队伍简介
+                            {{item.description}}
                           </p>
                           <span @click="changeOnLookUnit(item.unitId)" class="more"
                                 style="color: dodgerblue" slot="actions"
@@ -295,7 +295,7 @@
                           Referee
                         </a-avatar>
                         <p slot="content" :style="{verticalAlign:'left'}">
-                          这是一段简介
+                          {{item.description}}
                         </p>
                         <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
                       </a-comment>
