@@ -320,7 +320,7 @@
                 </a-empty>
               </template>
             <ul>
-              <li class="list" v-for="(item,index) in this.match.rounds">
+              <li class="list" v-for="(item,index) in this.onShowRoundsList">
               <b-card class="roundCard" bg-variant="default">
                 <b-card-text>
                     <div>
@@ -365,6 +365,9 @@
               </b-card>
               </li>
             </ul>
+              <a-pagination class="pagination" :default-current="1" :total="match.rounds.length" :page-size="2"
+                            @change="onRoundsPageChange"
+              />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -478,6 +481,7 @@ export default class MatchDetail extends Vue{
         publicSignUp: res.data.findMatchById.publicSignUp,
         status:res.data.findMatchById.status
       }
+      this.onRoundsPageChange(1, 2)
       for (let x of this.match['rounds']){
         for(let game of x.games){
           game['unit0_name']=game.unit0.name
@@ -1076,9 +1080,13 @@ export default class MatchDetail extends Vue{
     this.form.description = ''
   }
 
-
-  gotoTeamDetail(id) {
-    this.$router.push(`/teamDetail/${this.match.id}/${id}`)
+  onShowRoundsList = []
+  onRoundsPageChange(page, pageSize)
+  {
+    let total = this.match.rounds.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowRoundsList = this.match.rounds.slice(left, right)
   }
 
   gotoCreateRound(){
@@ -1100,6 +1108,13 @@ export default class MatchDetail extends Vue{
 <style scoped>
 li{
   list-style-type: none;
+}
+
+.pagination {
+  margin: auto;
+  margin-top:20px;
+  display: flex;
+  justify-content: center;
 }
 
 #menu {
