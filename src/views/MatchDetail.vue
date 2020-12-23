@@ -591,6 +591,7 @@ export default class MatchDetail extends Vue{
       }
       this.onRoundsPageChange(1, 2)
       this.onTeamsPageChange(1, 5)
+      this.onRefereesPageChange(1, 5)
       for (let x of this.match['rounds']){
         for(let game of x.games){
           game['unit0_name']=game.unit0.name
@@ -1235,6 +1236,15 @@ export default class MatchDetail extends Vue{
     let left = (page - 1) * pageSize
     let right = (page * pageSize > total) ? total : page * pageSize
     this.onShowTeamsList = this.match.teams.slice(left, right)
+  }
+
+  onShowRefereesList = []
+  onRefereesPageChange(page, pageSize)
+  {
+    let total = this.match.teams.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowRefereesList = this.match.referees.slice(left, right)
   }
 
   gotoCreateRound(){
