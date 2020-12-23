@@ -15,19 +15,26 @@
 <!--        <a-input class="user" placeholder="input nickname" v-model="username">-->
 <!--          <a-icon slot="prefix" type="user"></a-icon>-->
 <!--        </a-input>-->
-        <b-form-input v-model="username" placeholder="username" :state="validation" id="feedback-user">
+        <b-form-input @input="isUsernameRepeat" v-model="username" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" id="feedback-user">
         </b-form-input>
-        <b-form-invalid-feedback :state="validation">
-          Your user ID must be 5-12 characters long.
-        </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validation">
-          Looks Good.
+
+        <b-form-valid-feedback class="feedback" :state="validation&&containValidation">
+          Looks good
         </b-form-valid-feedback>
+        <div>
+        <b-form-invalid-feedback class="feedback" :state="validation">
+          the username has been occupied!
+        </b-form-invalid-feedback>
+        <b-form-invalid-feedback class="feedback" :state="containValidation">
+          the username must contain number or letter!
+        </b-form-invalid-feedback>
+        </div>
         <a-input-password class="password" placeholder="input password" v-model="password">
           <a-icon slot="prefix" type="lock"></a-icon>
         </a-input-password>
+
         <a-button id="button-login" v-on:click="login()">login</a-button>
-        <a-button id="button-logon" type="primary" v-on:click="logon()">logon</a-button>
+        <a-button :disabled="!validation||!containValidation" id="button-logon" type="primary" v-on:click="logon()">logon</a-button>
       </div>
     </div>
   </div>
@@ -37,6 +44,7 @@
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
+import {getCarouselMatches,findUserExactByName} from "../../myQuery";
 
 @Component
 export default class Logon extends Vue {
@@ -44,7 +52,40 @@ export default class Logon extends Vue {
   password = '123456'
   ticket = '2018013405'
 
+  temp=true
+  validation=false
+  containValidation=false
   querystring = require('querystring')
+
+
+  async isUsernameRepeat(){
+    try {
+      let res = await this.$apollo.query({
+        query:findUserExactByName,
+        variables:{
+          username:this.username
+        }
+      })
+      if(res.data.findUserByUsername===null){
+        this.validation=true
+      }
+      else{
+        this.validation=false
+      }
+      let regNumber = /\d+/;
+      let regString = /[a-zA-Z]+/;
+      if(!regNumber.test(this.username) && !regString.test(this.username)){
+        this.containValidation=false
+      }
+      else{
+        this.containValidation=true
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
 
   login(){
     this.$router.push('/')
@@ -60,6 +101,10 @@ export default class Logon extends Vue {
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.message))
     }
+  }
+
+  mounted(){
+    this.isUsernameRepeat()
   }
 }
 </script>
@@ -100,6 +145,10 @@ export default class Logon extends Vue {
 
 #icon {
   margin: 20px;
+}
+
+.feedback{
+  margin-bottom: 20px;
 }
 
 </style>
