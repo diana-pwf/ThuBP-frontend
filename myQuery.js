@@ -98,7 +98,8 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
             unitId
             name
             creator {
-                username   
+                username  
+                userId 
             }
             members {
                 userId

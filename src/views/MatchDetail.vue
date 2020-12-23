@@ -117,15 +117,15 @@
                   <h5 class='text-warning'>比赛裁判</h5>
                 </div>
               </div>
-              <div id="selective-buttons">
-                <div v-if="isSingleMatch">
+              <div v-if="this.match.status==='PREPARE'" id="selective-buttons">
+                <div  v-if="isSingleMatch">
 <!--                  <b-button v-if="isOrganizer" variant="outline-success" class="add">-->
 <!--                    <b-icon icon="person-plus-fill"/>-->
 <!--                    添加选手-->
 <!--                  </b-button>-->
-                  <b-button v-if="isParticipant"
+                  <b-button v-if="isParticipant&&myCreateUnitId>0"
                             variant="outline-success" class="add"
-                            @click="cancelSignUp">
+                            @click="onDeleteTeam(myCreateUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     取消报名
                   </b-button>
@@ -141,12 +141,31 @@
 <!--                  <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>-->
 <!--                    添加队伍-->
 <!--                  </b-button>-->
+                  <div v-if="myCreateUnitId>0" class="aboutTeamButton">
                   <b-button v-if="isParticipant"
-                            variant="outline-success" class="add"
+                            variant="outline-success"
                             @click="gotoTeamDetail(myUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     查看我的队伍
                   </b-button>
+                    <b-button v-if="myCreateUnitId>0"
+                              variant="outline-danger"
+                              class="delete"
+                              @click="onDeleteTeam(myCreateUnitId)"
+                    >
+                      解散我的队伍
+                    </b-button>
+                  </div>
+                  <div v-else>
+                    <b-button v-if="isParticipant"
+                              variant="outline-success"
+                              @click="gotoTeamDetail(myUnitId)"
+                              class="add"
+                    >
+                      <b-icon icon="person-plus-fill"/>
+                      查看我的队伍
+                    </b-button>
+                  </div>
                   <b-button v-if="!isOrganizer && !isParticipant"
                             variant="outline-success"
                             class="add"
@@ -221,7 +240,7 @@
                           <p slot="content" :style="{verticalAlign:'left'}">
                             选手简介
                           </p>
-                          <span class="more" style="color: dodgerblue" slot="actions">删除</span>
+                          <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer"  class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -246,7 +265,7 @@
                             队伍简介
                           </p>
                           <span @click="gotoTeamDetail(item.unitId)" class="more" style="color: dodgerblue" slot="actions">更多</span>
-                          <span @click="onDeleteTeam(item.unitId)" class="more" style="color: dodgerblue" slot="actions">删除</span>
+                          <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -272,13 +291,13 @@
                         <p slot="content" :style="{verticalAlign:'left'}">
                           这是一段简介
                         </p>
-                        <span @click="onDeleteReferee(item.userId)" class="more" style="color: dodgerblue" slot="actions">删除</span>
+                        <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
                       </a-comment>
                     </li>
                   </ul>
                 </div>
               </div>
-              <b-button @click="onClickEndSignUp" v-if="this.match.status==='PREPARE'" id="endSignUp" variant="danger">结束报名</b-button>
+              <b-button @click="onClickEndSignUp" v-if="this.match.status==='PREPARE'&&isOrganizer" id="endSignUp" variant="danger">结束报名</b-button>
             </a-tab-pane>
             <a-tab-pane  key="3">
               <span slot="tab">
@@ -425,6 +444,7 @@ export default class MatchDetail extends Vue{
   isOrganizer = false
   isParticipant = false
   myUnitId = -1
+  myCreateUnitId=-1
 
   form = {
     name: '',
@@ -836,6 +856,9 @@ export default class MatchDetail extends Vue{
         // @ts-ignore
         for (let team of this.match.teams)
         {
+          if(this.currentUserId===team.creator.userId){
+            this.myCreateUnitId=team.unitId
+          }
           for (let person of team.members)
           {
             if (this.currentUserId === person.userId)
@@ -1088,5 +1111,11 @@ ul{
   margin-bottom: 20px;
 }
 
+.aboutTeamButton{
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: 45% 45%;
+  grid-column-gap: 5%;
+}
 
 </style>

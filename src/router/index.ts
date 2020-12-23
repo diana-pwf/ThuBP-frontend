@@ -61,7 +61,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path:'/matchDetail/:matchId/:token',
-    name:'matchDetail',
+    name:'matchDetailWithToken',
     component:MatchDetail
   },
   {
