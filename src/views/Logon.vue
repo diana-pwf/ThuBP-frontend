@@ -54,18 +54,11 @@ export default class Logon extends Vue {
 
   async isUsernameRepeat(){
     try {
-      let res = await this.$apollo.query({
-        query:findUserExactByName,
-        variables:{
-          username:this.username
-        }
+      let response = await axios({
+        method: 'get',
+        url: `/api/v1/user/check?username=${encodeURIComponent(this.username)}`,
       })
-      if(res.data.findUserByUsername===null){
-        this.validation=true
-      }
-      else{
-        this.validation=false
-      }
+      this.validation = (response.data.userId === null)
       let regNumber = /\d+/;
       let regString = /[a-zA-Z]+/;
       if(!regNumber.test(this.username) && !regString.test(this.username)){
