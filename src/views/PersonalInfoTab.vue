@@ -826,4 +826,11 @@ ul,li {
 .edit-button {
   margin-right: 20px;
 }
+
+/*.text {*/
+/*  text-align: left;*/
+/*  text-overflow: ellipsis;*/
+/*  overflow: hidden;*/
+/*  white-space: nowrap;*/
+/*}*/
 </style>

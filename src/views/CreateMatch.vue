@@ -39,7 +39,8 @@
       />
     </a-form-model-item>
     <a-form-model-item prop="publicRestriction" label="赛事开放限制">
-      <a-radio-group :options="options" :default-value="0" v-model="form.publicRestriction" />
+      <a-radio-group :options="options"
+                     :default-value="0" v-model="form.publicRestriction" />
     </a-form-model-item>
     <a-form-model-item prop="matchRuleType" label="赛制">
       <a-radio-group :options="[{ label: '个人赛', value: 0 },{ label: '团体赛', value: 1 },]"
@@ -112,9 +113,8 @@ export default class CreateMatch extends Vue {
   }
 
   options = [
-    { label: '赛事公开，允许自由报名', value: 0 },
-    { label: '赛事不公开，允许自由报名', value: 1 },
-    { label: '赛事不公开，不允许自由报名', value: 2 },
+    { label: '赛事公开（可被搜索到，直接点击进入）', value: 0 },
+    { label: '赛事不公开（不可被搜索到，通过链接加入）', value: 1 },
   ];
 
   rules = {
@@ -162,13 +162,36 @@ export default class CreateMatch extends Vue {
     this.$refs.ruleForm.validate(valid => {
       console.log(valid);
       if (valid) {
-        this.createMatch();
+        this.onCreateMatch();
       } else {
         console.log('error submit!!');
         return false;
       }
     });
   }
+
+  onCreateMatch(){
+    this.$bvModal.msgBoxConfirm('确定要创建此赛事吗？', {
+      title: '创建赛事',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.createMatch()
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
 
   async createMatch() {
     if(this.form.publicRestriction === 0)
@@ -177,11 +200,6 @@ export default class CreateMatch extends Vue {
       this.form.publicShow = true
     }
     else if(this.form.publicRestriction === 1)
-    {
-      this.form.publicSignUp = true
-      this.form.publicShow = false
-    }
-    else
     {
       this.form.publicSignUp = false
       this.form.publicShow = false

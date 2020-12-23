@@ -63,7 +63,10 @@ export default class SearchResultCard extends Vue {
   height: 100%;
 }
 
-.card-text {
+#text1, #text2 {
   text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

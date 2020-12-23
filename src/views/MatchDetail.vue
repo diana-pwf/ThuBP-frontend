@@ -230,78 +230,97 @@
                 <div>
                   <div v-if="isSingleMatch">
                     <span class="list_title">选手列表</span>
-                    <ul id="athlete">
-                      <li v-for="(item,index) in this.match.teams" :key="index">
-                        <a-comment>
-                          <a slot="author">{{item.creator.username}}</a>
-                          <a-avatar
-                              slot="avatar"
-                              shape="square"
-                              size="large"
-                              :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                            Athlete
-                          </a-avatar>
-                          <p slot="content" :style="{verticalAlign:'left'}">
-                            {{item.creator.description}}
-                          </p>
-                          <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer"  class="more" style="color: dodgerblue" slot="actions">删除</span>
-                        </a-comment>
-                      </li>
-                    </ul>
+                    <div v-if="match.teams.length">
+                      <ul id="athlete">
+                        <li v-for="(item,index) in this.onShowTeamsList" :key="index">
+                          <a-comment>
+                            <a slot="author">{{item.creator.username}}</a>
+                            <a-avatar
+                                slot="avatar"
+                                shape="square"
+                                size="large"
+                                :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                              Athlete
+                            </a-avatar>
+                            <p slot="content" :style="{verticalAlign:'left'}">
+                              {{item.creator.description}}
+                            </p>
+                            <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer"  class="more" style="color: dodgerblue" slot="actions">删除</span>
+                          </a-comment>
+                        </li>
+                      </ul>
+                      <a-pagination class="pagination" :default-current="1" :total="onShowTeamsList.length" :page-size="5"
+                                    @change="onTeamsPageChange"
+                      />
+                    </div>
+                    <div v-else>
+                      <a-empty :description="'暂无选手报名'"/>
+                    </div>
                   </div>
                   <div v-else>
                     <span class="list_title">队伍列表</span>
-                    <template v-if="this.match.teams.length===0">
-                      <a-empty />
-                    </template>
-                    <ul id="team">
-                      <li v-for="(item,index) in this.match.teams" :key="index">
-                        <a-comment>
-                          <a slot="author">{{item.name}}</a>
-                          <a-avatar
-                              slot="avatar"
-                              shape="square"
-                              size="large"
-                              :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
-                            Team
-                          </a-avatar>
-                          <p slot="content" :style="{verticalAlign:'left'}">
-                            {{item.description}}
-                          </p>
-                          <span @click="changeOnLookUnit(item.unitId)" class="more"
-                                style="color: dodgerblue" slot="actions"
-                                v-b-toggle.sidebar-teamdetail
-                          >更多</span>
-                          <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
-                        </a-comment>
-                      </li>
-                    </ul>
+                    <div v-if="match.teams.length">
+                      <ul id="team">
+                        <li v-for="(item,index) in this.onShowTeamsList" :key="index">
+                          <a-comment>
+                            <a slot="author">{{item.name}}</a>
+                            <a-avatar
+                                slot="avatar"
+                                shape="square"
+                                size="large"
+                                :style="{ backgroundColor:'#f56a00', verticalAlign: 'left' }">
+                              Team
+                            </a-avatar>
+                            <p slot="content" :style="{verticalAlign:'left'}">
+                              {{item.description}}
+                            </p>
+                            <span @click="changeOnLookUnit(item.unitId)" class="more"
+                                  style="color: dodgerblue" slot="actions"
+                                  v-b-toggle.sidebar-teamdetail
+                            >更多</span>
+                            <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
+                          </a-comment>
+                        </li>
+                      </ul>
+                      <a-pagination class="pagination" :default-current="1" :total="onShowTeamsList.length" :page-size="5"
+                                    @change="onTeamsPageChange"
+                      />
+                    </div>
+                    <div v-else>
+                      <a-empty :description="'暂无队伍报名'"/>
+                    </div>
                   </div>
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
-                  <template v-if="this.match.referees.length===0">
-                    <a-empty />
-                  </template>
+
                   <InviteUser   id="addUserInviteReferee" type="InviteReferee" :unit="match"></InviteUser>
-                  <ul id="referee">
-                    <li v-for="(item,index) in this.match.referees" :key="index">
-                      <a-comment>
-                        <a slot="author">{{item.username}}</a>
-                        <a-avatar
-                            slot="avatar"
-                            shape="square"
-                            size="large"
-                            :style="{ backgroundColor:'#9400D3', verticalAlign: 'left' }">
-                          Referee
-                        </a-avatar>
-                        <p slot="content" :style="{verticalAlign:'left'}">
-                          {{item.description}}
-                        </p>
-                        <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
-                      </a-comment>
-                    </li>
-                  </ul>
+                  <div v-if="match.referees.length">
+                    <ul id="referee">
+                      <li v-for="(item,index) in onShowRefereesList" :key="index">
+                        <a-comment>
+                          <a slot="author">{{item.username}}</a>
+                          <a-avatar
+                              slot="avatar"
+                              shape="square"
+                              size="large"
+                              :style="{ backgroundColor:'#9400D3', verticalAlign: 'left' }">
+                            Referee
+                          </a-avatar>
+                          <p slot="content" :style="{verticalAlign:'left'}">
+                            {{item.description}}
+                          </p>
+                          <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
+                        </a-comment>
+                      </li>
+                    </ul>
+                    <a-pagination class="pagination" :default-current="1" :total="onShowRefereesList.length" :page-size="5"
+                                  @change="onRefereesPageChange"
+                    />
+                  </div>
+                  <div v-else>
+                    <a-empty :description="'暂无裁判'"/>
+                  </div>
                 </div>
               </div>
               <b-button @click="onClickEndSignUp" v-if="this.match.status==='PREPARE'&&isOrganizer" id="endSignUp" variant="danger">结束报名</b-button>
@@ -571,6 +590,7 @@ export default class MatchDetail extends Vue{
         status:res.data.findMatchById.status
       }
       this.onRoundsPageChange(1, 2)
+      this.onTeamsPageChange(1, 5)
       for (let x of this.match['rounds']){
         for(let game of x.games){
           game['unit0_name']=game.unit0.name
@@ -1206,6 +1226,15 @@ export default class MatchDetail extends Vue{
     let left = (page - 1) * pageSize
     let right = (page * pageSize > total) ? total : page * pageSize
     this.onShowRoundsList = this.match.rounds.slice(left, right)
+  }
+
+  onShowTeamsList = []
+  onTeamsPageChange(page, pageSize)
+  {
+    let total = this.match.teams.length
+    let left = (page - 1) * pageSize
+    let right = (page * pageSize > total) ? total : page * pageSize
+    this.onShowTeamsList = this.match.teams.slice(left, right)
   }
 
   gotoCreateRound(){

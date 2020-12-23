@@ -1,15 +1,17 @@
 <template>
   <div @mouseleave="hideList" >
     <div id="searchBar">
-    <a-select default-value="matchName"  @change="handleChange">
-      <a-select-option value="matchName">
-        赛事名称
-      </a-select-option>
-      <a-select-option value="organizerName">
-        组织者名称
-      </a-select-option>
-    </a-select>
-  <a-input-search class="search" @change="onChange"   v-model="searchKey"  placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch" />
+      <a-select id="select" default-value="matchName"  @change="handleChange">
+        <a-select-option value="matchName">
+          赛事名称
+        </a-select-option>
+        <a-select-option value="organizerName">
+          组织者名称
+        </a-select-option>
+      </a-select>
+      <a-input-search class="search" @change="onChange"
+                      v-model="searchKey"  placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch"
+      />
     </div>
     <ul id="list" class="wrapper" v-if="showList">
       <li class="list" v-for="(item,index) in  searchList ">
@@ -121,5 +123,7 @@ li{
 #searchBar{
   display: grid;
   grid-template-columns: 20% 80%;
+  grid-column-gap: 5px;
 }
+
 </style>
