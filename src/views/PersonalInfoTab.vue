@@ -395,7 +395,7 @@ export default class PersonalInfoTab extends Vue {
   }
 
   async readNote(record){
-    console.log('readNote')
+
     let id = this.myNotifications[record.key]['notificationId']
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -467,25 +467,27 @@ export default class PersonalInfoTab extends Vue {
     let token=''
     let id=''
     let url=''
-    console.log(record['extra'])
+
+    await this.readNote(record)
+
     token = record['extra'].token
     if(record['tag']==='REFEREE_INVITE'){
       // id=inviteToken['matchId']
       id = record['extra'].matchId
       url=`/api/v1/match/become-referee/${id}`
-      this.acceptInvitation(token,url)
+      await this.acceptInvitation(token, url)
     }
     else if(record['tag']==='UNIT_INVITE'){
       // id=inviteToken['unitId']
       id = record['extra'].unitId
       url=`/api/v1/match/participate/${id}`
-      this.acceptInvitation(token,url)
+      await this.acceptInvitation(token, url)
     }
     else if(record['tag']==='MATCH_INVITE'){
       id=record['extra'].matchId
       this.$router.push(`/matchDetail/${id}/${token}`)
     }
-
+    setTimeout(() => window.location.reload(), 1000);
   }
 
   async acceptInvitation(token,url){
