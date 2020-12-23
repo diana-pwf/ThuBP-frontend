@@ -249,7 +249,10 @@ export default class GameDetail extends Vue {
       }
       await this.getComments()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
   async deleteComment(id){
@@ -266,7 +269,10 @@ export default class GameDetail extends Vue {
       }
       await this.getComments()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
@@ -302,7 +308,10 @@ export default class GameDetail extends Vue {
       }
       await this.getComments()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
     await this.getComments()
     this.$nextTick(() => {
@@ -457,7 +466,10 @@ export default class GameDetail extends Vue {
       this.unit1ScoreDelta = 0
       await this.getGameScore()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
@@ -508,7 +520,10 @@ export default class GameDetail extends Vue {
       }
       await this.getGameScore()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
@@ -563,7 +578,10 @@ export default class GameDetail extends Vue {
       }
       await this.getGameScore()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
@@ -589,7 +607,10 @@ export default class GameDetail extends Vue {
       }
       await this.getGameScore()
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
@@ -627,7 +648,10 @@ export default class GameDetail extends Vue {
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 

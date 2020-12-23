@@ -62,7 +62,7 @@ export default class UrlClickResult extends Vue{
   }
 
   goHome(){
-    if(this.$route.params.resultType==='logon-success'){
+    if(this.$route.params.resultType==='logon-success'||this.$route.params.resultType==='fail'){
       this.$router.push('/')
     }
     else

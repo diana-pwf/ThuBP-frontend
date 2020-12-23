@@ -93,7 +93,10 @@ export default class Logon extends Vue {
         username, password, timestamp
       }));
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 

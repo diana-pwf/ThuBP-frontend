@@ -101,7 +101,10 @@ export default class PictureUpload extends Vue{
         await this.uploadAvatar()
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
       this.$message.error('图片上传出现问题，请删除后再试')
     }
   }
@@ -146,7 +149,10 @@ export default class PictureUpload extends Vue{
         throw {response}
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 

@@ -173,7 +173,10 @@ export default class Home extends Vue {
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 

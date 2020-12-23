@@ -66,7 +66,10 @@ export default class Login extends Vue {
         // 在此处弹出提示 注册成功
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
+       this.$message.error(JSON.stringify(e.response.data.message))
+      if(e.response.data.status===401){
+        setTimeout(() => this.$router.push("/urlClickResult/fail"), 1000);
+      }
     }
   }
 
