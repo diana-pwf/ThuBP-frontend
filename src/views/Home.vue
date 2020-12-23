@@ -264,6 +264,7 @@ export default class Home extends Vue {
 img{
   width: 200px;
   height: 200px;
-  margin:auto
+  margin:auto;
+  padding-top: 20px;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div>
+  <div id="matchDetailPC">
     <div id="personalMenu">
       <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
       <div id="menu">
@@ -387,6 +388,93 @@
       </b-sidebar>
     </div>
   </div>
+  <div id="matchDetailMobile">
+    <navigation></navigation>
+    <div>
+      <b-card
+          :title="this.match.name"
+          :img-src="this.match.previewLarge"
+          img-alt="Image"
+          img-top
+          tag="article"
+          class="mb-2"
+      >
+        <b-card-text>
+          <a-descriptions >
+            <a-descriptions-item label="组织者">
+              {{this.match.organizerName}}
+            </a-descriptions-item>
+            <a-descriptions-item label="球赛类型">
+              {{this.match.matchType}}
+            </a-descriptions-item>
+          </a-descriptions>
+<!--          <b-table small :fields="mobileParticipantFields" :items="mobileParticipantItems" responsive="sm">-->
+<!--          -->
+
+<!--          </b-table>-->
+          <div id="mobile-user-list">
+          <div>
+          <a-tag style="margin-bottom: 10px" color="green">
+            队伍列表
+          </a-tag>
+          <b-list-group  id="mobile-team-list" class="wrapper">
+            <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in  match.teams ">
+              <!--                          <span>{{item.username}}</span>-->
+              <b-avatar size="sm" icon="people-fill" variant="info" class="mr-3"></b-avatar>
+              <span class="mr-auto">{{item.name}}</span>
+<!--              <h5><b-badge variant="warning">{{item.unitId}}</b-badge></h5>-->
+            </b-list-group-item>
+          </b-list-group>
+          </div>
+          <div>
+            <a-tag style="margin-bottom: 10px" color="blue">
+              裁判列表
+            </a-tag>
+            <b-list-group  id="mobile-referee-list" class="wrapper">
+              <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in  match.referees ">
+                <!--                          <span>{{item.username}}</span>-->
+                <b-avatar size="sm" variant="success" class="mr-3"></b-avatar>
+                <span class="mr-auto">{{item.username}}</span>
+<!--                <h5><b-badge variant="warning">{{item.userId}}</b-badge></h5>-->
+              </b-list-group-item>
+            </b-list-group>
+          </div>
+          </div>
+          <div >
+            <a-tag style="margin-bottom: 10px;margin-top: 20px" color="pink">
+              轮次列表
+            </a-tag>
+<!--            <b-list-group  id="mobile-round-list" class="wrapper">-->
+<!--              <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in  match.rounds ">-->
+          <ul>
+            <li v-for="(item,index) in match.rounds" :key="index">
+            <b-card bg-variant="light" :header="item.name" class="text-center">
+              <b-card-text>
+<!--                <b-table striped hover :items="mobileRoundItems" :fields="mobileRoundFields">-->
+                <ul>
+                  <li v-for="(record,index) in item.games" :key="index">
+                    <h5>
+                      <b-badge variant="danger">{{record.unit0.name}}</b-badge>
+                      vs
+                      <b-badge variant="info">{{record.unit1.name}}</b-badge>
+                      <b-link  @click="gotoGameDetail(record,item)" style="margin-left: 10px;font-size: 15px">更多</b-link>
+                    </h5>
+                  </li>
+                </ul>
+<!--                </b-table>-->
+              </b-card-text>
+            </b-card>
+<!--              </b-list-group-item>-->
+<!--            </b-list-group>-->
+            </li>
+          </ul>
+          </div>
+        </b-card-text>
+      </b-card>
+
+    </div>
+  </div>
+  </div>
 </template>
 
 
@@ -408,6 +496,7 @@ import Teamdetail from "@/components/Teamdetail.vue";
 
 export default class MatchDetail extends Vue{
 
+  //TODO:@media轮次和比赛分页
   currentUserId = ''
   myUnitId = -1
   myCreateUnitId=-1
@@ -1140,6 +1229,8 @@ li{
   list-style-type: none;
 }
 
+
+
 .pagination {
   margin: auto;
   margin-top:20px;
@@ -1258,4 +1349,27 @@ ul{
   grid-column-gap: 5%;
 }
 
+#mobile-user-list{
+  display: grid;
+  grid-template-columns: 45% 45%;
+  grid-gap: 5%;
+}
+
+#mobile-team-list{
+  max-height: 150px;
+  overflow-y: scroll;
+}
+
+#matchDetailMobile{
+  display: none;
+}
+
+@media screen and (max-width: 1000px){
+  #matchDetailPC{
+    display: none;
+  }
+  #matchDetailMobile{
+    display: block;
+  }
+}
 </style>
