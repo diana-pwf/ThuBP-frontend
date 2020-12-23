@@ -12,6 +12,7 @@ import TeamDetail from "@/views/TeamDetail.vue";
 import CreateRound from "@/views/CreateRound.vue";
 import UrlClickResult from "@/views/UrlClickResult.vue";
 import ThuRegister from "@/views/ThuRegister.vue";
+// import qwq from "@/views/qwq.vue";
 
 Vue.use(VueRouter)
 
@@ -98,7 +99,12 @@ const routes: Array<RouteConfig> = [
     path:'/thuLogin',
     name:'thuLogin',
     component:ThuRegister
-  }
+  },
+  // {
+  //   path:'/qwq',
+  //   name:'qwq',
+  //   component:qwq
+  // }
 ]
 
 const router = new VueRouter({

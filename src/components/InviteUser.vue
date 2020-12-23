@@ -74,9 +74,10 @@ export default class InviteUser extends Vue{
       }
     }
     console.log(list)
+    console.log(this.type)
     let url = ""
     let method = ""
-    if(this.type==="InviteReferee"){
+    if(this.type === "InviteReferee"){
       url = `/api/v1/match/invite-referees/${this.unit['id']}`
       method = "post"
     }
@@ -104,6 +105,7 @@ export default class InviteUser extends Vue{
         this.showUserList = false
         this.userSearchKey = ""
         this.userSearchList=[]
+        console.log(this.unit)
       }
       else
       {

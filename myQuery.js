@@ -59,7 +59,6 @@ export const getParticipants = gql`query getParticipants($matchId: String!){
     }
 }`;
 
-
 export const getMatchRelatedUsers = gql`query  getMatchRelatedUsers($matchId: String!){
  findMatchById(matchId: $matchId) {
      units {
@@ -287,3 +286,4 @@ export const getMatchTypeList = gql`query getMatchTypeList {
         matchTypeName
     }
 }`;
+

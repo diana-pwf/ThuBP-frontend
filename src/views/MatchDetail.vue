@@ -15,67 +15,68 @@
                 赛事详情
             </span>
               <div id="detail">
-              <img :src="this.match.previewLarge" alt="比赛照片"/>
-<!--                <b-container id="description" class="bv-example-row">-->
-<!--                  <b-row>-->
-<!--                    <b-col><p>比赛名称：{{this.match.name}}</p></b-col>-->
-<!--                    <b-col>2 of 3</b-col>-->
-<!--                    <b-col>3 of 3</b-col>-->
-<!--                  </b-row>-->
-<!--                </b-container>-->
-              <a-descriptions id="description" >
-                <a-descriptions-item label="比赛名称">
-                  {{this.match.name}}
-                </a-descriptions-item>
-                <a-descriptions-item label="组织者">
-                  {{this.match.organizerName}}
-                </a-descriptions-item>
-                <a-descriptions-item label="球赛类型">
-                  {{this.match.matchType}}
-                </a-descriptions-item>
-                <a-descriptions-item label="开始时间">
-                  <p v-if="!this.match.edit">{{ this.match.startTime }}</p>
-                  <a-date-picker
-                      v-else
-                       v-model="matchEditStartTime"
-                      @change="dateChange"
-                  />
-                </a-descriptions-item>
-<!--                <a-descriptions-item label="结束时间">-->
-<!--                  2020/12/04-->
-<!--                </a-descriptions-item>-->
-                <a-descriptions-item label="面向人群">
-                  <p v-if="!this.match.edit">{{this.match.targetGroup}}</p>
-                  <a-input v-else v-model="matchEditAim"></a-input>
-                </a-descriptions-item>
-                <a-descriptions-item label="访问方式">
-                  <p v-if="!this.match.edit">{{this.match.publicShowUp===true?"公开":"非公开"}}</p>
-                  <a-radio-group v-else v-model="matchEditShowUp">
-                    <a-radio :value="1">
-                      公开
-                    </a-radio>
-                    <a-radio :value="2">
-                      非公开
-                    </a-radio>
-                  </a-radio-group>
-                </a-descriptions-item>
-                <a-descriptions-item label="报名方式">
-                  <p v-if="!this.match.edit">{{this.match.publicSignUp===true?"公开":"非公开"}}</p>
-                  <a-radio-group v-else v-model="matchEditSignUp">
-                    <a-radio :value="1">
-                      公开
-                    </a-radio>
-                    <a-radio :value="2">
-                      非公开
-                    </a-radio>
-                  </a-radio-group>
-                </a-descriptions-item>
+                <img :src="this.match.previewLarge" alt="比赛照片"/>
+  <!--                <b-container id="description" class="bv-example-row">-->
+  <!--                  <b-row>-->
+  <!--                    <b-col><p>比赛名称：{{this.match.name}}</p></b-col>-->
+  <!--                    <b-col>2 of 3</b-col>-->
+  <!--                    <b-col>3 of 3</b-col>-->
+  <!--                  </b-row>-->
+  <!--                </b-container>-->
+                <a-descriptions id="description" >
+                  <a-descriptions-item label="比赛名称">
+                    {{this.match.name}}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="组织者">
+                    {{this.match.organizerName}}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="球赛类型">
+                    {{this.match.matchType}}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="开始时间">
+                    <p v-if="!this.match.edit">{{ this.match.startTime }}</p>
+                    <a-date-picker
+                        v-else
+                         v-model="matchEditStartTime"
+                        @change="dateChange"
+                    />
+                  </a-descriptions-item>
+  <!--                <a-descriptions-item label="结束时间">-->
+  <!--                  2020/12/04-->
+  <!--                </a-descriptions-item>-->
+                  <a-descriptions-item label="面向人群">
+                    <p v-if="!this.match.edit">{{this.match.targetGroup}}</p>
+                    <a-input v-else v-model="matchEditAim"></a-input>
+                  </a-descriptions-item>
+                  <a-descriptions-item label="访问方式">
+                    <p v-if="!this.match.edit">{{this.match.publicShowUp===true?"公开":"非公开"}}</p>
+                    <a-radio-group v-else v-model="matchEditShowUp">
+                      <a-radio :value="1">
+                        公开
+                      </a-radio>
+                      <a-radio :value="2">
+                        非公开
+                      </a-radio>
+                    </a-radio-group>
+                  </a-descriptions-item>
+                  <a-descriptions-item label="报名方式">
+                    <p v-if="!this.match.edit">{{this.match.publicSignUp===true?"公开":"非公开"}}</p>
+                    <a-radio-group v-else v-model="matchEditSignUp">
+                      <a-radio :value="1">
+                        公开
+                      </a-radio>
+                      <a-radio :value="2">
+                        非公开
+                      </a-radio>
+                    </a-radio-group>
+                  </a-descriptions-item>
 
 
               </a-descriptions>
 
               </div>
-              <b-button block v-b-modal.addUser v-if="!this.match.publicShowUp&&isOrganizer" variant="outline-warning">添加可查看比赛的用户</b-button>
+              <b-button block v-b-modal.addUser v-if="!this.match.publicShowUp&&isOrganizer"
+                        variant="outline-warning">添加可查看比赛的用户</b-button>
               <invite-user  type="addWatch" :unit="this.match" ></invite-user>
               <div id="intro">
                 <a-card>
@@ -141,10 +142,12 @@
 <!--                  <b-button v-if="isOrganizer" variant="outline-success" class="add"><b-icon icon="person-plus-fill"/>-->
 <!--                    添加队伍-->
 <!--                  </b-button>-->
-                  <div v-if="myCreateUnitId>0" class="aboutTeamButton">
+                  <div v-if="myCreateUnitId > 0" class="aboutTeamButton">
                   <b-button v-if="isParticipant"
                             variant="outline-success"
-                            @click="gotoTeamDetail(myUnitId)">
+                            @click="changeOnLookUnit(myUnitId)"
+                            v-b-toggle.sidebar-teamdetail>
+
                     <b-icon icon="person-plus-fill"/>
                     查看我的队伍
                   </b-button>
@@ -159,17 +162,17 @@
                   <div v-else>
                     <b-button v-if="isParticipant"
                               variant="outline-success"
-                              @click="gotoTeamDetail(myUnitId)"
+                              @click="changeOnLookUnit(myUnitId)"
                               class="add"
+                              v-b-toggle.sidebar-teamdetail
                     >
                       <b-icon icon="person-plus-fill"/>
                       查看我的队伍
                     </b-button>
                   </div>
                   <b-button v-if="!isOrganizer && !isParticipant"
-                            variant="outline-success"
-                            class="add"
-                            v-b-toggle.sidebar-backdrop>
+                            variant="outline-success" class="add"
+                            v-b-toggle.sidebar-createteam>
                     <b-icon icon="person-plus-fill"/>
                     创建我的队伍
                   </b-button>
@@ -182,16 +185,29 @@
                   添加裁判
                 </b-button>
                 <b-sidebar
-                        id="sidebar-backdrop"
+                    id="sidebar-teamdetail"
+                    :backdrop-variant="'dark'"
+                    :width="'50%'"
+                    backdrop
+                    right
+                    shadow
+                >
+                  <div class="px-3 py-2">
+                    <h4>队伍详情</h4>
+                    <Teamdetail :team="onLookUnit" :items="items" :is-creator="isUnitCreator"></Teamdetail>
+                  </div>
+                </b-sidebar>
+                <b-sidebar
+                        id="sidebar-createteam"
                         :backdrop-variant="'dark'"
                         :width="'50%'"
                         backdrop
                         right
                         shadow
                     >
-                      <div class="px-3 py-2">
-                        <h4 id="sidebar-title">组建我的队伍</h4>
-                        <b-form @submit="createNewTeam" @reset="resetForm">
+                  <div class="px-3 py-2">
+                    <h4 id="sidebar-title">组建我的队伍</h4>
+                    <b-form @submit="createNewTeam" @reset="resetForm">
                           <b-form-group
                               id="input-group-1"
                               label="队伍名称"
@@ -219,8 +235,8 @@
                           <b-button class="form-button" type="submit" variant="outline-primary">Submit</b-button>
                           <b-button class="form-button" type="reset" variant="outline-danger">Reset</b-button>
                         </b-form>
-                      </div>
-                  </b-sidebar>
+                  </div>
+                </b-sidebar>
               </div>
               <div id="person_list">
                 <div>
@@ -264,7 +280,10 @@
                           <p slot="content" :style="{verticalAlign:'left'}">
                             队伍简介
                           </p>
-                          <span @click="gotoTeamDetail(item.unitId)" class="more" style="color: dodgerblue" slot="actions">更多</span>
+                          <span @click="changeOnLookUnit(item.id)" class="more"
+                                style="color: dodgerblue" slot="actions"
+                                v-b-toggle.sidebar-teamdetail
+                          >更多</span>
                           <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
@@ -374,88 +393,31 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import InviteUser from "@/components/InviteUser.vue";
-import {findMatchDetailById, findUserByName, findMatchesByOrganizerId, findMatchesByParticipantId, findOrganizerById, getParticipants} from "../../myQuery";
+import {findMatchDetailById, findUserByName, findMatchesByOrganizerId,
+  findMatchesByParticipantId, findOrganizerById, getParticipants,
+  getUnitDetail} from "../../myQuery";
 import {isStringElement} from "ant-design-vue/es/_util/props-util";
 import {concat} from "apollo-link";
 import moment from 'moment'
+import Teamdetail from "@/components/Teamdetail.vue";
 
-@Component({components:{InviteUser, Navigation}})
+@Component({components:{Teamdetail, InviteUser, Navigation}})
 
 export default class MatchDetail extends Vue{
-  columns = [
-    {
-      dataIndex: 'unit0_name',
-      key: 'unit0_name',
-      title:'比赛队伍A'
-      // slots: { title: 'customTitle' },
-      // scopedSlots: { customRender: 'unit0' },
-    },
-    {
-      title: '比赛队伍B',
-      dataIndex: 'unit1_name',
-      key: 'unit1_name',
-    },
-    {
-      title: '开始时间',
-      dataIndex: 'startTime',
-      key: 'startTime',
-    },
-    {
-      title:'裁判名称',
-      dataIndex:'referee_name',
-      key:'referee_name'
-    },
-    // {
-    //   title: '结束时间',
-    //   key: 'end_time',
-    //   dataIndex: 'end_time',
-    // },
-    {
-      title: '地点',
-      key: 'location',
-      dataIndex: 'location',
-    },
-    {
-      title: 'tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      scopedSlots: { customRender: 'tags' },
-    },
-    {
-      title: '...',
-      key: 'action',
-      scopedSlots: { customRender: 'action' },
-    },
-  ];
-  pagination={
-    pageSize:3,
-    total:0,
-    current:0
-  }
+  //TODO：私有比赛报名有问题
 
-  isSingleMatch = false
 
-  matchEditAim=""
-  matchEditDescription=""
-  matchEditStartTime=''
-  matchEditShowUp=1
-  matchEditSignUp=1
   currentUserId = ''
-  isOrganizer = false
-  isParticipant = false
   myUnitId = -1
   myCreateUnitId=-1
-
-  form = {
-    name: '',
-    description: ''
-  }
-
   user = {
     username: '',
     avatar: ''
   }
+  isOrganizer = false
+  isParticipant = false
 
+  isSingleMatch = false
   match = {
     id:'',
     description: '',
@@ -477,287 +439,13 @@ export default class MatchDetail extends Vue{
     status:""
   }
 
-  onDeleteTeam(unitId){
-    this.$bvModal.msgBoxConfirm('确认要删除这支队伍吗？', {
-      title: '删除队伍',
-      size: 'sm',
-      buttonSize: 'sm',
-      okVariant: 'danger',
-      okTitle: 'YES',
-      cancelTitle: 'NO',
-      footerClass: 'p-2',
-      hideHeaderClose: false,
-      centered: true
-    })
-        .then(value => {
-          if(value===true){
-             this.deleteTeam(unitId)
-          }
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
-  }
-
-  onDeleteReferee(userId){
-    this.$bvModal.msgBoxConfirm('确认要删除这位裁判吗？', {
-      title: '删除裁判',
-      size: 'sm',
-      buttonSize: 'sm',
-      okVariant: 'danger',
-      okTitle: 'YES',
-      cancelTitle: 'NO',
-      footerClass: 'p-2',
-      hideHeaderClose: false,
-      centered: true
-    })
-        .then(value => {
-          if(value===true){
-            this.deleteReferee(userId)
-          }
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
-  }
-
-  async deleteReferee(userId){
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'delete',
-        url: `/api/v1/match/${this.match.id}/referee`,
-        data:{
-          referees:[userId]
-        }
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        this.$message.success('删除裁判成功！')
-        setTimeout(() => window.location.reload(), 1000);
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  async deleteTeam(unitId){
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'delete',
-        url: `/api/v1/match/${this.match.id}/unit/${unitId}`,
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        this.$message.success('删除队伍成功！')
-        setTimeout(() => window.location.reload(), 1000);
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  onClickEndSignUp(){
-    this.$bvModal.msgBoxConfirm('确认要结束报名吗？', {
-      title: '结束报名',
-      size: 'sm',
-      buttonSize: 'sm',
-      okVariant: 'danger',
-      okTitle: 'YES',
-      cancelTitle: 'NO',
-      footerClass: 'p-2',
-      hideHeaderClose: false,
-      centered: true
-    })
-        .then(value => {
-          if(value===true){
-            this.changeGameStatus('RUNNING')
-          }
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
-  }
-
-  async changeGameStatus(status){
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'post',
-        url: `/api/v1/match/${this.match.id}`,
-        data:{
-            status:status
-        }
-      })
-      // 对response做处理
-      if (response.status === 200) {
-          this.$message.success('结束报名成功！')
-          setTimeout(() => window.location.reload(), 1000);
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  dateChange(date,dateString){
-    this.matchEditStartTime=dateString
-  }
-
-  onEditRound(item){
-    this.$router.push(`/editRound/${this.match.id}/${item.roundId}`)
-  }
-
-  onDetailEdit(){
-    this.match.edit=true
-    this.matchEditDescription=this.match.description
-    this.matchEditAim=this.match.targetGroup
-    if(this.match.publicShowUp){
-      this.matchEditShowUp=1
-    }
-    else{
-      this.matchEditShowUp=2
-    }
-    if(this.match.publicSignUp){
-      this.matchEditSignUp=1
-    }
-    else{
-      this.matchEditSignUp=2
-    }
-
-  }
-  cancelDetailEdit(){
-    this.match.edit=false
-  }
-  submitDetailEdit(){
-    this.match.edit=false
-    this.match.targetGroup=this.matchEditAim
-    this.match.description=this.matchEditDescription
-    this.match.startTime=this.matchEditStartTime
-    this.match.publicShowUp = this.matchEditShowUp === 1;
-    this.match.publicSignUp = this.matchEditSignUp === 1;
-    this.modifyMatchDetail()
-  }
-
-  async modifyMatchDetail(){
-    let time=new Date(this.match.startTime).toISOString()
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'post',
-        url: `/api/v1/match/${this.match['id']}`,
-        data:{
-          description:this.match.description,
-          targetGroup:this.match.targetGroup,
-          startTime:time,
-          publicShowUp:this.match.publicShowUp,
-          publicSignUp:this.match.publicSignUp
-        }
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        this.$message.success('修改赛事信息成功！')
-        window.location.reload()
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  handleTableChange(pagination){
-    this.pagination=pagination
-    let page=pagination.current - 1
-  }
-  async getRefereeToken(){
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'post',
-        url: `/api/v1/match/assign-referee-token/${this.match['id']}`
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        this.$bvModal.msgBoxOk(`签发裁判邀请码成功！过期时间：${response.data.expirationTime}`)
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  gotoGameDetail(record,item){
-    this.$router.push(`/gameDetail/${this.match['id']}/${item.roundId}/${record.gameId}`)
-  }
-
-  onDeleteRound(item){
-    this.$bvModal.msgBoxConfirm('确定要删除轮次吗？', {
-      title: '删除轮次',
-      size: 'sm',
-      buttonSize: 'sm',
-      okVariant: 'danger',
-      okTitle: 'YES',
-      cancelTitle: 'NO',
-      footerClass: 'p-2',
-      hideHeaderClose: false,
-      centered: true
-    })
-        .then(value => {
-          if(value===true){
-            this.deleteRound(item)
-          }
-        })
-        .catch(err => {
-          this.$message.error(err)
-        })
-  }
-
-  async deleteRound(item){
-    try {
-      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'delete',
-        url: `/api/v1/match/${this.match['id']}/round/${item.roundId}`
-      })
-      // 对response做处理
-      if (response.status === 200) {
-        this.$message.success("删除轮次成功！")
-        window.location.reload()
-      }
-      else
-      {
-        this.$message.error(response.data)
-      }
-    } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.message))
-    }
-  }
-
-  //TODO：私有比赛报名有问题
+  // 获取本赛事信息及当前用户信息，判断角色
   async getMatchDetail()
   {
     let res=undefined
     try {
       if(this.$route.params.token){
-         res = await this.$apollo.query({
+        res = await this.$apollo.query({
           query: findMatchDetailById,
           variables: {
             matchId: this.$route.params.matchId,
@@ -767,7 +455,7 @@ export default class MatchDetail extends Vue{
       }
       else
       {
-         res = await this.$apollo.query({
+        res = await this.$apollo.query({
           query: findMatchDetailById,
           variables: {matchId: this.$route.params.matchId}
         });
@@ -803,11 +491,11 @@ export default class MatchDetail extends Vue{
           }
         }
       }
-       if(res.data.findMatchById.previewLarge !== null)
-       {
-         // @ts-ignore
-         this.match.previewLarge = res.data.findMatchById.previewLarge
-       }
+      if(res.data.findMatchById.previewLarge !== null)
+      {
+        // @ts-ignore
+        this.match.previewLarge = res.data.findMatchById.previewLarge
+      }
 
       // @ts-ignore
       if (this.match.minUnitMember === 1 && this.match.maxUnitMember === 1)
@@ -825,7 +513,6 @@ export default class MatchDetail extends Vue{
       console.log(e);
     }
   }
-
   async getCurrentUserRole()
   {
     try {
@@ -879,6 +566,438 @@ export default class MatchDetail extends Vue{
     }
   }
 
+  // 轮次中的比赛表格抬头
+  columns = [
+    {
+      dataIndex: 'unit0_name',
+      key: 'unit0_name',
+      title:'比赛队伍A'
+      // slots: { title: 'customTitle' },
+      // scopedSlots: { customRender: 'unit0' },
+    },
+    {
+      title: '比赛队伍B',
+      dataIndex: 'unit1_name',
+      key: 'unit1_name',
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'startTime',
+      key: 'startTime',
+    },
+    {
+      title:'裁判名称',
+      dataIndex:'referee_name',
+      key:'referee_name'
+    },
+    // {
+    //   title: '结束时间',
+    //   key: 'end_time',
+    //   dataIndex: 'end_time',
+    // },
+    {
+      title: '地点',
+      key: 'location',
+      dataIndex: 'location',
+    },
+    {
+      title: 'tags',
+      key: 'tags',
+      dataIndex: 'tags',
+      scopedSlots: { customRender: 'tags' },
+    },
+    {
+      title: '...',
+      key: 'action',
+      scopedSlots: { customRender: 'action' },
+    },
+  ]
+
+  // 轮次中的比赛表格分页
+  pagination={
+    pageSize:3,
+    total:0,
+    current:0
+  }
+  handleTableChange(pagination){
+    this.pagination=pagination
+    let page=pagination.current - 1
+  }
+
+  // 组织者修改赛事详情信息
+  matchEditAim=""
+  matchEditDescription=""
+  matchEditStartTime=''
+  matchEditShowUp=1
+  matchEditSignUp=1
+  onDetailEdit(){
+    this.match.edit=true
+    this.matchEditDescription=this.match.description
+    this.matchEditAim=this.match.targetGroup
+    if(this.match.publicShowUp){
+      this.matchEditShowUp=1
+    }
+    else{
+      this.matchEditShowUp=2
+    }
+    if(this.match.publicSignUp){
+      this.matchEditSignUp=1
+    }
+    else{
+      this.matchEditSignUp=2
+    }
+
+  }
+  cancelDetailEdit(){
+    this.match.edit=false
+  }
+  submitDetailEdit(){
+    this.match.edit=false
+    this.match.targetGroup=this.matchEditAim
+    this.match.description=this.matchEditDescription
+    this.match.startTime=this.matchEditStartTime
+    this.match.publicShowUp = this.matchEditShowUp === 1;
+    this.match.publicSignUp = this.matchEditSignUp === 1;
+    this.modifyMatchDetail()
+  }
+  async modifyMatchDetail(){
+    let time=new Date(this.match.startTime).toISOString()
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.match['id']}`,
+        data:{
+          description:this.match.description,
+          targetGroup:this.match.targetGroup,
+          startTime:time,
+          publicShowUp:this.match.publicShowUp,
+          publicSignUp:this.match.publicSignUp
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('修改赛事信息成功！')
+        window.location.reload()
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+  dateChange(date,dateString){
+    this.matchEditStartTime=dateString
+  }
+
+  // 查看队伍详情
+  onLookUnit = {}
+  items = []
+  isUnitCreator = false
+  // onlookUnitId = ''
+  // async getTeamDetail()
+  // {
+  //   try {
+  //     let res = await this.$apollo.query({
+  //       query: getUnitDetail,
+  //       variables:{unitId:this.onlookUnitId}
+  //     });
+  //     this.team = res.data.findUnitById
+  //     this.team['id'] = res.data.findUnitById.unitId
+  //     this.items.push({
+  //       // @ts-ignore
+  //       name: this.team.creator.username,
+  //       // @ts-ignore
+  //       id: this.team.creator.userId,
+  //       // @ts-ignore
+  //       description: this.team.creator.description,
+  //       // @ts-ignore
+  //       avatar: this.team.creator.avatar,
+  //       _rowVariant: 'success',
+  //       actions: true
+  //     })
+  //     // @ts-ignore
+  //     for (let person of this.team.members)
+  //     {
+  //       // @ts-ignore
+  //       if (this.team.creator.userId !== person.userId) {
+  //         this.items.push(
+  //             {
+  //               // @ts-ignore
+  //               name: person.username,
+  //               // @ts-ignore
+  //               id: person.userId,
+  //               // @ts-ignore
+  //               description: person.description,
+  //               // @ts-ignore
+  //               avatar: person.avatar,
+  //             }
+  //         )
+  //       }
+  //     }
+  //
+  //   }
+  //   catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+  async changeOnLookUnit(id){
+    // this.onlookUnitId = id
+    // this.getTeamDetail(id)
+    try {
+      let res = await this.$apollo.query({
+        query: getUnitDetail,
+        variables:{unitId:id}
+      });
+      this.onLookUnit = res.data.findUnitById
+      this.onLookUnit['id'] = res.data.findUnitById.unitId
+      this.items.push({
+        // @ts-ignore
+        name: this.onLookUnit.creator.username,
+        // @ts-ignore
+        id: this.onLookUnit.creator.userId,
+        // @ts-ignore
+        description: this.onLookUnit.creator.description,
+        // @ts-ignore
+        avatar: this.onLookUnit.creator.avatar,
+        _rowVariant: 'success',
+        actions: true
+      })
+      // @ts-ignore
+      for (let person of this.onLookUnit.members)
+      {
+        // @ts-ignore
+        if (this.onLookUnit.creator.userId !== person.userId) {
+          this.items.push(
+              {
+                // @ts-ignore
+                name: person.username,
+                // @ts-ignore
+                id: person.userId,
+                // @ts-ignore
+                description: person.description,
+                // @ts-ignore
+                avatar: person.avatar,
+              }
+          )
+        }
+      }
+      //@ts-ignore
+      this.isUnitCreator = this.onLookUnit.creator.userId === this.currentUserId;
+
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  // 组织者删除队伍
+  onDeleteTeam(unitId){
+    this.$bvModal.msgBoxConfirm('确认要删除这支队伍吗？', {
+      title: '删除队伍',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+             this.deleteTeam(unitId)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+  async deleteTeam(unitId){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match.id}/unit/${unitId}`,
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('删除队伍成功！')
+        setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  // 组织者邀请裁判
+  async getRefereeToken(){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/assign-referee-token/${this.match['id']}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$bvModal.msgBoxOk(`签发裁判邀请码成功！过期时间：${response.data.expirationTime}`)
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  // 组织者删除裁判
+  onDeleteReferee(userId){
+    this.$bvModal.msgBoxConfirm('确认要删除这位裁判吗？', {
+      title: '删除裁判',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.deleteReferee(userId)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+  async deleteReferee(userId){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match.id}/referee`,
+        data:{
+          referees:[userId]
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('删除裁判成功！')
+        setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  // 组织者结束报名
+  onClickEndSignUp(){
+    this.$bvModal.msgBoxConfirm('确认要结束报名吗？', {
+      title: '结束报名',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.changeGameStatus('RUNNING')
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+  async changeGameStatus(status){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'post',
+        url: `/api/v1/match/${this.match.id}`,
+        data:{
+          status:status
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('结束报名成功！')
+        setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  // 组织者修改轮次信息
+  onEditRound(item){
+    this.$router.push(`/editRound/${this.match.id}/${item.roundId}`)
+  }
+
+  // 组织者删除轮次信息
+  onDeleteRound(item){
+    this.$bvModal.msgBoxConfirm('确定要删除轮次吗？', {
+      title: '删除轮次',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.deleteRound(item)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+  async deleteRound(item){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.match['id']}/round/${item.roundId}`
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success("删除轮次成功！")
+        window.location.reload()
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
+
+  // 选手进行个人赛报名
   async signUpPersonal()
   {
     let response=undefined
@@ -917,9 +1036,8 @@ export default class MatchDetail extends Vue{
       this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
-
-  async cancel
-  ()
+  // 取消报名
+  async cancel()
   {
     if (this.isSingleMatch)
     {
@@ -950,11 +1068,11 @@ export default class MatchDetail extends Vue{
     }
   }
 
-  gotoTeamDetail(id)
-  {
-    this.$router.push(`/teamDetail/${this.match.id}/${id}`)
+  // 选手创建新队伍
+  form = {
+    name: '',
+    description: ''
   }
-
   async createNewTeam(evt)
   {
     evt.preventDefault()
@@ -981,7 +1099,6 @@ export default class MatchDetail extends Vue{
       this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
-
   resetForm(evt)
   {
     evt.preventDefault()
@@ -990,13 +1107,22 @@ export default class MatchDetail extends Vue{
     this.form.description = ''
   }
 
-  mounted()
-  {
-    this.getMatchDetail();
+
+  gotoTeamDetail(id) {
+    this.$router.push(`/teamDetail/${this.match.id}/${id}`)
   }
 
   gotoCreateRound(){
     this.$router.push(`/CreateRound/${this.$route.params.matchId}`)
+  }
+
+  gotoGameDetail(record,item){
+    this.$router.push(`/gameDetail/${this.match['id']}/${item.roundId}/${record.gameId}`)
+  }
+
+  mounted()
+  {
+    this.getMatchDetail();
   }
 
 }

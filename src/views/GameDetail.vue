@@ -1,7 +1,7 @@
 <template>
   <div id="personalMenu">
     <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
-    <div class="flex-box">
+    <div class="flex-box" id="whole">
       <div id="photo-and-comment">
         <div id="photo">
           <b-container fluid class="p-3">
@@ -19,23 +19,38 @@
               <a-comment :author="item.authorName" :avatar="item.avatar">
                 <div slot="content" class="flex-box">
                   <p id="comment-content">
-                  <b-badge v-if="item.replyUser" variant="warning">@{{item.replyUser}}</b-badge>
+                    <b-badge v-if="item.replyUser" variant="warning">@{{item.replyUser}}</b-badge>
                     {{ item.content }}
                   </p>
                 </div>
-                <a-button size="small" type="link" v-if="item.authorId === user.userId"
-                          @click="deleteComment(item.id)"
-                          >删除</a-button>
-                <a-collapse>
-                  <a-collapse-panel :showArrow="false">
-                    <a-textarea placeholder="写下我的想法" :autoSize="{minRows:4}" v-model="replyComment"/>
-                    <a-button class="button" type="primary" @click="createReply(item.id)">发送</a-button>
-                    <a-button id="reply-button" slot="extra"
-                              size="small" type="link"
-                              @click="changeButtonText"
-                              >{{buttonText}}</a-button>
-                  </a-collapse-panel>
-                </a-collapse>
+                <b-link class="link-button" v-if="item.authorId === user.userId" @click="deleteComment(item.id)">删除</b-link>
+                <b-link class="link-button" v-b-modal.modal-reply @click="setReplyId(item.id)">回复</b-link>
+                <b-modal
+                    id="modal-reply"
+                    title="写下你的回复"
+                    @show="resetModal"
+                    @hidden="resetModal"
+                    @ok="handleReplyOk"
+                >
+                  <form @submit.stop.prevent="handleReplySubmit">
+                    <b-form-group
+                        label="回复内容"
+                        label-for="reply-input"
+                    >
+                      <b-form-input
+                          id="reply-input"
+                          v-model="replyContent"
+                          :state="replyContent.length > 0"
+                          required
+                      ></b-form-input>
+                      <b-form-invalid-feedback :state="replyContent.length > 0">
+                        回复内容不能为空
+                      </b-form-invalid-feedback>
+                      <b-form-valid-feedback :state="replyContent.length > 0">
+                      </b-form-valid-feedback>
+                    </b-form-group>
+                  </form>
+                </b-modal>
               </a-comment>
             </a-list-item>
           </a-list>
@@ -66,7 +81,7 @@
                 <div class="unit-score-info unit0-main-score">{{unit[0].score}}</div>
                 <div class="invisible-tip">.</div>
                 <div class="unit-score-info unit-round-score-info">
-                  {{roundScoreList[roundScoreList.length - 1].score0}}
+                  {{roundScoreItemList[roundScoreItemList.length - 1].score0}}
                 </div>
                 <div v-if="isReferee">
                   <div class="score-change-form">{{unit[0].name}}分数增加（扣分为负）：</div>
@@ -89,7 +104,7 @@
                 <div class="unit-score-info unit1-main-score">{{unit[1].score}}</div>
                 <div class="invisible-tip">.</div>
                 <div class="unit-round-score-info">
-                  {{roundScoreList[roundScoreList.length - 1].score1}}
+                  {{roundScoreItemList[roundScoreItemList.length - 1].score1}}
                 </div>
                 <div v-if="isReferee">
                   <div class="score-change-form">{{unit[1].name}}分数增加（扣分为负）：</div>
@@ -183,11 +198,12 @@ export default class GameDetail extends Vue {
   comments = []
   onShowComments = []
   async getComments(){
-    this.comments = []
     let res = await this.$apollo.query({
       query: getGameComments,
       variables:{gameId:this.$route.params.gameId}
     });
+    console.log(res.data.findGameById.comments)
+    this.comments = []
     for(let item of res.data.findGameById.comments){
       let comment = {
         id: item.commentId,
@@ -195,7 +211,7 @@ export default class GameDetail extends Vue {
         authorId: item.issuer.userId,
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
         content: item.content,
-        replyUser: null
+        replyUser: null,
       }
       if (item.reply !== null) {
         comment.replyUser = item.reply.issuer.username
@@ -250,27 +266,30 @@ export default class GameDetail extends Vue {
     }
   }
 
-  buttonText = '写下回复'
-  changeButtonText() {
-    if(this.buttonText === '写下回复')
-    {
-      this.buttonText = '收起回复'
-    }
-    else
-    {
-      this.buttonText = '写下回复'
-    }
+  replyContent = ''
+  replyId = ''
+  setReplyId(id){
+    this.replyId = id
   }
-  replyComment = ''
-  async createReply(id){
+  resetModal() {
+    this.replyContent = ''
+  }
+  async handleReplyOk(bvModalEvt) {
+    bvModalEvt.preventDefault()
+    this.handleReplySubmit()
+  }
+  async handleReplySubmit() {
+    if (this.replyContent === '') {
+      return
+    }
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
       let response = await axios({
         method: 'post',
         url: `/api/v1/comment/game/${this.$route.params.gameId}`,
         data: {
-          replyId: id,
-          content: `${this.replyComment}`
+          replyId: this.replyId,
+          content: this.replyContent
         }
       })
       // 对response做处理
@@ -281,7 +300,10 @@ export default class GameDetail extends Vue {
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.message))
     }
-
+    await this.getComments()
+    this.$nextTick(() => {
+      this.$bvModal.hide('modal-reply')
+    })
   }
 
   unit = [
@@ -341,12 +363,14 @@ export default class GameDetail extends Vue {
     { key: 'score1', label: `${this.unit[1].name}得分`}
   ]
 
+  totalStrategy = 0
+
   async getGameScore(){
     let res = await this.$apollo.query({
       query: getGameScoreAndRecord,
       variables:{gameId:this.$route.params.gameId}
     })
-    console.log(res.data.findGameById)
+    // console.log(res.data.findGameById)
     if (res.data.findGameById.result)
     {
       if (res.data.findGameById.result.rounds)
@@ -385,15 +409,26 @@ export default class GameDetail extends Vue {
 
   async changeScore(id) {
     let len = this.roundScoreList.length
-    if (!id) {
+    let unit0score = this.unit[0].score
+    let unit1score = this.unit[1].score
+
+    if (id === 0) {
       this.roundScoreList[len - 1].score0 += this.unit0ScoreDelta
-      this.roundScoreItemList[len - 1].score0 += this.unit0ScoreDelta
-      this.unit[0].score += this.unit0ScoreDelta
+      unit0score += this.unit0ScoreDelta
     } else if (id === 1) {
       this.roundScoreList[len - 1].score1 += this.unit1ScoreDelta
-      this.roundScoreItemList[len - 1].score1 += this.unit1ScoreDelta
-      this.unit[1].score += this.unit1ScoreDelta
+      unit1score += this.unit1ScoreDelta
     }
+
+    // if (this.totalStrategy === 0)
+    // {
+    //   if (id === 0) {
+    //     unit0score += this.unit0ScoreDelta
+    //   } else if (id === 1) {
+    //     unit1score += this.unit1ScoreDelta
+    //   }
+    // }
+
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
       let response = await axios({
@@ -404,8 +439,8 @@ export default class GameDetail extends Vue {
             rounds: this.roundScoreList,
             result: {
               winner: 2,
-              output0: this.unit[0].score,
-              output1: this.unit[1].score
+              output0: unit0score,
+              output1: unit1score
             }
           }
         }
@@ -430,14 +465,23 @@ export default class GameDetail extends Vue {
       }
     )
 
-    let len = this.roundScoreItemList.length + 1
-    this.roundScoreItemList[len - 2]['_rowVariant'] = undefined
-    this.roundScoreItemList.push({
-      index: len,
-      score0: 0,
-      score1: 0,
-      _rowVariant: 'success'
-    })
+    let score0 = this.unit[0].score
+    let score1 = this.unit[1].score
+
+    if(this.totalStrategy === 1)
+    {
+      let len = this.roundScoreList.length
+
+      if (this.roundScoreList[len - 2].score0 > this.roundScoreList[len - 2].score1)
+      {
+        score0 += 1
+      }
+      else if(this.roundScoreList[len - 2].score0 < this.roundScoreList[len - 2].score1)
+      {
+        score1 += 1
+      }
+    }
+
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
       let response = await axios({
@@ -446,6 +490,11 @@ export default class GameDetail extends Vue {
         data: {
           result: {
             rounds: this.roundScoreList,
+            result: {
+              winner: 2,
+              output0: score0,
+              output1: score1
+            }
           }
         }
       })
@@ -483,7 +532,8 @@ export default class GameDetail extends Vue {
   }
 
   async createRecord(){
-    this.recordList.push(
+    let currentRecordList = this.recordList
+    currentRecordList.push(
         {
           id: this.unit[this.form.team].id,
           name: this.unit[this.form.team].name,
@@ -498,7 +548,7 @@ export default class GameDetail extends Vue {
         data: {
           result: {
             extra: {
-              records: this.recordList
+              records: currentRecordList
             }
           }
         }
@@ -514,7 +564,8 @@ export default class GameDetail extends Vue {
   }
 
   async deleteRecord(index) {
-    this.recordList.splice(index, 1)
+    let currentRecordList = this.recordList
+    currentRecordList.splice(index, 1)
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
       let response = await axios({
@@ -523,7 +574,7 @@ export default class GameDetail extends Vue {
         data: {
           result: {
             extra: {
-              records: this.recordList
+              records: currentRecordList
             }
           }
         }
@@ -602,17 +653,24 @@ export default class GameDetail extends Vue {
     this.location = res.data.findGameById.location
   }
 
-  created(){
+  async getMatchType(){
+
+  }
+
+  createFunc()
+  {
     if (this.$router.currentRoute.path === `/gameDetail/${this.$route.params.matchId}/${this.$route.params.roundId}/${this.$route.params.gameId}`)
     {
-      setInterval(this.getGameScore, 1000)
+      this.getComments()
+      this.getGameScore()
+      // setTimeout(this.createFunc, 1000)
     }
   }
 
+
   mounted() {
     this.getUserInfo()
-    this.getComments()
-    this.getGameScore()
+    this.createFunc()
   }
 
 }
@@ -647,6 +705,7 @@ export default class GameDetail extends Vue {
 
 #comment-content {
   margin-bottom: 0;
+  max-width: 100%;
 }
 
 #photo {
@@ -671,6 +730,7 @@ export default class GameDetail extends Vue {
 }
 
 #my-comment {
+  margin-top: 20px;
   height: 12%;
   position: relative;
 }
@@ -774,4 +834,37 @@ li {
 #end-button {
   margin: 10px;
 }
+
+.link-button {
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+@media screen and (max-width: 960px) {
+  #divider {
+    display: none;
+  }
+
+  #whole {
+    display: block;
+  }
+
+  #photo-and-comment {
+    width: 95%;
+    margin: 0 20px 20px 20px;
+  }
+
+  #records {
+    width: 95%;
+    float: top;
+  }
+
+  #logs {
+    padding-top: 20px;
+    max-height: 40%;
+    overflow-y: scroll;
+  }
+
+}
+
 </style>
