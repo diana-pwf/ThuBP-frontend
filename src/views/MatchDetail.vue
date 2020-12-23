@@ -75,9 +75,8 @@
               </a-descriptions>
 
               </div>
-              <b-button block v-b-modal.addUser v-if="!this.match.publicShowUp&&isOrganizer"
-                        variant="outline-warning">添加可查看比赛的用户</b-button>
-              <invite-user  type="addWatch" :unit="this.match" ></invite-user>
+              <b-button block v-b-modal.addUserAddWatch v-if="!this.match.publicShowUp&&isOrganizer" variant="outline-warning">添加可查看比赛的用户</b-button>
+              <invite-user id="addUserAddWatch" type="addWatch" :unit="this.match" ></invite-user>
               <div id="intro">
                 <a-card>
                   <a-textarea
@@ -178,8 +177,9 @@
                   </b-button>
                 </div>
                 <b-button
+                          v-b-modal.addUserInviteReferee
                           v-if="isOrganizer"
-                          v-b-modal.addUser variant="outline-success"
+                          variant="outline-success"
                           b-icon="person-plus" class="add">
                   <b-icon icon="person-plus"/>
                   添加裁判
@@ -295,7 +295,7 @@
                   <template v-if="this.match.referees.length===0">
                     <a-empty />
                   </template>
-                  <InviteUser type="InviteReferee" :unit="match"></InviteUser>
+                  <InviteUser   id="addUserInviteReferee" type="InviteReferee" :unit="match"></InviteUser>
                   <ul id="referee">
                     <li v-for="(item,index) in this.match.referees" :key="index">
                       <a-comment>
@@ -404,8 +404,6 @@ import Teamdetail from "@/components/Teamdetail.vue";
 @Component({components:{Teamdetail, InviteUser, Navigation}})
 
 export default class MatchDetail extends Vue{
-  //TODO：私有比赛报名有问题
-
 
   currentUserId = ''
   myUnitId = -1
@@ -513,6 +511,8 @@ export default class MatchDetail extends Vue{
       console.log(e);
     }
   }
+
+
   async getCurrentUserRole()
   {
     try {
@@ -619,6 +619,8 @@ export default class MatchDetail extends Vue{
     total:0,
     current:0
   }
+
+
   handleTableChange(pagination){
     this.pagination=pagination
     let page=pagination.current - 1
@@ -648,9 +650,11 @@ export default class MatchDetail extends Vue{
     }
 
   }
+
   cancelDetailEdit(){
     this.match.edit=false
   }
+
   submitDetailEdit(){
     this.match.edit=false
     this.match.targetGroup=this.matchEditAim
@@ -660,6 +664,8 @@ export default class MatchDetail extends Vue{
     this.match.publicSignUp = this.matchEditSignUp === 1;
     this.modifyMatchDetail()
   }
+
+
   async modifyMatchDetail(){
     let time=new Date(this.match.startTime).toISOString()
     try {
@@ -696,53 +702,7 @@ export default class MatchDetail extends Vue{
   onLookUnit = {}
   items = []
   isUnitCreator = false
-  // onlookUnitId = ''
-  // async getTeamDetail()
-  // {
-  //   try {
-  //     let res = await this.$apollo.query({
-  //       query: getUnitDetail,
-  //       variables:{unitId:this.onlookUnitId}
-  //     });
-  //     this.team = res.data.findUnitById
-  //     this.team['id'] = res.data.findUnitById.unitId
-  //     this.items.push({
-  //       // @ts-ignore
-  //       name: this.team.creator.username,
-  //       // @ts-ignore
-  //       id: this.team.creator.userId,
-  //       // @ts-ignore
-  //       description: this.team.creator.description,
-  //       // @ts-ignore
-  //       avatar: this.team.creator.avatar,
-  //       _rowVariant: 'success',
-  //       actions: true
-  //     })
-  //     // @ts-ignore
-  //     for (let person of this.team.members)
-  //     {
-  //       // @ts-ignore
-  //       if (this.team.creator.userId !== person.userId) {
-  //         this.items.push(
-  //             {
-  //               // @ts-ignore
-  //               name: person.username,
-  //               // @ts-ignore
-  //               id: person.userId,
-  //               // @ts-ignore
-  //               description: person.description,
-  //               // @ts-ignore
-  //               avatar: person.avatar,
-  //             }
-  //         )
-  //       }
-  //     }
-  //
-  //   }
-  //   catch (e) {
-  //     console.log(e);
-  //   }
-  // }
+
   async changeOnLookUnit(id){
     // this.onlookUnitId = id
     // this.getTeamDetail(id)
@@ -815,6 +775,7 @@ export default class MatchDetail extends Vue{
           this.$message.error(err)
         })
   }
+
   async deleteTeam(unitId){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -879,6 +840,7 @@ export default class MatchDetail extends Vue{
           this.$message.error(err)
         })
   }
+
   async deleteReferee(userId){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -925,6 +887,7 @@ export default class MatchDetail extends Vue{
           this.$message.error(err)
         })
   }
+
   async changeGameStatus(status){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -976,6 +939,7 @@ export default class MatchDetail extends Vue{
           this.$message.error(err)
         })
   }
+
   async deleteRound(item){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
@@ -1073,6 +1037,7 @@ export default class MatchDetail extends Vue{
     name: '',
     description: ''
   }
+
   async createNewTeam(evt)
   {
     evt.preventDefault()
@@ -1099,6 +1064,7 @@ export default class MatchDetail extends Vue{
       this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
+
   resetForm(evt)
   {
     evt.preventDefault()

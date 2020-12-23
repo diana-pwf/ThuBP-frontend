@@ -42,13 +42,13 @@
 
     <b-button class="button" v-if="isCreator"
               variant="outline-primary"
-              v-b-modal.addUser
+              v-b-modal.addUserInviteTeamMember
     >添加队员
     </b-button>
     <!--      <b-button class="button" v-if="isCreator" variant="outline-success">转让队长</b-button>-->
-    <b-button class="button" v-if="isCreator" variant="outline-danger">解散队伍</b-button>
+<!--    <b-button class="button" v-if="isCreator" variant="outline-danger">解散队伍</b-button>-->
 
-    <InviteUser :type="'InviteTeamMember'" :unit="team"></InviteUser>
+    <InviteUser id="addUserInviteTeamMember" :type="'InviteTeamMember'" :unit="team"></InviteUser>
 
   </div>
 </template>
@@ -70,6 +70,7 @@ import index from "@/store";
 
 export default class Teamdetail extends Vue {
   // @Prop({type:String, default:function (){return ""}})unitId
+
   @Prop({type:Object, default:function (){return {}}})team
   @Prop({type:Array, default:function (){return []}})items
   @Prop({type:Boolean, default:function (){return []}})isCreator
@@ -96,12 +97,13 @@ export default class Teamdetail extends Vue {
         })
   }
 
+  //TODO：后端移除队员/解散队伍可能还存在问题
   async removeMember(id){
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
       let response = await axios({
         method: 'delete',
-        url: `/api/v1/match/${this.$route.params.matchId}/unit/${this.$route.params.unitId}/member`,
+        url: `/api/v1/match/${this.$route.params.matchId}/unit/${this.team.id}/member`,
         data:{
           members:[id]
         }

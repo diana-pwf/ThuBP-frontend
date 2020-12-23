@@ -12,9 +12,17 @@
 <!--        <a-input class="user" placeholder="input TsinghuaID" v-model="ticket">-->
 <!--          <a-icon slot="prefix" type="user"></a-icon>-->
 <!--        </a-input>-->
-        <a-input class="user" placeholder="input nickname" v-model="username">
-          <a-icon slot="prefix" type="user"></a-icon>
-        </a-input>
+<!--        <a-input class="user" placeholder="input nickname" v-model="username">-->
+<!--          <a-icon slot="prefix" type="user"></a-icon>-->
+<!--        </a-input>-->
+        <b-form-input v-model="username" placeholder="username" :state="validation" id="feedback-user">
+        </b-form-input>
+        <b-form-invalid-feedback :state="validation">
+          Your user ID must be 5-12 characters long.
+        </b-form-invalid-feedback>
+        <b-form-valid-feedback :state="validation">
+          Looks Good.
+        </b-form-valid-feedback>
         <a-input-password class="password" placeholder="input password" v-model="password">
           <a-icon slot="prefix" type="lock"></a-icon>
         </a-input-password>

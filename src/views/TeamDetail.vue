@@ -50,13 +50,13 @@
 
       <b-button class="button" v-if="isCreator"
                 variant="outline-primary"
-                v-b-modal.addUser
+                v-b-modal.addUserInviteTeamMember
                 >添加队员
       </b-button>
 <!--      <b-button class="button" v-if="isCreator" variant="outline-success">转让队长</b-button>-->
       <b-button class="button" v-if="isCreator" variant="outline-danger">解散队伍</b-button>
 
-      <InviteUser type="InviteTeamMember" :unit="team"></InviteUser>
+      <InviteUser id="addUserInviteTeamMember" type="InviteTeamMember" :unit="team"></InviteUser>
 
     </div>
   </div>

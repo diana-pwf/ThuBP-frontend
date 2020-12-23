@@ -1,5 +1,5 @@
 <template>
-  <b-modal  id="addUser" hide-footer >
+  <b-modal  :id="id" hide-footer >
     <div class="d-block text-center">
       <p class="h2 mb-2"><b-icon icon="person-plus-fill"></b-icon></p>
       <span style="font-size: large">邀请用户成为<strong>{{unit.name}}</strong>{{type==="InviteReferee"?"裁判":type==='addWatch'?'参与者':'队员'}}</span>
@@ -29,17 +29,20 @@
 
 <script>
 import axios from "axios";
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 import {findUserByName} from "../../myQuery";
 
 @Component
 export default class InviteUser extends Vue{
   @Prop({type:String, default:function (){return ""}})type
   @Prop({type:Object, default:function (){return {}}})unit
+  // @Prop({type:Boolean,default:function(){return false}})showModal
+  @Prop({type:String, default:function (){return ""}})id
   selectedUserList=[]
   showUserList = false
   userSearchKey = ""
   userSearchList=[]
+
 
   selectUserChange(){
     this.showUserList=true
@@ -114,8 +117,12 @@ export default class InviteUser extends Vue{
     } catch (e) {
       this.$message.error(JSON.stringify(e.response.data.message))
     }
-    this.$bvModal.hide("addUser")
+    this.$bvModal.hide(this.id)
   }
+
+  // mounted(){
+  //   console.log(this.id)
+  // }
 }
 </script>
 

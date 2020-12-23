@@ -137,6 +137,13 @@ export const findMatchDetailById = gql`query findMatchDetailById($matchId: Strin
     }
 }`;
 
+export const findUserExactByName = gql`query findUserExactByName($username: String!){
+   findUserByUsername(username:$username){
+        userId
+   }
+}
+`
+
 export const findUserByName = gql`query findUserByName($username: String!){
     findUserByFuzzy(username:$username){
         page
