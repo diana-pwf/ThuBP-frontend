@@ -70,7 +70,7 @@ const routes: Array<RouteConfig> = [
     component:CreateMatch
   },
   {
-    path:'/teamDetail/:unitId',
+    path:'/teamDetail/:matchId/:unitId',
     name:'teamDetail',
     component:TeamDetail
   },

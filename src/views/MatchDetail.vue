@@ -952,7 +952,7 @@ export default class MatchDetail extends Vue{
 
   gotoTeamDetail(id)
   {
-    this.$router.push(`/teamDetail/${id}`)
+    this.$router.push(`/teamDetail/${this.match.id}/${id}`)
   }
 
   async createNewTeam(evt)

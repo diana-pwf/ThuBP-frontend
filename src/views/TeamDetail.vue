@@ -35,7 +35,7 @@
           {{ row.value }}
         </template>
         <template #cell(actions)="row">
-          <b-button v-if="!row.value" size="sm" variant="outline-danger" @click="row.removePerson()">
+          <b-button v-if="!row.value" size="sm" variant="outline-danger" @click="onRemoveMember(row)">
             移除
           </b-button>
         </template>
@@ -87,6 +87,52 @@ export default class TeamDetail extends Vue{
   }
   currentUserId = ""
   isCreator = false
+
+  onRemoveMember(row){
+    this.$bvModal.msgBoxConfirm(`确认要删除${row.item.name}吗？`, {
+      title: '删除队员',
+      size: 'sm',
+      buttonSize: 'sm',
+      okVariant: 'danger',
+      okTitle: 'YES',
+      cancelTitle: 'NO',
+      footerClass: 'p-2',
+      hideHeaderClose: false,
+      centered: true
+    })
+        .then(value => {
+          if(value===true){
+            this.removeMember(row.item.id)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+  }
+
+  async removeMember(id){
+    try {
+      axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
+      let response = await axios({
+        method: 'delete',
+        url: `/api/v1/match/${this.$route.params.matchId}/unit/${this.$route.params.unitId}/member`,
+        data:{
+          members:[id]
+        }
+      })
+      // 对response做处理
+      if (response.status === 200) {
+        this.$message.success('删除队员成功！')
+        // setTimeout(() => window.location.reload(), 1000);
+      }
+      else
+      {
+        this.$message.error(response.data)
+      }
+    } catch (e) {
+      this.$message.error(JSON.stringify(e.response.data.message))
+    }
+  }
 
   async getTeamDetail()
   {
