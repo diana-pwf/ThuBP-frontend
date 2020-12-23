@@ -47,9 +47,12 @@ export default class SearchInput extends Vue {
   async getMatchesList(){
     let res = await this.$apollo.query({
       query: getMatchesList,
-      variables:{typeIds:[]}
+      variables:{
+        typeIds:[],
+        pageSize:9999
+      }
     });
-    this.matchesList=res.data.findMatchesByType
+    this.matchesList=res.data.findMatchesByType.list
   }
   onSearch(value: string)
   {
