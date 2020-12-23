@@ -225,6 +225,7 @@ import PictureUpload from "@/components/PictureUpload.vue";
   components: {PictureUpload, SearchResultCard, ResultCardList, Navigation},
 })
 
+//TODO:对修改个人信息进行检验
 export default class PersonalInfoTab extends Vue {
   columns = [
     {
@@ -286,7 +287,7 @@ export default class PersonalInfoTab extends Vue {
       }
 
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
     this.isEditAccount = false
   }
@@ -325,7 +326,7 @@ export default class PersonalInfoTab extends Vue {
         throw {response}
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
 
     // Hide the modal manually
@@ -549,7 +550,7 @@ export default class PersonalInfoTab extends Vue {
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -612,7 +613,7 @@ export default class PersonalInfoTab extends Vue {
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 

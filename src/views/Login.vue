@@ -66,7 +66,7 @@ export default class Login extends Vue {
         // 在此处弹出提示 注册成功
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 

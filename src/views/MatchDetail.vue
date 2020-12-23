@@ -75,7 +75,7 @@
               </a-descriptions>
 
               </div>
-              <b-button block v-b-modal.addUser  variant="outline-warning">添加可查看比赛的用户</b-button>
+              <b-button block v-b-modal.addUser v-if="!this.match.publicShowUp&&isOrganizer" variant="outline-warning">添加可查看比赛的用户</b-button>
               <invite-user  type="addWatch" :unit="this.match" ></invite-user>
               <div id="intro">
                 <a-card>
@@ -649,13 +649,14 @@ export default class MatchDetail extends Vue{
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('修改赛事信息成功！')
+        window.location.reload()
       }
       else
       {
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -679,7 +680,7 @@ export default class MatchDetail extends Vue{
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -726,7 +727,7 @@ export default class MatchDetail extends Vue{
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -851,21 +852,35 @@ export default class MatchDetail extends Vue{
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
   async signUpPersonal()
   {
+    let response=undefined
     try {
       axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
-      let response = await axios({
-        method: 'post',
-        url: `/api/v1/match/register/${this.$route.params.matchId}`,
-        data: {
-          unitName: this.user.username
-        }
-      })
+      if(this.$route.params.token){
+        response = await axios({
+          method: 'post',
+          url: `/api/v1/match/register/${this.$route.params.matchId}`,
+          data: {
+            unitName: this.user.username,
+            token:this.$route.params.token
+          }
+        })
+      }
+      else{
+        response = await axios({
+          method: 'post',
+          url: `/api/v1/match/register/${this.$route.params.matchId}`,
+          data: {
+            unitName: this.user.username
+          }
+        })
+      }
+
       // 对response做处理
       if (response.status === 200) {
         this.$message.success('sign up success!')
@@ -876,11 +891,12 @@ export default class MatchDetail extends Vue{
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
-  async cancelSignUp()
+  async cancel
+  ()
   {
     if (this.isSingleMatch)
     {
@@ -902,7 +918,7 @@ export default class MatchDetail extends Vue{
         }
       }
       catch (e) {
-        this.$message.error(JSON.stringify(e.response.data.error))
+        this.$message.error(JSON.stringify(e.response.data.message))
       }
     }
     else
@@ -939,7 +955,7 @@ export default class MatchDetail extends Vue{
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 

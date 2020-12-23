@@ -50,7 +50,7 @@ export default class Logon extends Vue {
         username, password, timestamp
       }));
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 }

@@ -221,7 +221,7 @@ export default class CreateMatch extends Vue {
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -245,7 +245,7 @@ export default class CreateMatch extends Vue {
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 

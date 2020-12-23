@@ -245,7 +245,7 @@ export default class CreateRound extends Vue{
         this.$message.error(JSON.stringify(response))
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -340,7 +340,7 @@ export default class CreateRound extends Vue{
         // 输出错误提示
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -455,7 +455,7 @@ export default class CreateRound extends Vue{
         this.$message.error(JSON.stringify(response))
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
@@ -475,7 +475,7 @@ export default class CreateRound extends Vue{
         this.$message.error(response.data)
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 

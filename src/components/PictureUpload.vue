@@ -101,7 +101,7 @@ export default class PictureUpload extends Vue{
         await this.uploadAvatar()
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
       this.$message.error('图片上传出现问题，请删除后再试')
     }
   }
@@ -146,7 +146,7 @@ export default class PictureUpload extends Vue{
         throw {response}
       }
     } catch (e) {
-      this.$message.error(JSON.stringify(e.response.data.error))
+      this.$message.error(JSON.stringify(e.response.data.message))
     }
   }
 
