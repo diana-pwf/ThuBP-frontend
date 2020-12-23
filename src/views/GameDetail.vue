@@ -2,6 +2,122 @@
   <div id="personalMenu">
     <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div class="flex-box" id="whole">
+      <div id="records">
+        <b-card id="card" no-body class="text-center">
+          <div class="flex-box">
+            <p id="date" v-if="startTime">{{startTime}}</P>
+            <p v-if="location !== 'null'">{{location}}</p>
+          </div>
+          <div id="qwq">
+            <div class="flex-box">
+              <div class="right-direct unit0-color">
+                <b-badge class="unit-name-info unit-name unit0-color" pill variant="light">
+                  {{unit[0].name}}
+                </b-badge>
+                <div class="invisible-tip">.</div>
+                <div class="unit-score-info unit0-main-score">{{unit[0].score}}</div>
+                <div class="invisible-tip">.</div>
+                <div class="unit-score-info unit-round-score-info">
+                  {{roundScoreItemList[roundScoreItemList.length - 1].score0}}
+                </div>
+                <div v-if="isReferee">
+                  <div class="score-change-form">{{unit[0].name}}分数增加（扣分为负）：</div>
+                  <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
+                  <a-button @click="changeScore(0)">提交</a-button>
+                </div>
+              </div>
+              <div id="center-symbol">
+                <div class="unit-name-info">VS</div>
+                <div class="visible-tip">当前比分</div>
+                <div class="unit-score-info">-</div>
+                <div class="visible-tip">本轮比分</div>
+                <div class="unit-round-score-info">:</div>
+              </div>
+              <div class="left-direct unit1-color">
+                <b-badge class="unit-name-info unit-name unit1-color" pill variant="light">
+                  {{unit[1].name}}
+                </b-badge>
+                <div class="invisible-tip">.</div>
+                <div class="unit-score-info unit1-main-score">{{unit[1].score}}</div>
+                <div class="invisible-tip">.</div>
+                <div class="unit-round-score-info">
+                  {{roundScoreItemList[roundScoreItemList.length - 1].score1}}
+                </div>
+                <div v-if="isReferee">
+                  <div class="score-change-form">{{unit[1].name}}分数增加（扣分为负）：</div>
+                  <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
+                  <a-button @click="changeScore(1)">提交</a-button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <b-button v-if="isReferee" id="end-button"
+                    variant="outline-info" @click="startNewRound"
+          >结束当前轮次</b-button>
+        </b-card>
+        <div v-if="isReferee">
+          <h3><b-badge pill variant="primary">增加记录</b-badge></h3>
+          <a-form-model ref="ruleForm"
+                        :model="form"
+                        :rules="rules"
+                        :label-col="{span: 4}"
+                        :wrapper-col="{span: 20}"
+          >
+            <a-form-model-item prop="name" label="选择队伍">
+              <a-radio-group :options="[{ label: unit[0].name, value: 0 },{ label: unit[1].name, value: 1 },]"
+                             :default-value="0" v-model="form.team" />
+            </a-form-model-item>
+            <a-form-model-item prop="description" label="简要说明">
+              <a-input v-model="form.description" placeholder="队员号码及事件"/>
+            </a-form-model-item>
+            <a-button class="button" type="primary" @click="onSubmit">
+              提交
+            </a-button>
+          </a-form-model>
+        </div>
+        <h3><b-badge pill variant="warning">比赛动态</b-badge></h3>
+        <div id="logs">
+          <div id="round-score">
+            <b-table
+                show-empty
+                small
+                stacked="md"
+                :items="roundScoreItemList"
+                :fields="fields"
+                :hover="true"
+                :fixed="true"
+            >
+              <template #cell(index)="row">
+                第{{ row.value }}局
+              </template>
+              <template #cell(score0)="row">
+                {{ row.value }}
+              </template>
+              <template #cell(score1)="row">
+                {{ row.value}}
+              </template>
+            </b-table>
+          </div>
+          <div id="timeline">
+            <a-timeline mode="alternate">
+              <a-timeline-item :color="getColor(item.id)" :position="getDirection(item.id)"
+                               v-for="(item,index) in recordList" :key="index">
+                {{item.name}}:{{item.description}}
+                <a-popover v-if="isReferee">
+                  <template slot="content">
+                    <span>Click to delete it</span>
+                  </template>
+                  <a-icon id="delete-icon" type="close-circle"
+                          theme="twoTone" two-tone-color="red"
+                          @click="deleteRecord(index)"
+                          title="click to delete"/>
+                </a-popover>
+              </a-timeline-item>
+            </a-timeline>
+          </div>
+        </div>
+      </div>
+      <a-divider type="vertical" id="divider"/>
       <div id="photo-and-comment">
         <div id="photo">
           <b-container fluid class="p-3">
@@ -62,118 +178,6 @@
           <h3><b-badge pill variant="primary">我也说一句</b-badge></h3>
           <a-textarea placeholder="写下我的想法" :autoSize="{minRows:4}" v-model="myComment"/>
           <a-button class="button" type="primary" @click="createComment">发布</a-button>
-        </div>
-      </div>
-      <a-divider type="vertical" id="divider"/>
-      <div id="records">
-        <b-card id="card" no-body class="text-center">
-          <div class="flex-box">
-            <p id="date">{{startTime}}</P>
-            <p>{{location}}</p>
-          </div>
-          <div id="qwq">
-            <div class="flex-box">
-              <div class="right-direct unit0-color">
-                <b-badge class="unit-name-info unit-name unit0-color" pill variant="light">
-                {{unit[0].name}}
-                </b-badge>
-                <div class="invisible-tip">.</div>
-                <div class="unit-score-info unit0-main-score">{{unit[0].score}}</div>
-                <div class="invisible-tip">.</div>
-                <div class="unit-score-info unit-round-score-info">
-                  {{roundScoreItemList[roundScoreItemList.length - 1].score0}}
-                </div>
-                <div v-if="isReferee">
-                  <div class="score-change-form">{{unit[0].name}}分数增加（扣分为负）：</div>
-                  <a-input-number :precision="0" v-model="unit0ScoreDelta"/>
-                  <a-button @click="changeScore(0)">提交</a-button>
-                </div>
-              </div>
-              <div id="center-symbol">
-                <div class="unit-name-info">VS</div>
-                <div class="visible-tip">当前比分</div>
-                <div class="unit-score-info">-</div>
-                <div class="visible-tip">本轮比分</div>
-                <div class="unit-round-score-info">:</div>
-              </div>
-              <div class="left-direct unit1-color">
-                <b-badge class="unit-name-info unit-name unit1-color" pill variant="light">
-                  {{unit[1].name}}
-                </b-badge>
-                <div class="invisible-tip">.</div>
-                <div class="unit-score-info unit1-main-score">{{unit[1].score}}</div>
-                <div class="invisible-tip">.</div>
-                <div class="unit-round-score-info">
-                  {{roundScoreItemList[roundScoreItemList.length - 1].score1}}
-                </div>
-                <div v-if="isReferee">
-                  <div class="score-change-form">{{unit[1].name}}分数增加（扣分为负）：</div>
-                  <a-input-number :precision="0" v-model="unit1ScoreDelta"/>
-                  <a-button @click="changeScore(1)">提交</a-button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <b-button v-if="isReferee" id="end-button"
-                    variant="outline-info" @click="startNewRound"
-                    >结束当前轮次</b-button>
-        </b-card>
-        <h3><b-badge pill variant="warning">比赛动态</b-badge></h3>
-        <div id="logs">
-          <b-table
-              show-empty
-              small
-              stacked="md"
-              :items="roundScoreItemList"
-              :fields="fields"
-              :hover="true"
-              :fixed="true"
-          >
-            <template #cell(index)="row">
-              第{{ row.value }}局
-            </template>
-            <template #cell(score0)="row">
-              {{ row.value }}
-            </template>
-            <template #cell(score1)="row">
-              {{ row.value}}
-            </template>
-          </b-table>
-          <a-timeline mode="alternate">
-            <a-timeline-item :color="getColor(item.id)" :position="getDirection(item.id)"
-                             v-for="(item,index) in recordList" :key="index">
-            {{item.name}}:{{item.description}}
-            <a-popover v-if="isReferee">
-              <template slot="content">
-                <span>Click to delete it</span>
-              </template>
-              <a-icon id="delete-icon" type="close-circle"
-                      theme="twoTone" two-tone-color="red"
-                      @click="deleteRecord(index)"
-                      title="click to delete"/>
-            </a-popover>
-          </a-timeline-item>
-          </a-timeline>
-        </div>
-        <div v-if="isReferee">
-        <h3><b-badge pill variant="primary">增加记录</b-badge></h3>
-        <a-form-model ref="ruleForm"
-                      :model="form"
-                      :rules="rules"
-                      :label-col="{span: 4}"
-                      :wrapper-col="{span: 20}"
-        >
-          <a-form-model-item prop="name" label="选择队伍">
-            <a-radio-group :options="[{ label: unit[0].name, value: 0 },{ label: unit[1].name, value: 1 },]"
-                           :default-value="0" v-model="form.team" />
-          </a-form-model-item>
-          <a-form-model-item prop="description" label="简要说明">
-            <a-input v-model="form.description" placeholder="队员号码及事件"/>
-          </a-form-model-item>
-          <a-button class="button" type="primary" @click="onSubmit">
-            提交
-          </a-button>
-        </a-form-model>
         </div>
       </div>
     </div>
@@ -597,7 +601,7 @@ export default class GameDetail extends Vue {
 
   refereeId = ''
   // 可修改
-  isReferee = true
+  isReferee = false
   startTime = ''
   location = ''
 
@@ -810,10 +814,21 @@ li {
 
 #logs {
   padding-top: 20px;
+  padding-bottom: 20px;
   display: grid;
   grid-template-columns: 2fr 3fr;
-  max-height: 30%;
+}
+
+#round-score {
+  max-height: 200px;
   overflow-y: scroll;
+  margin: 10px;
+}
+
+#timeline {
+  max-height: 200px;
+  overflow-y: scroll;
+  margin: 10px;
 }
 
 .score-change-form {
@@ -837,13 +852,17 @@ li {
   margin-right: 20px;
 }
 
+#whole {
+  flex-direction: row-reverse;
+}
+
 @media screen and (max-width: 960px) {
   #divider {
     display: none;
   }
 
   #whole {
-    display: block;
+    flex-direction: column;
   }
 
   #photo-and-comment {
@@ -858,8 +877,6 @@ li {
 
   #logs {
     padding-top: 20px;
-    max-height: 40%;
-    overflow-y: scroll;
   }
 
 }
