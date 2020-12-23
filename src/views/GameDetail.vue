@@ -139,7 +139,7 @@
               {{ row.value}}
             </template>
           </b-table>
-          <a-timeline id="timeline" mode="alternate">
+          <a-timeline mode="alternate">
             <a-timeline-item :color="getColor(item.id)" :position="getDirection(item.id)"
                              v-for="(item,index) in recordList" :key="index">
             {{item.name}}:{{item.description}}
@@ -796,9 +796,6 @@ export default class GameDetail extends Vue {
   color: dimgrey;
 }
 
-#timeline {
-}
-
 li {
   list-style-type: none;
 }
@@ -865,6 +862,13 @@ li {
     overflow-y: scroll;
   }
 
+}
+
+@media screen and (max-width: 720px){
+ #logs {
+   display: block;
+ }
+  /*重新设计卡片样式*/
 }
 
 </style>

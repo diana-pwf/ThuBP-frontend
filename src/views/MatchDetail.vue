@@ -185,19 +185,6 @@
                   添加裁判
                 </b-button>
                 <b-sidebar
-                    id="sidebar-teamdetail"
-                    :backdrop-variant="'dark'"
-                    :width="'50%'"
-                    backdrop
-                    right
-                    shadow
-                >
-                  <div class="px-3 py-2">
-                    <h4>队伍详情</h4>
-                    <Teamdetail :team="onLookUnit" :items="items" :is-creator="isUnitCreator"></Teamdetail>
-                  </div>
-                </b-sidebar>
-                <b-sidebar
                         id="sidebar-createteam"
                         :backdrop-variant="'dark'"
                         :width="'50%'"
@@ -280,7 +267,7 @@
                           <p slot="content" :style="{verticalAlign:'left'}">
                             队伍简介
                           </p>
-                          <span @click="changeOnLookUnit(item.id)" class="more"
+                          <span @click="changeOnLookUnit(item.unitId)" class="more"
                                 style="color: dodgerblue" slot="actions"
                                 v-b-toggle.sidebar-teamdetail
                           >更多</span>
@@ -382,6 +369,19 @@
           </a-tabs>
         </div>
       </div>
+      <b-sidebar
+          id="sidebar-teamdetail"
+          :backdrop-variant="'dark'"
+          :width="'50%'"
+          backdrop
+          right
+          shadow
+      >
+        <div class="px-3 py-2">
+          <h4>队伍详情</h4>
+          <Teamdetail :team="onLookUnit" :items="items" :is-creator="isUnitCreator"></Teamdetail>
+        </div>
+      </b-sidebar>
     </div>
   </div>
 </template>
@@ -706,13 +706,16 @@ export default class MatchDetail extends Vue{
   async changeOnLookUnit(id){
     // this.onlookUnitId = id
     // this.getTeamDetail(id)
+    // console.log(id)
     try {
       let res = await this.$apollo.query({
         query: getUnitDetail,
         variables:{unitId:id}
       });
+      console.log(res.data)
       this.onLookUnit = res.data.findUnitById
       this.onLookUnit['id'] = res.data.findUnitById.unitId
+      this.items = []
       this.items.push({
         // @ts-ignore
         name: this.onLookUnit.creator.username,
