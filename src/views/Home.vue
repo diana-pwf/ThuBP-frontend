@@ -36,9 +36,30 @@
           </a-tab-pane>
           <a-tab-pane v-for="(item, index) in matchTypeList"
                       :key="item.matchTypeId" :tab="item.matchTypeName" force-render>
-            <div v-if="onShowMatchesList.length">
+            <div id="PC-matchList" v-if="onShowMatchesList.length">
               <ResultCardList class="matchLists" :match-lists="onShowMatchesList" :isCenter="true"></ResultCardList>
               <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="3"
+                            @change="onMatchesPageChange"
+              />
+            </div>
+            <div id="mobile-matchList" v-if="onShowMatchesList.length">
+              <ul class="wrapper">
+                <li class="list" v-for="(item,index) in onShowMatchesList">
+                  <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
+                    <img
+                        slot="cover"
+                        alt="example"
+                        :src="item.previewLarge"
+                    />
+                    <a-card-meta :title="item.name">
+                      <template slot="description">
+                        {{ item.description }}
+                      </template>
+                    </a-card-meta>
+                  </a-card>
+                </li>
+              </ul>
+              <a-pagination class="pagination" :default-current="1" :total="matchesList.length" :page-size="8"
                             @change="onMatchesPageChange"
               />
             </div>
@@ -232,4 +253,19 @@ img{
   padding-top: 20px;
 }
 
+#mobile-matchList{
+  display: none;
+}
+
+@media screen and (max-width: 1000px){
+  #PC-matchList{
+    display: none;
+  }
+  #mobile-matchList{
+    display: block;
+  }
+  #search{
+    width: 100%;
+  }
+}
 </style>

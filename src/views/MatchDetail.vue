@@ -118,10 +118,10 @@
                   <h5 class='text-warning'>比赛裁判</h5>
                 </div>
               </div>
-              <div v-if="this.match.status==='PREPARE'" id="selective-buttons">
-                <div  v-if="isSingleMatch">
+              <div  id="selective-buttons">
+                <div  v-if="isSingleMatch&&this.match.status==='PREPARE'">
                   <b-button v-if="isParticipant&&myCreateUnitId>0"
-                            variant="outline-success" class="add"
+                            variant="outline-danger" class="add"
                             @click="onDeleteTeam(myCreateUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     取消报名
@@ -145,7 +145,7 @@
                   </b-button>
                     <b-button v-if="myCreateUnitId>0"
                               variant="outline-danger"
-                              class="delete"
+                              :disabled="match.status!=='PREPARE'"
                               @click="onDeleteTeam(myCreateUnitId)"
                     >
                       解散我的队伍
@@ -253,9 +253,9 @@
                     <span class="list_title">队伍列表</span>
                     <div v-if="match.teams.length">
                       <ul id="team">
-                        <li v-for="(item,index) in this.onShowTeamsList" :key="index">
-                          <a-comment>
-                            <a slot="author">{{item.name}}</a>
+                        <li  v-for="(item,index) in this.onShowTeamsList" :key="index">
+                          <a-comment >
+                            <a style="color: dodgerblue" @click="changeOnLookUnit(item.unitId)" v-b-toggle.sidebar-teamdetail  slot="author">{{item.name}}</a>
                             <a-avatar
                                 slot="avatar"
                                 shape="square"
@@ -266,11 +266,7 @@
                             <p slot="content" :style="{verticalAlign:'left'}">
                               {{item.description}}
                             </p>
-                            <span @click="changeOnLookUnit(item.unitId)" class="more"
-                                  style="color: dodgerblue" slot="actions"
-                                  v-b-toggle.sidebar-teamdetail
-                            >更多</span>
-                            <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer" class="more" style="color: dodgerblue" slot="actions">删除</span>
+                            <span @click="onDeleteTeam(item.unitId)" v-if="isOrganizer&&match.status==='PREPARE'" class="more" style="color: dodgerblue" slot="actions">删除</span>
                           </a-comment>
                         </li>
                       </ul>
@@ -301,8 +297,7 @@
                           <p slot="content" :style="{verticalAlign:'left'}">
                             {{item.description}}
                           </p>
-                          <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer"
-                                class="more" style="color: dodgerblue" slot="actions">删除</span>
+                          <span @click="onDeleteReferee(item.userId)" v-if="isOrganizer&&match.status==='PREPARE'" class="more" style="color: dodgerblue" slot="actions">删除</span>
                         </a-comment>
                       </li>
                     </ul>
@@ -1288,6 +1283,7 @@ img{
 }
 
 #person_list{
+  margin-left: 10%;
   margin-top: 10%;
   display: grid;
   grid-template-columns:  50% 50%;

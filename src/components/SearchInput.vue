@@ -114,17 +114,25 @@ div{
   position: absolute;
   z-index: 3;
 }
-#img{
-  width: 30%;
-  height: 30%;
-}
+/*#img{*/
+/*  width: 30%;*/
+/*  height: 30%;*/
+/*}*/
 li{
   list-style-type: none;
 }
 #searchBar{
   display: grid;
-  grid-template-columns: 20% 80%;
+  grid-template-columns: 20% 70%;
   grid-column-gap: 5px;
 }
 
+
+@media screen and (max-width: 450px){
+  #searchBar{
+    display: grid;
+    grid-template-columns: 20% 70%;
+    grid-column-gap: 40px;
+  }
+}
 </style>
