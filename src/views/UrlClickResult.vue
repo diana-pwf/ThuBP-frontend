@@ -1,6 +1,6 @@
 <template>
   <div>
-  <a-result v-if="this.$route.params.resultType==='fail'" id="fail" status="403" title="403" sub-title="Sorry, you are not authorized to access this page.">
+  <a-result v-if="this.$route.params.resultType==='fail'" id="fail" status="403" title="401" sub-title="Sorry, you are not authorized to access this page.">
     <template #extra>
       <a-button @click="goHome" type="primary">
         Back Home
@@ -52,10 +52,7 @@ import {Modal} from "ant-design-vue";
 @Component
 
 export default class UrlClickResult extends Vue{
-  resultType=false;
-  mounted(){
-
-  }
+  resultType=false
 
   gotoLogon(){
      this.$router.push('/logon')
@@ -74,7 +71,5 @@ export default class UrlClickResult extends Vue{
 </script>
 
 <style scoped>
-
-
 
 </style>

@@ -43,8 +43,6 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
   }
 })
 
-
-
 export default class PictureUpload extends Vue{
   @Prop({type:String, default:function (){return ""}})pictureType
   @Prop({type:String, default:function (){return ""}})imageUrl

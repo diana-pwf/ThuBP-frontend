@@ -10,7 +10,8 @@
         </a-select-option>
       </a-select>
       <a-input-search class="search" @change="onChange"
-                      v-model="searchKey"  placeholder="输入赛事名称或组织者昵称以搜索比赛" enter-button @search="onSearch"
+                      v-model="searchKey" placeholder="输入赛事名称或组织者昵称以搜索比赛"
+                      enter-button @search="onSearch"
       />
     </div>
     <ul id="list" class="wrapper" v-if="showList">
@@ -18,7 +19,7 @@
         <b-card @click="goMatchDetail(item)" no-body class="overflow-hidden" style="max-height: 100px">
           <b-row no-gutters>
             <b-col md="6">
-              <b-card-img id="img" src="background.png" alt="Image" class="rounded-0"></b-card-img>
+              <b-card-img id="img" :src="item.previewLarge" alt="Image" class="rounded-0"></b-card-img>
             </b-col>
             <b-col md="6">
               <b-card-body :title="item.name">
@@ -113,17 +114,25 @@ div{
   position: absolute;
   z-index: 3;
 }
-#img{
-  width: 30%;
-  height: 30%;
-}
+/*#img{*/
+/*  width: 30%;*/
+/*  height: 30%;*/
+/*}*/
 li{
   list-style-type: none;
 }
 #searchBar{
   display: grid;
-  grid-template-columns: 20% 80%;
+  grid-template-columns: 20% 70%;
   grid-column-gap: 5px;
 }
 
+
+@media screen and (max-width: 450px){
+  #searchBar{
+    display: grid;
+    grid-template-columns: 20% 70%;
+    grid-column-gap: 40px;
+  }
+}
 </style>

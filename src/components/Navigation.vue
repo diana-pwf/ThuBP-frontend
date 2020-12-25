@@ -12,15 +12,15 @@
     <a-menu-item id="create" @click="goCreateMatch" key="2">
       创建比赛
     </a-menu-item>
-    <a-menu-item id="user" key="3">
-      <a-dropdown :trigger="['click']">
+    <a-menu-item @click="goPersonInfo('1')" id="user" key="3">
+      <a-dropdown  :trigger="['click']">
         <a class="ant-dropdown-link user-dropdown-link" @click="e => e.preventDefault()">
           <a-avatar v-if="avatarKey" class="avatar" :src="avatarKey" :style="{}" />
           <a-avatar v-else class="avatar" icon="user" :style="{}" />
           <span class="delimiter"></span>
           <span class="text-middle">{{username}}</span><a-icon class="down-icon" type="down" />
         </a>
-        <a-menu slot="overlay" class="dropdown-list">
+        <a-menu id="user_menu" slot="overlay" class="dropdown-list">
           <a-menu-item @click="goPersonInfo('1')" key="4">
             <a-icon type="user"/>个人资料
           </a-menu-item>
@@ -34,7 +34,7 @@
           <a-menu-item @click="goPersonInfo('4')" key="7">
             <a-icon type="message" />我的消息
           </a-menu-item>
-          <a-menu-item @click="goPersonInfo('5')" key="8">
+          <a-menu-item @click="logout()" key="8">
             <a-icon type="logout" />登出
           </a-menu-item>
         </a-menu>
@@ -56,6 +56,11 @@ export default class Navigation extends Vue{
   @Prop({type:String, default:function (){return ""}})username
   @Prop({type:String, default:function (){return ""}})avatarKey
 
+  logout(){
+    window.localStorage.removeItem('jwt')
+    this.$router.push(`/`)
+  }
+
   goPersonInfo(key){
     if (this.$router.currentRoute.path !== `/personal/${key}`) {
       this.$router.push(`/personal/${key}`);
@@ -73,9 +78,7 @@ export default class Navigation extends Vue{
       this.$router.push('/creatematch');
     }
   }
-  mounted(){
-    // console.log(this.navKeys)
-  }
+
 }
 </script>
 
@@ -94,20 +97,6 @@ export default class Navigation extends Vue{
   }
 }
 
-#main{
-
-}
-#create{
-
-}
-#logout{
-  position: absolute;
-  left: 26%;
-}
-#message{
-  position: absolute;
-  left: 77%;
-}
 #user{
   margin-left: auto;
 }
@@ -136,5 +125,11 @@ export default class Navigation extends Vue{
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+@media screen and (max-width: 1000px){
+  #user_menu{
+    display: none;
+  }
 }
 </style>

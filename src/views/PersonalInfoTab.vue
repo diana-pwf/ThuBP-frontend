@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <div id="matchDetailPC">
   <div id="personalMenu">
     <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div id="menu">
@@ -30,7 +32,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="用户名">
                 <span v-if="!isEditAccount">{{user.username}}</span>
-<!--                <a-input v-else v-model="user.username"></a-input>-->
                 <div v-else>
                 <b-form-input @input="isUsernameRepeat" v-model="editUsername" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" class="feedback-user">
                 </b-form-input>
@@ -50,7 +51,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="手机号">
                 <span v-if="!isEditAccount">{{user.mobile}}</span>
-<!--                <a-input v-else v-model="user.mobile"></a-input>-->
                 <div v-else>
                 <b-form-input v-model="user.mobile" :state="mobileValidation" class="feedback-user"></b-form-input>
                 <b-form-invalid-feedback :state="mobileValidation">
@@ -63,7 +63,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="邮箱">
                 <span v-if="!isEditAccount">{{user.email}}</span>
-<!--                <a-input v-else v-model="user.email"></a-input>-->
                 <div v-else>
                   <b-form-input v-model="user.email" :state="emailValidation" class="feedback-user"></b-form-input>
                   <b-form-invalid-feedback :state="emailValidation">
@@ -76,7 +75,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="个人陈述">
                 <span v-if="!isEditAccount">{{user.description}}</span>
-<!--                <a-input v-else v-model="user.description"></a-input>-->
                 <div v-else>
                   <b-form-input v-model="user.description" :state="descriptionValidation" class="feedback-user"></b-form-input>
                   <b-form-invalid-feedback :state="descriptionValidation">
@@ -201,10 +199,6 @@
             </span>
             <div>
               <div class='row' style='margin-top: 5ex'>
-<!--                <div class='col-md-4'>-->
-<!--                  <h3><i class="fas fa-box"></i>5</h3>-->
-<!--                  <h5>我的待办</h5>-->
-<!--                </div>-->
                 <div class='col-md-4'>
                   <h3 class='text-success'><i class="fas fa-box"></i>{{this.pagination.total}}</h3>
                   <h5 class='text-success'>收到消息数</h5>
@@ -216,8 +210,6 @@
               </div>
               <div id="msg-list">
                       <a-table @change="handleTableChange" :pagination="pagination" :columns="columns" :data-source="myNotifications">
-<!--                        <a slot="name" slot-scope="text">{{ text }}</a>-->
-<!--                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>-->
                         <span slot="tags" slot-scope="tags">
                           <a-tag
                               v-for="tag in tags"
@@ -228,7 +220,6 @@
                           </a-tag>
                         </span>
                         <span  slot='action' slot-scope="text, record">
-<!--                          <a>查看详情</a>-->
                           <a-divider type="vertical" />
                           <a class="delete-action" @click="onDelete(record)">删除</a>
                           <a-divider type="vertical" />
@@ -252,6 +243,59 @@
       </div>
     </div>
   </div>
+  </div>
+  <div id="matchDetailMobile">
+    <navigation></navigation>
+    <b-card style="margin-top: 10px">
+    <b-media style="margin-top: 10px;">
+      <template #aside>
+        <b-img style="width: 64px;height: 64px;" :src="user.avatar" width="64" alt="placeholder"></b-img>
+      </template>
+      <h5 class="mt-0"><b-badge variant="info">{{user.username}}</b-badge></h5>
+      <p class="mb-0">
+        <a-descriptions>
+          <a-descriptions-item class="description-item" label="账号ID">
+            {{user.userId}}
+          </a-descriptions-item>
+          <a-descriptions-item class="description-item" label="学工号">
+            {{user.thuId}}
+          </a-descriptions-item>
+        </a-descriptions>
+      </p>
+    </b-media>
+      <b-card-text>
+        <div id="mobile-organizedMatches">
+        <a-tag style="margin-bottom: 10px" color="purple">
+          创建的比赛
+        </a-tag>
+        <b-list-group>
+          <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowOrganizedMatches ">
+            <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
+            <span class="mr-auto">{{item.name}}</span>
+          </b-list-group-item>
+        </b-list-group>
+          <a-pagination class="pagination" :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
+                        @change="onOrganizedMatchesPageChange"
+          />
+        </div>
+        <div style="margin-top: 10px" id="mobile-participatedMatches">
+          <a-tag  style="margin-bottom: 10px" color="orange">
+            参与的比赛
+          </a-tag>
+          <b-list-group>
+            <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowParticipatedMatches ">
+              <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
+              <span class="mr-auto">{{item.name}}</span>
+            </b-list-group-item>
+          </b-list-group>
+          <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
+                        @change="onParticipatedMatchesPageChange"
+          />
+        </div>
+      </b-card-text>
+    </b-card>
+  </div>
+  </div>
 </template>
 
 
@@ -271,7 +315,7 @@ import PictureUpload from "@/components/PictureUpload.vue";
 
 
 
-//TODO:对修改个人信息进行检验
+
 export default class PersonalInfoTab extends Vue {
   columns = [
     {
@@ -362,7 +406,6 @@ export default class PersonalInfoTab extends Vue {
     this.user.username=this.editUsername
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
-      console.log(this.user.mobile)
       let response = await axios({
         method: 'post',
         url: `/api/v1/user/info`,
@@ -579,13 +622,11 @@ export default class PersonalInfoTab extends Vue {
 
     token = record['extra'].token
     if(record['tag']==='REFEREE_INVITE'){
-      // id=inviteToken['matchId']
       id = record['extra'].matchId
       url=`/api/v1/match/become-referee/${id}`
       await this.acceptInvitation(token, url)
     }
     else if(record['tag']==='UNIT_INVITE'){
-      // id=inviteToken['unitId']
       id = record['extra'].unitId
       url=`/api/v1/match/participate/${id}`
       await this.acceptInvitation(token, url)
@@ -655,7 +696,6 @@ export default class PersonalInfoTab extends Vue {
           this.myNotifications[index]['readStatus']=(this.myNotifications[index]['isRead'])?['read']:['unread']
           this.myNotifications[index]['key']=index
         }
-        console.log(this.myNotifications)
       }
       else
       {
@@ -753,6 +793,10 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
+  goMatchDetail(id){
+    this.$router.push(`/matchdetail/${id}`)
+  }
+
   mounted()
   {
     this.getUserInfo();
@@ -833,4 +877,17 @@ ul,li {
 /*  overflow: hidden;*/
 /*  white-space: nowrap;*/
 /*}*/
+
+#matchDetailMobile{
+  display: none;
+}
+
+@media screen and (max-width: 1000px){
+  #matchDetailPC{
+    display: none;
+  }
+  #matchDetailMobile{
+    display: block;
+  }
+}
 </style>

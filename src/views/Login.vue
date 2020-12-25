@@ -1,8 +1,5 @@
 <template>
   <div id="center">
-<!--    <div id="left">-->
-<!--      <img src="/ball.png" alt="">-->
-<!--    </div>-->
     <div id="form">
       <div id="title">
         <img id="icon" src="icon.png" width="60px" alt="">
@@ -22,7 +19,7 @@
         </a-form>
         <div style="margin-top: 10px">
         <a-button id="button-login" style="margin-right: 20%;width: 40%" type="primary" v-on:click="login()">login</a-button>
-        <a-button id="button-logon" style="width: 40%" v-on:click="logon()">logon</a-button>
+        <a-button id="button-logon" style="width: 40%" v-on:click="logon">logon</a-button>
         </div>
       </div>
     </div>
@@ -84,15 +81,11 @@ export default class Login extends Vue {
   height: 100%;
   position: fixed;
   width: 100%;
-  /*margin-top: 100px;*/
   display: flex;
   align-items: center;
   justify-content: center;
   background-image: url('/ball.png');
-  /*width: 100%;*/
-  /*height: 1000px;*/
-  /*background-image: url("../../public/background.png");*/
-  /*background-size: cover;*/
+  background-size: cover;
 }
 
 #form-body {
@@ -113,10 +106,6 @@ export default class Login extends Vue {
   margin-bottom: 20px;
 }
 
-#button {
-  grid-column-start: 2;
-}
-
 #title {
   display: flex;
   justify-content: center;
@@ -127,15 +116,13 @@ export default class Login extends Vue {
   margin: 20px;
 }
 
-#form{
 
-}
 @media screen and (max-width: 1000px){
-#form-body {
-  margin-top: 5%;
-  margin-left: 20px;
-  width: 80%;
-  margin: auto;
-}
+  #form-body {
+    margin-top: 5%;
+    margin-left: 20px;
+    width: 80%;
+    margin: auto;
+  }
 }
 </style>

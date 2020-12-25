@@ -51,10 +51,6 @@ export default class ThuRegister extends Vue {
         this.$message.success('注册成功');
         setTimeout(() => this.$router.push("/urlClickResult/logon-success"), 1000);
       }
-      // else{
-      //   console.log(response)
-      //   this.$message.error(JSON.stringify(response.message))
-      // }
     } catch (e) {
        this.$message.error(JSON.stringify(e.response.data.message))
       if(e.response.data.status===401){
