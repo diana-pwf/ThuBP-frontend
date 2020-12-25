@@ -225,7 +225,7 @@ export default class Home extends Vue {
   flex-wrap: wrap;
   justify-content: space-evenly;
   row-gap: 16px;
-  column-gap: 16px;
+  grid-column-gap: 16px;
   padding: 0;
 }
 .matchLists{
@@ -248,9 +248,9 @@ export default class Home extends Vue {
 
 img{
   width: 200px;
-  height: 200px;
-  margin:auto;
-  padding-top: 20px;
+  height: 180px;
+  margin: 20px auto 0 auto;
+  object-fit: cover;
 }
 
 #mobile-matchList{

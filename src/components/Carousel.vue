@@ -67,6 +67,7 @@ export default class Carousel extends Vue{
 
 #carousel >>> .img-fluid {
   height: 300px !important;
+  object-fit: cover;
 }
 
 </style>

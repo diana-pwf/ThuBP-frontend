@@ -15,8 +15,8 @@
       />
     </div>
     <ul id="list" class="wrapper" v-if="showList">
-      <li class="list" v-for="(item,index) in  searchList ">
-        <b-card @click="goMatchDetail(item)" no-body class="overflow-hidden" style="max-height: 100px">
+      <li class="list" v-for="(item,index) in searchList">
+        <b-card @click="goMatchDetail(item)" no-body class="result-card overflow-hidden">
           <b-row no-gutters>
             <b-col md="6">
               <b-card-img id="img" :src="item.previewLarge" alt="Image" class="rounded-0"></b-card-img>
@@ -104,26 +104,29 @@ export default class SearchInput extends Vue {
 .search {
   max-width: 600px;
 }
-div{
-  margin: auto;
+div {
   position: relative;
 }
 #list{
   padding-left: 0;
-  padding-right: 8%;
   position: absolute;
   z-index: 3;
 }
-/*#img{*/
-/*  width: 30%;*/
-/*  height: 30%;*/
-/*}*/
+.result-card {
+  max-height: 100px;
+  box-sizing: content-box;
+  margin: auto;
+}
+#img {
+  height: 100px;
+  object-fit: cover;
+}
 li{
   list-style-type: none;
 }
 #searchBar{
   display: grid;
-  grid-template-columns: 20% 70%;
+  grid-template-columns: 2fr 7fr;
   grid-column-gap: 5px;
 }
 
@@ -131,8 +134,8 @@ li{
 @media screen and (max-width: 450px){
   #searchBar{
     display: grid;
-    grid-template-columns: 20% 70%;
-    grid-column-gap: 40px;
+    grid-template-columns: 2fr 7fr;
+    grid-column-gap: 5px;
   }
 }
 </style>

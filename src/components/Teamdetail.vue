@@ -60,7 +60,6 @@ import InviteUser from "@/components/InviteUser.vue";
 export default class Teamdetail extends Vue {
   @Prop({type:Object, default:function (){return {}}})team
   @Prop({type:Array, default:function (){return []}})items
-  @Prop({type:Boolean, default:function (){return []}})isCreator
   @Prop({type:Boolean, default:function (){return []}})start
   @Prop({type:Boolean, default:function (){return false}})isCreator
 

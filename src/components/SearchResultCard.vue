@@ -61,6 +61,7 @@ export default class SearchResultCard extends Vue {
 
 .card-img {
   height: 100%;
+  object-fit: cover;
 }
 
 #text1, #text2 {

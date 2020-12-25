@@ -17,9 +17,9 @@
           <span style="color: white">Remember Me</span>
         </a-checkbox>
         </a-form>
-        <div style="margin-top: 10px">
-        <a-button id="button-login" style="margin-right: 20%;width: 40%" type="primary" v-on:click="login()">login</a-button>
-        <a-button id="button-logon" style="width: 40%" v-on:click="logon">logon</a-button>
+        <div style="margin-top: 10px; display: grid; column-gap: 10%; grid-template-columns: 1fr 1fr;">
+          <a-button id="button-login" style="flex-basis: 0;" type="primary" v-on:click="login()">login</a-button>
+          <a-button id="button-logon" style="flex-basis: 0;" v-on:click="logon">logon</a-button>
         </div>
       </div>
     </div>

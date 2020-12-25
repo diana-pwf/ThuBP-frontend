@@ -831,6 +831,7 @@ img {
 
 .card-img {
   height: 100px;
+  object-fit: cover;
 }
 
 #menu {

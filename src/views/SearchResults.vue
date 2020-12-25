@@ -102,7 +102,7 @@ export default class SearchResults extends Vue {
 
 <style scoped>
 .list{
-  margin: 2% 10% auto 10%;
+  margin: 48px auto;
   width:60%;
 }
 
@@ -111,10 +111,7 @@ export default class SearchResults extends Vue {
 }
 
 .search{
-  margin-left: 30%;
-  margin-right: 20%;
-  width: 60%;
-  margin-top: 2%;
+  margin: 16px auto 0;
 }
 
 .pagination {

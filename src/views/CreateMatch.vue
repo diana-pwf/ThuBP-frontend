@@ -173,7 +173,7 @@ export default class CreateMatch extends Vue {
       title: '创建赛事',
       size: 'sm',
       buttonSize: 'sm',
-      okVariant: 'danger',
+      okVariant: 'primary',
       okTitle: 'YES',
       cancelTitle: 'NO',
       footerClass: 'p-2',

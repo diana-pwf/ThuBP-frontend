@@ -22,9 +22,9 @@
         <a-input-password class="password" placeholder="input password" v-model="password">
           <a-icon slot="prefix" type="lock"></a-icon>
         </a-input-password>
-        <div style="margin-top: 10px">
-          <a-button id="button-login" style="margin-right: 20%;width: 40%"  v-on:click="login()">Login</a-button>
-          <a-button id="button-logon" :disabled="!validation||!containValidation" type="primary" style="width: 40%" v-on:click="logon()">logon</a-button>
+        <div style="margin-top: 10px; display: grid; column-gap: 10%; grid-template-columns: 1fr 1fr;">
+          <a-button id="button-login" style="flex-basis: 0;" v-on:click="login()">login</a-button>
+          <a-button id="button-logon" style="flex-basis: 0;" type="primary" v-on:click="logon()">logon</a-button>
         </div>
       </div>
     </div>
@@ -39,9 +39,9 @@ import {getCarouselMatches,findUserExactByName} from "../../myQuery";
 
 @Component
 export default class Logon extends Vue {
-  username = 'pwf18'
-  password = '123456'
-  ticket = '2018013405'
+  username = ''
+  password = ''
+  ticket = ''
 
   validation=false
   containValidation=false
@@ -77,7 +77,7 @@ export default class Logon extends Vue {
     try {
       const { username, password } = this;
       const timestamp = new Date().getTime();
-      window.location.href = "https://alumni-test.iterator-traits.com/fake-id-tsinghua/do/off/ui/auth/login/form/032771ca2d05561cefc5ca65dcff39f9/0?/thuLogin";
+      window.location.href = "https://alumni-test.iterator-traits.com/fake-id-tsinghua/do/off/ui/auth/login/form/032771ca2d05561cefc5ca65dcff39f9/0?/local-login";
       localStorage.setItem("logon", JSON.stringify({
         username, password, timestamp
       }));
@@ -104,6 +104,7 @@ export default class Logon extends Vue {
   align-items: center;
   justify-content: center;
   background-image: url('/ball.png');
+  background-size: cover;
 }
 
 #form-body {
