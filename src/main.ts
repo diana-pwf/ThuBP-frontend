@@ -32,7 +32,7 @@ import {ApolloLink} from "apollo-link";
 //     }
 // })
 
-const httpLink = new HttpLink({uri: 'http://211.159.159.210:9960/api/v1/graphql'});
+const httpLink = new HttpLink({uri: 'https://thubp.iterator-traits.com/api/v1/graphql'});
 
 const authLink = new ApolloLink((operation, forward) => {
     // Retrieve the authorization token from local storage.

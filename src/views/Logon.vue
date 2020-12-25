@@ -82,7 +82,7 @@ export default class Logon extends Vue {
     try {
       const { username, password } = this;
       const timestamp = new Date().getTime();
-      window.location.href = "https://alumni-test.iterator-traits.com/fake-id-tsinghua/do/off/ui/auth/login/form/032771ca2d05561cefc5ca65dcff39f9/0?/local-login";
+      window.location.href = "https://alumni-test.iterator-traits.com/fake-id-tsinghua/do/off/ui/auth/login/form/032771ca2d05561cefc5ca65dcff39f9/0?/thuLogin";
       localStorage.setItem("logon", JSON.stringify({
         username, password, timestamp
       }));
