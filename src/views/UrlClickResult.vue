@@ -52,10 +52,7 @@ import {Modal} from "ant-design-vue";
 @Component
 
 export default class UrlClickResult extends Vue{
-  resultType=false;
-  mounted(){
-
-  }
+  resultType=false
 
   gotoLogon(){
      this.$router.push('/logon')
@@ -74,7 +71,5 @@ export default class UrlClickResult extends Vue{
 </script>
 
 <style scoped>
-
-
 
 </style>

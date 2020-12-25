@@ -32,7 +32,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="用户名">
                 <span v-if="!isEditAccount">{{user.username}}</span>
-<!--                <a-input v-else v-model="user.username"></a-input>-->
                 <div v-else>
                 <b-form-input @input="isUsernameRepeat" v-model="editUsername" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" class="feedback-user">
                 </b-form-input>
@@ -52,7 +51,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="手机号">
                 <span v-if="!isEditAccount">{{user.mobile}}</span>
-<!--                <a-input v-else v-model="user.mobile"></a-input>-->
                 <div v-else>
                 <b-form-input v-model="user.mobile" :state="mobileValidation" class="feedback-user"></b-form-input>
                 <b-form-invalid-feedback :state="mobileValidation">
@@ -65,7 +63,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="邮箱">
                 <span v-if="!isEditAccount">{{user.email}}</span>
-<!--                <a-input v-else v-model="user.email"></a-input>-->
                 <div v-else>
                   <b-form-input v-model="user.email" :state="emailValidation" class="feedback-user"></b-form-input>
                   <b-form-invalid-feedback :state="emailValidation">
@@ -78,7 +75,6 @@
               </a-descriptions-item>
               <a-descriptions-item class="description-item" label="个人陈述">
                 <span v-if="!isEditAccount">{{user.description}}</span>
-<!--                <a-input v-else v-model="user.description"></a-input>-->
                 <div v-else>
                   <b-form-input v-model="user.description" :state="descriptionValidation" class="feedback-user"></b-form-input>
                   <b-form-invalid-feedback :state="descriptionValidation">
@@ -203,10 +199,6 @@
             </span>
             <div>
               <div class='row' style='margin-top: 5ex'>
-<!--                <div class='col-md-4'>-->
-<!--                  <h3><i class="fas fa-box"></i>5</h3>-->
-<!--                  <h5>我的待办</h5>-->
-<!--                </div>-->
                 <div class='col-md-4'>
                   <h3 class='text-success'><i class="fas fa-box"></i>{{this.pagination.total}}</h3>
                   <h5 class='text-success'>收到消息数</h5>
@@ -218,8 +210,6 @@
               </div>
               <div id="msg-list">
                       <a-table @change="handleTableChange" :pagination="pagination" :columns="columns" :data-source="myNotifications">
-<!--                        <a slot="name" slot-scope="text">{{ text }}</a>-->
-<!--                        <span slot="customTitle"><a-icon type="smile-o" />发送者</span>-->
                         <span slot="tags" slot-scope="tags">
                           <a-tag
                               v-for="tag in tags"
@@ -230,7 +220,6 @@
                           </a-tag>
                         </span>
                         <span  slot='action' slot-scope="text, record">
-<!--                          <a>查看详情</a>-->
                           <a-divider type="vertical" />
                           <a class="delete-action" @click="onDelete(record)">删除</a>
                           <a-divider type="vertical" />
@@ -415,7 +404,6 @@ export default class PersonalInfoTab extends Vue {
     this.user.username=this.editUsername
     axios.defaults.headers.common["Authorization"] = window.localStorage.getItem('jwt')
     try {
-      console.log(this.user.mobile)
       let response = await axios({
         method: 'post',
         url: `/api/v1/user/info`,
@@ -632,13 +620,11 @@ export default class PersonalInfoTab extends Vue {
 
     token = record['extra'].token
     if(record['tag']==='REFEREE_INVITE'){
-      // id=inviteToken['matchId']
       id = record['extra'].matchId
       url=`/api/v1/match/become-referee/${id}`
       await this.acceptInvitation(token, url)
     }
     else if(record['tag']==='UNIT_INVITE'){
-      // id=inviteToken['unitId']
       id = record['extra'].unitId
       url=`/api/v1/match/participate/${id}`
       await this.acceptInvitation(token, url)
@@ -708,7 +694,6 @@ export default class PersonalInfoTab extends Vue {
           this.myNotifications[index]['readStatus']=(this.myNotifications[index]['isRead'])?['read']:['unread']
           this.myNotifications[index]['key']=index
         }
-        console.log(this.myNotifications)
       }
       else
       {

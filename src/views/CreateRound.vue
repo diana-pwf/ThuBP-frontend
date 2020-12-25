@@ -61,7 +61,6 @@
       <b-modal  id="editGameDetail" hide-footer >
         <div class="d-block text-center">
           <p class="h2 mb-2"><b-icon icon="pencil-square"></b-icon></p>
-          <!--              <span style="font-size: large">修改比赛信息</span>-->
 
           <b-form @submit="editGameSubmit">
             <b-form-group
@@ -89,7 +88,7 @@
             <b-form-group id="input-group-edit-referee" label="添加裁判（仅一人）" label-for="input-3">
               <b-form-tags id="edit-referee"  no-outer-focus v-model="selectedUserList">
                 <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
-                  <a-input-search class="search" @change="selectUserChange"   v-model="userSearchKey"  placeholder="Search by username"   />
+                  <a-input-search class="search" @change="selectUserChange"  v-model="userSearchKey"  placeholder="Search by username"   />
                   <b-form-tag
                       v-for="tag in tags"
                       @remove="removeTag(tag)"
@@ -101,18 +100,13 @@
               </b-form-tags>
               <b-list-group  id="list" class="wrapper" v-if="showUserList">
                 <b-list-group-item @click="chooseUser(item)" class="d-flex align-items-center" v-for="(item,index) in  searchList ">
-                  <!--                          <span>{{item.username}}</span>-->
                   <b-avatar variant="info" class="mr-3"></b-avatar>
                   <span class="mr-auto">{{item.username}}</span>
                 </b-list-group-item>
               </b-list-group>
             </b-form-group>
-
-            <b-button block type="submit" v-if="selectedUserList.length==1" variant="success">确认修改</b-button>
-
+            <b-button block type="submit" v-if="selectedUserList.length === 1" variant="success">确认修改</b-button>
           </b-form>
-
-
         </div>
       </b-modal>
       <div id="submit-button">
@@ -127,7 +121,7 @@
 <script>
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
-import {findUserByName,getMatchRelatedUsers , getRoundStrategyTypes,getRoundInfo} from "../../myQuery";
+import {getMatchRelatedUsers , getRoundStrategyTypes,getRoundInfo} from "../../myQuery";
 import Navigation from "@/components/Navigation.vue";
 import SearchTeam from "@/components/SearchTeam.vue"
 
@@ -144,7 +138,6 @@ export default class CreateRound extends Vue{
 
   selectedTime=""
   selectedLocation=''
-  showTeamList=false
   roundDescription=''
   user={
     username: '',
@@ -192,8 +185,6 @@ export default class CreateRound extends Vue{
     return list
   }
 
-
-
   customCreateGame(){
     let game={}
     game['id']=this.gameItems.length
@@ -203,7 +194,6 @@ export default class CreateRound extends Vue{
     game['unit1-name']=this.modalTeamItems[1].name
     game['time']='null'
     game['location']='null'
-    // game['edit']=false
     game['referee-name']='null'
     this.gameItems.push(game)
     this.$bvModal.hide("custom-create-game")
@@ -231,7 +221,6 @@ export default class CreateRound extends Vue{
       if (response.status === 200) {
         let list=response.data.arrangement
         for(let x of list){
-          // x['edit']=false
           x['time']='null'
           x['location']='null'
           x['unit0-name']=this.teamsList.find(team=>team['unitId']===x['unit0']).name
@@ -253,7 +242,6 @@ export default class CreateRound extends Vue{
   }
 
   onEdit(row){
-    // row.item.edit=true
     this.selectedTime=row.item.time
     this.selectedLocation=row.item.location
 
@@ -371,7 +359,6 @@ export default class CreateRound extends Vue{
       temp['unit1']=game.unit1.unitId
       temp['unit0-name']=game.unit0.name
       temp['unit1-name']=game.unit1.name
-      // temp['edit']=false
       if(game.startTime)
       {
         temp['time']=game.startTime
@@ -390,7 +377,6 @@ export default class CreateRound extends Vue{
   }
 
   async createRound(){
-    // let strategy=this.strategyOptions.find(x=>x.strategyName===this.roundStrategy)
     let unitList=[]
     for(let x of this.teamItems){
       unitList.push(x.id)
@@ -531,11 +517,6 @@ export default class CreateRound extends Vue{
   margin-top: 30px;
   margin-bottom: 30px;
   float: right;
-}
-
-#teamDetail{
-  color: dodgerblue;
-  text-decoration: underline;
 }
 
 #custom-create-game-button{

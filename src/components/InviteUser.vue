@@ -17,7 +17,6 @@
       </b-form-tags>
       <b-list-group  id="list" class="wrapper" v-if="showUserList">
         <b-list-group-item @click="chooseUser(item)" class="d-flex align-items-center" v-for="(item,index) in  userSearchList ">
-          <!--                          <span>{{item.username}}</span>-->
           <b-avatar variant="info" class="mr-3"></b-avatar>
           <span class="mr-auto">{{item.username}}</span>
         </b-list-group-item>
@@ -29,14 +28,13 @@
 
 <script>
 import axios from "axios";
-import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 import {findUserByName} from "../../myQuery";
 
 @Component
 export default class InviteUser extends Vue{
   @Prop({type:String, default:function (){return ""}})type
   @Prop({type:Object, default:function (){return {}}})unit
-  // @Prop({type:Boolean,default:function(){return false}})showModal
   @Prop({type:String, default:function (){return ""}})id
   selectedUserList=[]
   showUserList = false
@@ -76,8 +74,6 @@ export default class InviteUser extends Vue{
         list.push(array[3])
       }
     }
-    console.log(list)
-    console.log(this.type)
     let url = ""
     let method = ""
     if(this.type === "InviteReferee"){
@@ -108,7 +104,6 @@ export default class InviteUser extends Vue{
         this.showUserList = false
         this.userSearchKey = ""
         this.userSearchList=[]
-        console.log(this.unit)
       }
       else
       {
@@ -122,10 +117,6 @@ export default class InviteUser extends Vue{
     }
     this.$bvModal.hide(this.id)
   }
-
-  // mounted(){
-  //   console.log(this.id)
-  // }
 }
 </script>
 

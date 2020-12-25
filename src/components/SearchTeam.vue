@@ -10,7 +10,6 @@
     ></b-form-input>
     <b-list-group  id="list" class="wrapper" v-if="showTeamList">
       <b-list-group-item @click="chooseTeam(item)" class="d-flex align-items-center" v-for="(item,index) in  searchTeamList ">
-        <!--                          <span>{{item.username}}</span>-->
         <b-avatar variant="success" icon="people-fill" class="mr-3"></b-avatar>
         <span class="mr-auto">{{item.name}}</span>
         <b-badge variant="info">{{item.unitId}}</b-badge>
@@ -20,7 +19,6 @@
   <h4><b-badge style="margin-top: 20px" variant="success">选择队伍列表</b-badge></h4>
   <b-table  class="table" hover :items="teamItems" :fields="teamFields">
     <template #cell(name)="row">
-      <!-- `data.value` is the value after formatted by the Formatter -->
       <a class="teamDetail" @click="gotoTeamDetail(row)">{{ row.item.name }}</a>
     </template>
     <template #cell(action)="row">
@@ -31,8 +29,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import {Component, Prop, Vue,Watch} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class SearchTeam extends Vue{
@@ -40,7 +37,6 @@ export default class SearchTeam extends Vue{
   @Prop({type:Array, default:function (){return []}})teamsList
   @Prop({type:Array,default:function (){return []}})teamItems
   teamFields = ['name', 'creator', 'description','action']
-  // teamItems = []
   teamSearchKey=''
   showTeamList=false
   alertShow=false
@@ -75,23 +71,12 @@ export default class SearchTeam extends Vue{
       }
     }
     this.alertShow=false
-    // if(this.type==="normal")
-    // {
-    //   team['id']=item.unitId
-    //   team['name']=item.name
-    //   // team['creator']=item.creator.username
-    //
-    //   team['description']='description to be implemented'
-    // }
-    // else if(this.type==="modal"){
-      team['id']=item.id
-      team['name']=item.name
-      team['creator']=item.creator
-      team['description']='description to be implemented'
-    // }
+    team['id']=item.id
+    team['name']=item.name
+    team['creator']=item.creator
+    team['description']='description to be implemented'
     this.teamItems.push(team)
     this.hideList()
-    // this.$emit("changeSelectedTeams",this.teamItems)
   }
 
   removeTeam(row){
@@ -109,19 +94,6 @@ export default class SearchTeam extends Vue{
     }
     return list
   }
-  // @Watch(this.initTeamsItems)func1(){
-  //   if(this.initTeamsItems) {
-  //     this.teamItems = this.initTeamsItems
-  //   }
-  // }
-
-
-
-  // mounted(){
-  //   this.teamItems=this.initTeamsItems
-  //   console.log('searchTeam')
-  //   console.log(this.teamItems)
-  // }
 }
 </script>
 

@@ -34,7 +34,7 @@
           <a-menu-item @click="goPersonInfo('4')" key="7">
             <a-icon type="message" />我的消息
           </a-menu-item>
-          <a-menu-item @click="goPersonInfo('5')" key="8">
+          <a-menu-item @click="logout()" key="8">
             <a-icon type="logout" />登出
           </a-menu-item>
         </a-menu>
@@ -56,6 +56,11 @@ export default class Navigation extends Vue{
   @Prop({type:String, default:function (){return ""}})username
   @Prop({type:String, default:function (){return ""}})avatarKey
 
+  logout(){
+    window.localStorage.removeItem('jwt')
+    this.$router.push(`/`)
+  }
+
   goPersonInfo(key){
     if (this.$router.currentRoute.path !== `/personal/${key}`) {
       this.$router.push(`/personal/${key}`);
@@ -73,9 +78,7 @@ export default class Navigation extends Vue{
       this.$router.push('/creatematch');
     }
   }
-  mounted(){
-    // console.log(this.navKeys)
-  }
+
 }
 </script>
 
@@ -94,20 +97,6 @@ export default class Navigation extends Vue{
   }
 }
 
-#main{
-
-}
-#create{
-
-}
-#logout{
-  position: absolute;
-  left: 26%;
-}
-#message{
-  position: absolute;
-  left: 77%;
-}
 #user{
   margin-left: auto;
 }

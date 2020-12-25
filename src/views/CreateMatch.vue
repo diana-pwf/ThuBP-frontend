@@ -71,10 +71,9 @@
 <script lang="ts">
 import axios from "axios";
 import {Component, Vue} from 'vue-property-decorator';
-import {Modal} from "ant-design-vue";
 import Navigation from "@/components/Navigation.vue";
 import PictureUpload from "@/components/PictureUpload.vue";
-import {findMatchesByParticipantId, getCarouselMatches, getMatchTypeList} from "../../myQuery";
+import {getMatchTypeList} from "../../myQuery";
 
 @Component({
   components:{
@@ -160,7 +159,6 @@ export default class CreateMatch extends Vue {
   onSubmit() {
     //@ts-ignore
     this.$refs.ruleForm.validate(valid => {
-      console.log(valid);
       if (valid) {
         this.onCreateMatch();
       } else {
@@ -280,7 +278,6 @@ export default class CreateMatch extends Vue {
       let res = await this.$apollo.query({
         query: getMatchTypeList,
       });
-      console.log(res.data.listMatchTypes)
       this.matchTypeList = res.data.listMatchTypes
     }
     catch (e) {

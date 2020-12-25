@@ -8,7 +8,6 @@
       <div id="form-body">
         <b-form-input @input="isUsernameRepeat" v-model="username" placeholder="用户名：由数字或字母组成" :state="validation&&containValidation" class="feedback-user">
         </b-form-input>
-
         <b-form-valid-feedback class="feedback" :state="validation&&containValidation">
           Looks good
         </b-form-valid-feedback>
@@ -26,10 +25,7 @@
         <div style="margin-top: 10px">
           <a-button id="button-login" style="margin-right: 20%;width: 40%"  v-on:click="login()">Login</a-button>
           <a-button id="button-logon" :disabled="!validation||!containValidation" type="primary" style="width: 40%" v-on:click="logon()">logon</a-button>
-<!--          <b-button id="button-logon" :disabled="!validation||!containValidation"  style="width: 40%" v-on:click="logon()" variant="warning">Logon</b-button>-->
         </div>
-<!--        <a-button id="button-login" v-on:click="login()">login</a-button>-->
-
       </div>
     </div>
   </div>
@@ -47,7 +43,6 @@ export default class Logon extends Vue {
   password = '123456'
   ticket = '2018013405'
 
-  temp=true
   validation=false
   containValidation=false
   querystring = require('querystring')
@@ -102,17 +97,9 @@ export default class Logon extends Vue {
 
 <style scoped>
 #center {
-  /*width: 800px;*/
-  /*height: 600px;*/
-  /*margin: auto;*/
-  /*position: relative;*/
-  /*top: 100px;*/
-  /*display: flex;*/
-  /*align-items: center;*/
   height: 100%;
   position: fixed;
   width: 100%;
-  /*margin-top: 100px;*/
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,16 +112,8 @@ export default class Logon extends Vue {
   margin-left: 20px;
 }
 
-.user {
-  margin-bottom: 20px;
-}
-
 .password {
   margin-bottom: 20px;
-}
-
-#button {
-  grid-column-start: 2;
 }
 
 #title {
@@ -150,13 +129,13 @@ export default class Logon extends Vue {
 .feedback{
   margin-bottom: 20px;
 }
-@media screen and (max-width: 1000px){
 
-#form-body {
-    margin-top: 5%;
-    margin-left: 20px;
-    width: 100%;
-    margin: auto;
-  }
+@media screen and (max-width: 1000px){
+  #form-body {
+      margin-top: 5%;
+      margin-left: 20px;
+      width: 100%;
+      margin: auto;
+    }
 }
 </style>

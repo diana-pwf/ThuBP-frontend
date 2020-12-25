@@ -206,7 +206,6 @@ export default class GameDetail extends Vue {
       query: getGameComments,
       variables:{gameId:this.$route.params.gameId}
     });
-    console.log(res.data.findGameById.comments)
     this.comments = []
     for(let item of res.data.findGameById.comments){
       let comment = {
@@ -383,7 +382,6 @@ export default class GameDetail extends Vue {
       query: getGameScoreAndRecord,
       variables:{gameId:this.$route.params.gameId}
     })
-    // console.log(res.data.findGameById)
     if (res.data.findGameById.result)
     {
       if (res.data.findGameById.result.rounds)
@@ -725,12 +723,6 @@ export default class GameDetail extends Vue {
   width: 3px;
 }
 
-#reply-button {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
 #comment-content {
   margin-bottom: 0;
   max-width: 100%;
@@ -909,7 +901,7 @@ li {
  #logs {
    display: block;
  }
-  /*重新设计卡片样式*/
+
 }
 
 </style>
