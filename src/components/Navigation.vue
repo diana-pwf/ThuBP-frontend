@@ -12,15 +12,15 @@
     <a-menu-item id="create" @click="goCreateMatch" key="2">
       创建比赛
     </a-menu-item>
-    <a-menu-item id="user" key="3">
-      <a-dropdown :trigger="['click']">
+    <a-menu-item @click="goPersonInfo('1')" id="user" key="3">
+      <a-dropdown  :trigger="['click']">
         <a class="ant-dropdown-link user-dropdown-link" @click="e => e.preventDefault()">
           <a-avatar v-if="avatarKey" class="avatar" :src="avatarKey" :style="{}" />
           <a-avatar v-else class="avatar" icon="user" :style="{}" />
           <span class="delimiter"></span>
           <span class="text-middle">{{username}}</span><a-icon class="down-icon" type="down" />
         </a>
-        <a-menu slot="overlay" class="dropdown-list">
+        <a-menu id="user_menu" slot="overlay" class="dropdown-list">
           <a-menu-item @click="goPersonInfo('1')" key="4">
             <a-icon type="user"/>个人资料
           </a-menu-item>
@@ -136,5 +136,11 @@ export default class Navigation extends Vue{
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+@media screen and (max-width: 1000px){
+  #user_menu{
+    display: none;
+  }
 }
 </style>

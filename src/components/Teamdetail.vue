@@ -73,7 +73,7 @@ export default class Teamdetail extends Vue {
 
   @Prop({type:Object, default:function (){return {}}})team
   @Prop({type:Array, default:function (){return []}})items
-  @Prop({type:Boolean, default:function (){return []}})isCreator
+  @Prop({type:Boolean, default:function (){return false}})isCreator
 
   onRemoveMember(row){
     this.$bvModal.msgBoxConfirm(`确认要删除${row.item.name}吗？`, {

@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <div id="matchDetailPC">
   <div id="personalMenu">
     <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
     <div id="menu">
@@ -252,6 +254,57 @@
       </div>
     </div>
   </div>
+  </div>
+  <div id="matchDetailMobile">
+    <navigation></navigation>
+    <b-card style="margin-top: 10px">
+    <b-media style="margin-top: 10px;">
+      <template #aside>
+        <b-img style="width: 64px;height: 64px;" :src="user.avatar" width="64" alt="placeholder"></b-img>
+      </template>
+      <h5 class="mt-0"><b-badge variant="info">{{user.username}}</b-badge></h5>
+      <p class="mb-0">
+        <a-descriptions>
+          <a-descriptions-item class="description-item" label="账号ID">
+            {{user.userId}}
+          </a-descriptions-item>
+          <a-descriptions-item class="description-item" label="学工号">
+            {{user.thuId}}
+          </a-descriptions-item>
+        </a-descriptions>
+      </p>
+    </b-media>
+      <b-card-text>
+        <div id="mobile-organizedMatches">
+        <a-tag style="margin-bottom: 10px" color="purple">
+          创建的比赛
+        </a-tag>
+        <b-list-group>
+          <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowOrganizedMatches ">
+            <!--                          <span>{{item.username}}</span>-->
+            <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
+            <span class="mr-auto">{{item.name}}</span>
+            <!--              <h5><b-badge variant="warning">{{item.unitId}}</b-badge></h5>-->
+          </b-list-group-item>
+        </b-list-group>
+        </div>
+        <div style="margin-top: 10px" id="mobile-participatedMatches">
+          <a-tag  style="margin-bottom: 10px" color="orange">
+            创建的比赛
+          </a-tag>
+          <b-list-group>
+            <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowParticipatedMatches ">
+              <!--                          <span>{{item.username}}</span>-->
+              <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
+              <span class="mr-auto">{{item.name}}</span>
+              <!--              <h5><b-badge variant="warning">{{item.unitId}}</b-badge></h5>-->
+            </b-list-group-item>
+          </b-list-group>
+        </div>
+      </b-card-text>
+    </b-card>
+  </div>
+  </div>
 </template>
 
 
@@ -271,7 +324,7 @@ import PictureUpload from "@/components/PictureUpload.vue";
 
 
 
-//TODO:对修改个人信息进行检验
+
 export default class PersonalInfoTab extends Vue {
   columns = [
     {
@@ -753,6 +806,10 @@ export default class PersonalInfoTab extends Vue {
     }
   }
 
+  goMatchDetail(id){
+    this.$router.push(`/matchdetail/${id}`)
+  }
+
   mounted()
   {
     this.getUserInfo();
@@ -833,4 +890,17 @@ ul,li {
 /*  overflow: hidden;*/
 /*  white-space: nowrap;*/
 /*}*/
+
+#matchDetailMobile{
+  display: none;
+}
+
+@media screen and (max-width: 1000px){
+  #matchDetailPC{
+    display: none;
+  }
+  #matchDetailMobile{
+    display: block;
+  }
+}
 </style>

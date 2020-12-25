@@ -457,7 +457,11 @@
 <!--                <h5><b-badge variant="warning">{{item.userId}}</b-badge></h5>-->
               </b-list-group-item>
             </b-list-group>
+
           </div>
+<!--            <div v-else>-->
+<!--            <a-empty description="暂无裁判"/>-->
+<!--            </div>-->
           </div>
           <div >
             <a-tag style="margin-bottom: 10px;margin-top: 20px" color="pink">
