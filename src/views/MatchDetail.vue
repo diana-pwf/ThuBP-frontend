@@ -412,7 +412,7 @@
           class="mb-2"
       >
         <b-card-text>
-          <a-descriptions >
+          <a-descriptions>
             <a-descriptions-item label="组织者">
               {{this.match.organizerName}}
             </a-descriptions-item>
@@ -426,7 +426,7 @@
             队伍列表
           </a-tag>
           <b-list-group  id="mobile-team-list" class="wrapper">
-            <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in  match.teams ">
+            <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in match.teams ">
               <b-avatar size="sm" icon="people-fill" variant="info" class="mr-3"></b-avatar>
               <span class="mr-auto">{{item.name}}</span>
             </b-list-group-item>
@@ -444,21 +444,15 @@
             </b-list-group>
 
           </div>
-<!--            <div v-else>-->
-<!--            <a-empty description="暂无裁判"/>-->
-<!--            </div>-->
           </div>
           <div >
             <a-tag style="margin-bottom: 10px;margin-top: 20px" color="pink">
               轮次列表
             </a-tag>
-<!--            <b-list-group  id="mobile-round-list" class="wrapper">-->
-<!--              <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in  match.rounds ">-->
           <ul>
             <li v-for="(item,index) in match.rounds" :key="index">
             <b-card bg-variant="light" :header="item.name" class="text-center">
               <b-card-text>
-<!--                <b-table striped hover :items="mobileRoundItems" :fields="mobileRoundFields">-->
                 <ul>
                   <li v-for="(record,index) in item.games" :key="index">
                     <h5>
@@ -469,11 +463,8 @@
                     </h5>
                   </li>
                 </ul>
-<!--                </b-table>-->
               </b-card-text>
             </b-card>
-<!--              </b-list-group-item>-->
-<!--            </b-list-group>-->
             </li>
           </ul>
           </div>

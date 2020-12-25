@@ -270,25 +270,27 @@
         </a-tag>
         <b-list-group>
           <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowOrganizedMatches ">
-            <!--                          <span>{{item.username}}</span>-->
             <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
             <span class="mr-auto">{{item.name}}</span>
-            <!--              <h5><b-badge variant="warning">{{item.unitId}}</b-badge></h5>-->
           </b-list-group-item>
         </b-list-group>
+          <a-pagination class="pagination" :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
+                        @change="onOrganizedMatchesPageChange"
+          />
         </div>
         <div style="margin-top: 10px" id="mobile-participatedMatches">
           <a-tag  style="margin-bottom: 10px" color="orange">
-            创建的比赛
+            参与的比赛
           </a-tag>
           <b-list-group>
             <b-list-group-item @click="goMatchDetail(item.matchId)" class="d-flex align-items-center" v-for="(item,index) in  onShowParticipatedMatches ">
-              <!--                          <span>{{item.username}}</span>-->
               <b-avatar size="sm" icon="trophy" variant="warning" class="mr-3"></b-avatar>
               <span class="mr-auto">{{item.name}}</span>
-              <!--              <h5><b-badge variant="warning">{{item.unitId}}</b-badge></h5>-->
             </b-list-group-item>
           </b-list-group>
+          <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
+                        @change="onParticipatedMatchesPageChange"
+          />
         </div>
       </b-card-text>
     </b-card>
