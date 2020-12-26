@@ -635,7 +635,7 @@ export default class GameDetail extends Vue {
       })
       // 对response做处理
       if (response.status === 200) {
-        this.$message.success('get userInfo success!')
+
         this.user.userId = response.data.userId
         this.user.username = response.data.username
         this.user.avatar = response.data.avatar

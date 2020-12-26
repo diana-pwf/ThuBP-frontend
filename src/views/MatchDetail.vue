@@ -489,8 +489,7 @@ import Teamdetail from "@/components/Teamdetail.vue";
 @Component({components:{Teamdetail, InviteUser, Navigation}})
 
 export default class MatchDetail extends Vue{
-
-  //TODO:@media轮次和比赛分页
+  
   currentUserId = ''
   myUnitId = -1
   myCreateUnitId=-1
@@ -613,7 +612,7 @@ export default class MatchDetail extends Vue{
       })
       // 对response做处理
       if (response.status === 200) {
-        this.$message.success('get userInfo success!')
+
         this.currentUserId = response.data.userId
         this.user.username = response.data.username
         this.user.avatar = response.data.avatar

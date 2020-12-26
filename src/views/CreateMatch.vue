@@ -255,7 +255,7 @@ export default class CreateMatch extends Vue {
       })
       // 对response做处理
       if (response.status === 200) {
-        this.$message.success('get userInfo success!')
+
         this.user.avatar = response.data.avatar
         this.user.username = response.data.username
       }
