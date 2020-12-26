@@ -45,7 +45,7 @@
             <div id="mobile-matchList" v-if="onShowMatchesList.length">
               <ul class="wrapper">
                 <li class="list" v-for="(item,index) in onShowMatchesList">
-                  <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
+                  <a-card @click="goMatchDetail(item)" style=" text-align: center;">
                     <img
                         slot="cover"
                         alt="example"
@@ -96,7 +96,6 @@ export default class Home extends Vue {
   onShowMatchesList=[]
   totalMatches=0
 
-  //TODO：获取总数进行分页
   async getMatchesList(type){
     let res = await this.$apollo.query({
       query: getMatchesList,
@@ -263,6 +262,7 @@ img{
   }
   #mobile-matchList{
     display: block;
+    width: 90%;
   }
   #search{
     width: 100%;

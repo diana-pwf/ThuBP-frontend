@@ -9,7 +9,7 @@
       <div id="mobile-matchList" >
         <ul style="padding: 0" class="wrapper">
           <li style="margin-top: 10px"  v-for="(item,index) in onShowSearchList">
-            <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
+            <a-card @click="goMatchDetail(item)" style="text-align: center;">
               <img
                   slot="cover"
                   alt="example"
@@ -161,6 +161,7 @@ li{
   #mobile-matchList{
     display: block;
     margin: auto;
+    width: 90%;
   }
   .list{
     margin:20px auto auto;
