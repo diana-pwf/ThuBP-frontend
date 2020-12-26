@@ -274,8 +274,8 @@
             <span class="mr-auto">{{item.name}}</span>
           </b-list-group-item>
         </b-list-group>
-          <a-pagination class="pagination" :default-current="1" :total="myOrganizedMatches.length" :page-size="6"
-                        @change="onOrganizedMatchesPageChange"
+          <a-pagination v-if="myOrganizedMatches.length > 6" class="pagination" :default-current="1" :total="myOrganizedMatches.length"
+                        :page-size="6" @change="onOrganizedMatchesPageChange"
           />
         </div>
         <div style="margin-top: 10px" id="mobile-participatedMatches">
@@ -288,8 +288,8 @@
               <span class="mr-auto">{{item.name}}</span>
             </b-list-group-item>
           </b-list-group>
-          <a-pagination class="pagination" :default-current="1" :total="myParticipatedMatches.length" :page-size="6"
-                        @change="onParticipatedMatchesPageChange"
+          <a-pagination v-if="myParticipatedMatches.length > 6" class="pagination" :default-current="1" :total="myParticipatedMatches.length"
+                        :page-size="6" @change="onParticipatedMatchesPageChange"
           />
         </div>
       </b-card-text>
@@ -312,9 +312,6 @@ import PictureUpload from "@/components/PictureUpload.vue";
 @Component({
   components: {PictureUpload, SearchResultCard, ResultCardList, Navigation},
 })
-
-
-
 
 export default class PersonalInfoTab extends Vue {
   columns = [
@@ -807,6 +804,7 @@ export default class PersonalInfoTab extends Vue {
 <style scoped>
 .pagination {
   margin: auto;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }

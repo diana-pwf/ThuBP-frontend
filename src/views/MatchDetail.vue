@@ -17,13 +17,6 @@
             </span>
               <div id="detail">
                 <img :src="this.match.previewLarge" alt="比赛照片"/>
-  <!--                <b-container id="description" class="bv-example-row">-->
-  <!--                  <b-row>-->
-  <!--                    <b-col><p>比赛名称：{{this.match.name}}</p></b-col>-->
-  <!--                    <b-col>2 of 3</b-col>-->
-  <!--                    <b-col>3 of 3</b-col>-->
-  <!--                  </b-row>-->
-  <!--                </b-container>-->
                 <a-descriptions id="description" >
                   <a-descriptions-item label="比赛名称">
                     {{this.match.name}}
@@ -36,15 +29,8 @@
                   </a-descriptions-item>
                   <a-descriptions-item label="开始时间">
                     <p v-if="!this.match.edit">{{ this.match.startTime }}</p>
-                    <a-date-picker
-                        v-else
-                         v-model="matchEditStartTime"
-                        @change="dateChange"
-                    />
+                    <a-date-picker v-else v-model="matchEditStartTime" @change="dateChange"/>
                   </a-descriptions-item>
-  <!--                <a-descriptions-item label="结束时间">-->
-  <!--                  2020/12/04-->
-  <!--                </a-descriptions-item>-->
                   <a-descriptions-item label="面向人群">
                     <p v-if="!this.match.edit">{{this.match.targetGroup}}</p>
                     <a-input v-else v-model="matchEditAim"></a-input>
@@ -71,33 +57,27 @@
                       </a-radio>
                     </a-radio-group>
                   </a-descriptions-item>
-
-
               </a-descriptions>
-
               </div>
               <b-button block v-b-modal.addUserAddWatch v-if="!this.match.publicShowUp&&isOrganizer" variant="outline-warning">添加可查看比赛的用户</b-button>
               <invite-user id="addUserAddWatch" type="addWatch" :unit="this.match" ></invite-user>
               <div id="intro">
                 <a-card>
-                  <a-textarea
-                      v-if="this.match.edit"
-                      v-model="matchEditDescription"
-                      :auto-size="{ minRows: 3, maxRows: 5 }"
-                  />
+                  <a-textarea v-if="this.match.edit" v-model="matchEditDescription"
+                              :auto-size="{ minRows: 3, maxRows: 5 }"/>
                   <p v-else>{{this.match.description}}</p>
                 </a-card>
               </div>
               <div>
-              <a-button @click="onDetailEdit" v-if="this.isOrganizer&&!this.match.edit" id="detail_edit" type="link">
-                编辑
-              </a-button>
+                <a-button @click="onDetailEdit" v-if="this.isOrganizer&&!this.match.edit"
+                          id="detail_edit" type="link">
+                  编辑
+                </a-button>
                 <template v-if="this.isOrganizer&&this.match.edit">
                   <a-button @click="submitDetailEdit" class="detail_button" type="link">确认</a-button>
                   <a-button @click="cancelDetailEdit" class="detail_button" type="link">取消</a-button>
                 </template>
               </div>
-
             </a-tab-pane>
             <a-tab-pane  key="2">
             <span slot="tab">
@@ -119,45 +99,35 @@
                 </div>
               </div>
               <div  id="selective-buttons">
-                <div  v-if="isSingleMatch&&this.match.status==='PREPARE'">
-                  <b-button v-if="isParticipant&&myCreateUnitId>0"
-                            variant="outline-danger" class="add"
+                <div  v-if="isSingleMatch && this.match.status === 'PREPARE'">
+                  <b-button v-if="isParticipant && myCreateUnitId > 0" variant="outline-danger" class="add"
                             @click="onDeleteTeam(myCreateUnitId)">
                     <b-icon icon="person-plus-fill"/>
                     取消报名
                   </b-button>
-                  <b-button v-if="!isOrganizer && !isParticipant"
-                            variant="outline-success"
-                            class="add"
-                            @click="signUpPersonal">
+                  <b-button v-if="!isOrganizer && !isParticipant" variant="outline-success"
+                            class="add" @click="signUpPersonal">
                     <b-icon icon="person-plus-fill"/>
                     我要报名
                   </b-button>
                 </div>
                 <div v-else>
                   <div v-if="myCreateUnitId > 0" class="aboutTeamButton">
-                  <b-button v-if="isParticipant"
-                            variant="outline-success"
-                            @click="changeOnLookUnit(myUnitId)"
-                            v-b-toggle.sidebar-teamdetail>
-                    <b-icon icon="person-plus-fill"/>
-                    查看我的队伍
-                  </b-button>
-                    <b-button v-if="myCreateUnitId>0"
-                              variant="outline-danger"
-                              :disabled="match.status!=='PREPARE'"
-                              @click="onDeleteTeam(myCreateUnitId)"
-                    >
+                    <b-button v-if="isParticipant" variant="outline-success"
+                              @click="changeOnLookUnit(myUnitId)"
+                              v-b-toggle.sidebar-teamdetail>
+                      <b-icon icon="person-plus-fill"/>
+                      查看我的队伍
+                    </b-button>
+                    <b-button v-if="myCreateUnitId>0" variant="outline-danger"
+                              :disabled="match.status!=='PREPARE'" @click="onDeleteTeam(myCreateUnitId)">
                       解散我的队伍
                     </b-button>
                   </div>
                   <div v-else>
-                    <b-button v-if="isParticipant"
-                              variant="outline-success"
-                              @click="changeOnLookUnit(myUnitId)"
-                              class="add"
-                              v-b-toggle.sidebar-teamdetail
-                    >
+                    <b-button v-if="isParticipant" variant="outline-success"
+                              @click="changeOnLookUnit(myUnitId)" class="add"
+                              v-b-toggle.sidebar-teamdetail>
                       <b-icon icon="person-plus-fill"/>
                       查看我的队伍
                     </b-button>
@@ -169,52 +139,27 @@
                     创建我的队伍
                   </b-button>
                 </div>
-                <b-button
-                          v-b-modal.addUserInviteReferee
-                          v-if="isOrganizer"
-                          variant="outline-success"
-                          b-icon="person-plus" class="add">
+                <b-button v-b-modal.addUserInviteReferee v-if="isOrganizer"
+                          variant="outline-success" b-icon="person-plus" class="add">
                   <b-icon icon="person-plus"/>
                   添加裁判
                 </b-button>
-                <b-sidebar
-                        id="sidebar-createteam"
-                        :backdrop-variant="'dark'"
-                        :width="'50%'"
-                        backdrop
-                        right
-                        shadow
-                    >
+                <b-sidebar id="sidebar-createteam" :backdrop-variant="'dark'"
+                        :width="'50%'" backdrop right shadow>
                   <div class="px-3 py-2">
                     <h4 id="sidebar-title">组建我的队伍</h4>
                     <b-form @submit="createNewTeam" @reset="resetForm">
-                          <b-form-group
-                              id="input-group-1"
-                              label="队伍名称"
-                              label-for="input-1"
-                              description="有趣的队名会吸引更多的观众哦~"
-                          >
-                            <b-form-input
-                                id="input-1"
-                                v-model="form.name"
-                                required
-                                placeholder="Enter name"
-                            ></b-form-input>
-                          </b-form-group>
-                          <b-form-group
-                              label="队伍简介"
-                              label-for="input-2"
-                              description="说点什么吧~"
-                          >
-                          <b-form-textarea
-                              v-model="form.description"
-                              placeholder="Enter something..."
-                              rows="3"
-                          ></b-form-textarea>
-                          </b-form-group>
-                          <b-button class="form-button" type="submit" variant="outline-primary">Submit</b-button>
-                          <b-button class="form-button" type="reset" variant="outline-danger">Reset</b-button>
-                        </b-form>
+                      <b-form-group id="input-group-1" label="队伍名称" label-for="input-1"
+                                    description="有趣的队名会吸引更多的观众哦~">
+                        <b-form-input id="input-1" v-model="form.name" required placeholder="Enter name"></b-form-input>
+                      </b-form-group>
+                      <b-form-group label="队伍简介" label-for="input-2" description="说点什么吧~">
+                      <b-form-textarea v-model="form.description" placeholder="Enter something..." rows="3">
+                      </b-form-textarea>
+                      </b-form-group>
+                      <b-button class="form-button" type="submit" variant="outline-primary">Submit</b-button>
+                      <b-button class="form-button" type="reset" variant="outline-danger">Reset</b-button>
+                    </b-form>
                   </div>
                 </b-sidebar>
               </div>
@@ -241,8 +186,8 @@
                           </a-comment>
                         </li>
                       </ul>
-                      <a-pagination class="pagination" :default-current="1" :total="onShowTeamsList.length" :page-size="5"
-                                    @change="onTeamsPageChange"
+                      <a-pagination v-if="match.teams.length > 5" class="pagination" :default-current="1"
+                                    :total="onShowTeamsList.length" :page-size="5" @change="onTeamsPageChange"
                       />
                     </div>
                     <div v-else>
@@ -270,8 +215,8 @@
                           </a-comment>
                         </li>
                       </ul>
-                      <a-pagination class="pagination" :default-current="1" :total="onShowTeamsList.length" :page-size="5"
-                                    @change="onTeamsPageChange"
+                      <a-pagination v-if="match.teams.length > 5" class="pagination" :default-current="1" :total="onShowTeamsList.length"
+                                    :page-size="5" @change="onTeamsPageChange"
                       />
                     </div>
                     <div v-else>
@@ -281,7 +226,7 @@
                 </div>
                 <div>
                   <span class="list_title">裁判列表</span>
-                  <InviteUser   id="addUserInviteReferee" type="InviteReferee" :unit="match"></InviteUser>
+                  <InviteUser id="addUserInviteReferee" type="InviteReferee" :unit="match"></InviteUser>
                   <div v-if="match.referees.length">
                     <ul id="referee">
                       <li v-for="(item,index) in onShowRefereesList" :key="index">
@@ -301,8 +246,8 @@
                         </a-comment>
                       </li>
                     </ul>
-                    <a-pagination class="pagination" :default-current="1" :total="match.referees.length" :page-size="5"
-                                  @change="onRefereesPageChange"
+                    <a-pagination v-if="match.referees.length > 5" class="pagination" :default-current="1"
+                                  :total="match.referees.length" :page-size="5" @change="onRefereesPageChange"
                     />
                   </div>
                   <div v-else>
@@ -322,57 +267,65 @@
                 添加轮次
               </b-button>
               <div v-if="this.match.status !== 'PREPARE'">
+                <div v-if="match.rounds.length">
                 <ul>
                   <li class="list" v-for="(item,index) in this.onShowRoundsList">
-                <b-card class="roundCard" bg-variant="default">
-                  <b-card-text>
-                      <div>
-                        <div class="matchCard">
-                          <img :src="match.previewLarge" alt="赛事图片"/>
+                    <b-card class="roundCard" bg-variant="default">
+                      <b-card-text>
                           <div>
-                            <h4>{{item.name}}
-                            </h4>
-                            <a-descriptions style="margin-top:5%">
-                              <a-descriptions-item label="比赛场数">
-                                {{item.games.length}}
-                              </a-descriptions-item>
-                              <a-descriptions-item label="简介">
-                                {{item.description}}
-                              </a-descriptions-item>
-                            </a-descriptions>
-                          </div>
-                        </div>
-                           <a-table @change="handleTableChange" :pagination="pagination" class="table" :columns="columns" :data-source="item.games">
-                              <span slot="tags" slot-scope="tags">
-                           <a-tag
-                               v-for="tag in tags"
-                               :key="tag"
-                               :color="tag === 'unread' ? 'volcano' : 'read' ? 'geekblue' : 'green'"
-                           >
-                              {{ tag.toUpperCase() }}
-                            </a-tag>
+                            <div class="matchCard">
+                              <img :src="match.previewLarge" alt="赛事图片"/>
+                              <div>
+                                <h4>{{item.name}}
+                                </h4>
+                                <a-descriptions style="margin-top:5%">
+                                  <a-descriptions-item label="比赛场数">
+                                    {{item.games.length}}
+                                  </a-descriptions-item>
+                                  <a-descriptions-item label="简介">
+                                    {{item.description}}
+                                  </a-descriptions-item>
+                                </a-descriptions>
+                              </div>
+                            </div>
+                               <a-table @change="handleTableChange" :pagination="pagination" class="table" :columns="columns" :data-source="item.games">
+                                  <span slot="tags" slot-scope="tags">
+                               <a-tag
+                                   v-for="tag in tags"
+                                   :key="tag"
+                                   :color="tag === 'unread' ? 'volcano' : 'read' ? 'geekblue' : 'green'"
+                               >
+                                  {{ tag.toUpperCase() }}
+                                </a-tag>
+                                  </span>
+                                  <span slot="action" slot-scope="text, record">
+                                <a @click="gotoGameDetail(record,item)" class="ant-dropdown-link">查看详情</a>
                               </span>
-                              <span slot="action" slot-scope="text, record">
-                            <a @click="gotoGameDetail(record,item)" class="ant-dropdown-link">查看详情</a>
-                          </span>
-                            </a-table>
-                        <div class="roundButton">
-                        <b-button v-if="isOrganizer" @click="onEditRound(item)" id="edit_button" variant="warning">修改轮次</b-button>
-                        <b-button v-if="isOrganizer" @click="onDeleteRound(item)" id="delete_button" variant="danger">删除轮次</b-button>
+                                </a-table>
+                            <div class="roundButton">
+                            <b-button v-if="isOrganizer" @click="onEditRound(item)" id="edit_button" variant="warning">修改轮次</b-button>
+                            <b-button v-if="isOrganizer" @click="onDeleteRound(item)" id="delete_button" variant="danger">删除轮次</b-button>
+                            </div>
                         </div>
-                    </div>
 
-                  </b-card-text>
-                </b-card>
-                </li>
+                      </b-card-text>
+                    </b-card>
+                  </li>
                 </ul>
-                <a-pagination class="pagination" :default-current="1" :total="match.rounds.length" :page-size="2"
-                              @change="onRoundsPageChange"
+                <a-pagination v-if="match.rounds.length > 2" class="pagination" :default-current="1"
+                              :total="match.rounds.length" :page-size="2" @change="onRoundsPageChange"
                 />
+                </div>
+                <a-empty v-else>
+                  <span slot="description">暂无轮次信息</span>
+                </a-empty>
               </div>
               <div v-else>
-                <a-empty>
+                <a-empty v-if="this.isOrganizer">
                   <span slot="description">需要确认报名结束，才能添加轮次，开始比赛。</span>
+                </a-empty>
+                <a-empty v-else>
+                  <span slot="description">暂无轮次信息</span>
                 </a-empty>
               </div>
             </a-tab-pane>
@@ -431,37 +384,42 @@
             <a-tag style="margin-bottom: 10px" color="blue">
               裁判列表
             </a-tag>
-            <b-list-group  id="mobile-referee-list" class="wrapper">
+            <b-list-group id="mobile-referee-list" class="wrapper">
               <b-list-group-item class="d-flex align-items-center" v-for="(item,index) in match.referees">
                 <b-avatar size="sm" variant="success" class="mr-3"></b-avatar>
                 <span class="mr-auto">{{item.username}}</span>
               </b-list-group-item>
             </b-list-group>
-
           </div>
           </div>
           <div >
             <a-tag style="margin-bottom: 10px;margin-top: 20px" color="pink">
               轮次列表
             </a-tag>
-          <ul>
-            <li v-for="(item,index) in match.rounds" :key="index">
-            <b-card bg-variant="light" :header="item.name" class="text-center">
-              <b-card-text>
-                <ul>
-                  <li v-for="(record,index) in item.games" :key="index">
-                    <h5>
-                      <b-badge variant="danger">{{record.unit0.name}}</b-badge>
-                      vs
-                      <b-badge variant="info">{{record.unit1.name}}</b-badge>
-                      <b-link  @click="gotoGameDetail(record,item)" style="margin-left: 10px;font-size: 15px">更多</b-link>
-                    </h5>
-                  </li>
-                </ul>
-              </b-card-text>
-            </b-card>
-            </li>
-          </ul>
+            <div v-if="match.rounds.length">
+              <ul>
+                <li v-for="(item,index) in match.rounds" :key="index">
+                  <b-card bg-variant="light" :header="item.name" class="text-center">
+                    <b-card-text id="mobile-game-list">
+                      <ul>
+                        <li v-for="(record,index) in item.games" :key="index">
+                          <h5>
+                            <b-badge variant="danger">{{record.unit0.name}}</b-badge>
+                            vs
+                            <b-badge variant="info">{{record.unit1.name}}</b-badge>
+                            <b-link  @click="gotoGameDetail(record,item)" style="margin-left: 10px;font-size: 15px">更多</b-link>
+                          </h5>
+                        </li>
+                      </ul>
+                    </b-card-text>
+                  </b-card>
+                </li>
+              </ul>
+              <a-pagination v-if="match.rounds.length > 2" class="pagination" :default-current="1"
+                            :total="onShowRoundsList.length" :page-size="2" @change="onRoundsPageChange"
+              />
+            </div>
+
           </div>
         </b-card-text>
       </b-card>
@@ -663,8 +621,6 @@ export default class MatchDetail extends Vue{
       dataIndex: 'unit0_name',
       key: 'unit0_name',
       title:'比赛队伍A'
-      // slots: { title: 'customTitle' },
-      // scopedSlots: { customRender: 'unit0' },
     },
     {
       title: '比赛队伍B',
@@ -1236,9 +1192,8 @@ export default class MatchDetail extends Vue{
 <style scoped>
 li{
   list-style-type: none;
+  margin-top: 10px;
 }
-
-
 
 .pagination {
   margin: auto;
@@ -1255,9 +1210,6 @@ a-tab-pane {
   overflow: scroll;
 }
 
-#description{
-
-}
 img{
   width: 100%;
 }
@@ -1359,6 +1311,16 @@ ul{
 }
 
 #mobile-team-list{
+  max-height: 150px;
+  overflow-y: scroll;
+}
+
+#mobile-referee-list{
+  max-height: 150px;
+  overflow-y: scroll;
+}
+
+#mobile-game-list{
   max-height: 150px;
   overflow-y: scroll;
 }
