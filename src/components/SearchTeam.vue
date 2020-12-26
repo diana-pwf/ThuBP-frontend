@@ -74,7 +74,7 @@ export default class SearchTeam extends Vue{
     team['id']=item.id
     team['name']=item.name
     team['creator']=item.creator
-    team['description']='description to be implemented'
+    team['description']=item.description
     this.teamItems.push(team)
     this.hideList()
   }

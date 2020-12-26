@@ -287,6 +287,7 @@ export default class CreateRound extends Vue{
       for(let x of list){
         x['creator']=x['creator'].username
         x['id']=x.unitId
+        x['description']=x.description
       }
 
       this.teamsList=list
@@ -350,7 +351,7 @@ export default class CreateRound extends Vue{
       team['id']=unit.unitId
       team['name']=unit.name
       team['creator']=unit.creator.username
-      team['description']='description to be implemented'
+      team['description']=unit.description
       this.teamItems.push(team)
     }
     for(let game of res.data.findRoundById.games){
