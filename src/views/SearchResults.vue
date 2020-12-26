@@ -2,7 +2,7 @@
   <div>
   <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
-    <div class="list" v-if="onShowSearchList.length">
+    <div class="list" v-if="searchList.length">
       <ResultCardList id="matchesList" :match-lists="onShowSearchList" :is-center="true"></ResultCardList>
       <a-pagination class="pagination" :default-current="1" :total="searchList.length" :page-size="3"
                     @change="onMatchesPageChange"
@@ -39,11 +39,12 @@ export default class SearchResults extends Vue {
   path=""
 
   getSearchResult(list){
-   this.searchList=list
+    this.searchList = list
+    this.onMatchesPageChange(1, 3)
   }
 
   onMatchesPageChange(page, pageSize) {
-    let total = this.matchesList.length
+    let total = this.searchList.length
     let left = (page - 1) * pageSize
     let right = (page * pageSize > total) ? total : page * pageSize
     this.onShowSearchList = this.searchList.slice(left, right)
@@ -54,8 +55,7 @@ export default class SearchResults extends Vue {
       query: getMatchesList,
       variables:{typeIds:[]}
     });
-    this.matchesList=res.data.findMatchesByType
-
+    this.matchesList=res.data.findMatchesByType.list
     if(this.$route.params.mode==='0'){
       this.searchList = this.matchesList.filter((matches)=>{return matches.name.match(this.$route.params.value) })}
     else if( this.$route.params.mode === '1'){

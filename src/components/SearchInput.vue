@@ -47,6 +47,7 @@ export default class SearchInput extends Vue {
   matchesList=[]
   searchMode=0
   list=[]
+
   async getMatchesList(){
     let res = await this.$apollo.query({
       query: getMatchesList,
@@ -55,12 +56,12 @@ export default class SearchInput extends Vue {
         pageSize:9999
       }
     });
-    this.matchesList=res.data.findMatchesByType.list
+    this.matchesList = res.data.findMatchesByType.list
   }
+
   onSearch(value: string)
   {
     this.$emit("search",this.list)
-    console.log(value, encodeURIComponent(value))
     if(this.$router.currentRoute.path!=`/search/${encodeURIComponent(value)}/${this.searchMode}`)
     {
       this.$router.push({path:`/search/${encodeURIComponent(value)}/${this.searchMode}`})
@@ -72,9 +73,11 @@ export default class SearchInput extends Vue {
   hideList(){
     this.showList=false
   }
+
   get searchList(){
     if(this.searchMode===0){
-    this.list = this.matchesList.filter((matches)=>{return matches.name.match(this.searchKey) })}
+      this.list = this.matchesList.filter((matches)=>{return matches.name.match(this.searchKey) })
+    }
     else if(this.searchMode === 1){
       this.list = this.matchesList.filter((matches)=>{return matches.organizerUser.username.match(this.searchKey)})
     }
