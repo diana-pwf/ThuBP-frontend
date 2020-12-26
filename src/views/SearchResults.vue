@@ -2,12 +2,33 @@
   <div>
   <Navigation :username="user.username" :avatar-key="user.avatar"></Navigation>
   <search-input @search="getSearchResult" class="search"></search-input>
-    <div class="list" v-if="searchList.length">
+    <div v-if="searchList.length">
+    <div class="list" >
       <ResultCardList id="matchesList" :match-lists="onShowSearchList" :is-center="true"></ResultCardList>
+    </div>
+      <div id="mobile-matchList" >
+        <ul style="padding: 0" class="wrapper">
+          <li style="margin-top: 10px"  v-for="(item,index) in onShowSearchList">
+            <a-card @click="goMatchDetail(item)" style="width: 240px; text-align: center;">
+              <img
+                  slot="cover"
+                  alt="example"
+                  :src="item.previewLarge"
+              />
+              <a-card-meta :title="item.name">
+                <template slot="description">
+                  {{ item.description }}
+                </template>
+              </a-card-meta>
+            </a-card>
+          </li>
+        </ul>
+      </div>
       <a-pagination class="pagination" :default-current="1" :total="searchList.length" :page-size="3"
                     @change="onMatchesPageChange"
       />
     </div>
+
     <div v-else class="list">
       <a-empty :description="'暂无搜索结果'"/>
     </div>
@@ -57,11 +78,11 @@ export default class SearchResults extends Vue {
     });
     this.matchesList=res.data.findMatchesByType.list
     if(this.$route.params.mode==='0'){
+      console.log(this.matchesList)
       this.searchList = this.matchesList.filter((matches)=>{return matches.name.match(this.$route.params.value) })}
     else if( this.$route.params.mode === '1'){
       this.searchList = this.matchesList.filter((matches)=>{return matches.organizerUser.username.match(this.$route.params.value)})
     }
-
     this.onMatchesPageChange(1, 3)
   }
 
@@ -92,9 +113,14 @@ export default class SearchResults extends Vue {
     }
   }
 
-  mounted() {
+  goMatchDetail(item){
+    this.$router.push(`/matchDetail/${item.matchId}`)
+  }
+
+
+  async mounted() {
     this.getUserInfo()
-    this.init()
+    await this.init()
   }
 }
 </script>
@@ -102,8 +128,8 @@ export default class SearchResults extends Vue {
 
 <style scoped>
 .list{
-  margin: 48px auto;
-  width:60%;
+  margin:20px auto;
+  width:80%;
 }
 
 #matchesList {
@@ -115,8 +141,31 @@ export default class SearchResults extends Vue {
 }
 
 .pagination {
-  margin: auto;
   display: flex;
   justify-content: center;
+  margin: 10px auto auto;
 }
+
+li{
+  list-style-type: none;
+}
+
+#mobile-matchList{
+  display: none;
+}
+
+@media screen and (max-width: 1000px){
+  #matchesList{
+    display: none;
+  }
+  #mobile-matchList{
+    display: block;
+    margin: auto;
+  }
+  .list{
+    margin:20px auto auto;
+    width:90%;
+  }
+}
+
 </style>

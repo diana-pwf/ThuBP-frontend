@@ -62,10 +62,11 @@ export default class SearchInput extends Vue {
   onSearch(value: string)
   {
     this.$emit("search",this.list)
-    if(this.$router.currentRoute.path!=`/search/${encodeURIComponent(value)}/${this.searchMode}`)
+    if(this.$router.currentRoute.path!==`/search/${encodeURIComponent(value)}/${this.searchMode}`)
     {
       this.$router.push({path:`/search/${encodeURIComponent(value)}/${this.searchMode}`})
     }
+
   }
   onChange(value:string){
     this.showList=true
