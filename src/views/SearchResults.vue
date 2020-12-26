@@ -10,7 +10,7 @@
         <ul style="padding: 0" class="wrapper">
           <li style="margin-top: 10px"  v-for="(item,index) in onShowSearchList">
             <a-card @click="goMatchDetail(item)" style="text-align: center;">
-              <img
+              <img class="mobile-img"
                   slot="cover"
                   alt="example"
                   :src="item.previewLarge"
@@ -150,6 +150,14 @@ li{
   list-style-type: none;
 }
 
+
+.mobile-img{
+  width: 200px;
+  height: 180px;
+  margin: 20px auto 0 auto;
+  object-fit: cover;
+}
+
 #mobile-matchList{
   display: none;
 }
@@ -168,5 +176,7 @@ li{
     width:90%;
   }
 }
+
+
 
 </style>
